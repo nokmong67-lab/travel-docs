@@ -615,7 +615,7 @@ const NEW=[['category','หมวดหมู่','select',['ไปราชก�
 function build(box,defs){box.innerHTML=defs.map(d=>{const w=d[3]==='wide'?' class="wide"':'';const i='x_'+d[0];
 if(d[2]==='people')return '<div class="wide" id="w_companions"><label for="'+i+'">'+d[1]+'</label><div id="plist"></div><div class="row" style="margin:6px 0 0"><input id="'+i+'" placeholder="พิมพ์ชื่อแล้วกดเพิ่ม"><button type="button" class="s" id="padd" style="width:auto">เพิ่ม</button></div></div>';
 if(d[0]==='dateTo'||d[0]==='days')return '';
-if(d[0]==='dateFrom')return '<div class="dates"><div><label for="x_dateFrom">ตั้งแต่วันที่</label><input id="x_dateFrom" type="date"></div><div><label for="x_dateTo">ถึงวันที่</label><input id="x_dateTo" type="date"></div><div><label for="x_days">จำนวนวัน</label><input id="x_days" type="text" readonly style="text-align:center;font-weight:600"></div></div>';
+if(d[0]==='dateFrom')return '<div class="dates"><div><label for="x_dateFrom">ตั้งแต่วันที่</label><input id="x_dateFrom" type="date"></div><div><label for="x_dateTo">ถึงวันที่</label><input id="x_dateTo" type="date"></div><div><label for="x_days">จำนวนวัน (รวมทุกช่วง)</label><input id="x_days" type="text" readonly style="text-align:center;font-weight:600"></div></div><div class="wide" id="w_ranges"><div id="x_ranges"></div><button type="button" class="s" id="x_radd" style="margin-top:8px">➕ เพิ่มช่วงวันที่ (ไปหลายรอบในเอกสารฉบับเดียว)</button></div>';
 if(d[2]==='links')return '<div class="wide" id="w_docs"><label for="x_docUrl">'+d[1]+'</label><div id="dlist"></div><div class="row" style="margin:6px 0 0;flex-wrap:wrap"><input id="x_docName" placeholder="ชื่อเอกสาร (ไม่บังคับ)" style="flex:1 1 150px"><input id="x_docUrl" type="url" placeholder="วางลิงก์ https://..." style="flex:2 1 220px"><button type="button" class="s" id="dadd" style="width:auto">เพิ่ม</button></div></div>';
 if(d[2]==='plist')return '<div class="wide" id="w_projItems" hidden><div style="font-weight:600;margin-top:6px">รายละเอียดงบประมาณ (บาท) — จัดโครงการ</div><div id="pibox"></div></div>';
 if(d[2]==='head')return '<div class="wide" id="w_'+d[0]+'" style="margin-top:6px;font-weight:600">'+d[1]+'</div>';
@@ -623,7 +623,15 @@ if(d[2]==='ro')return '<div'+w+' id="w_'+d[0]+'"><label for="'+i+'">'+d[1]+'</la
 const f=d[2]==='select'?'<select id="'+i+'"><option value=""></option>'+d[3].map(o=>'<option>'+o+'</option>').join('')+'</select>':'<input id="'+i+'" type="'+d[2]+'"'+(d[2]==='number'?' inputmode="decimal" min="0" step="any"':'')+'>';return '<div'+w+' id="w_'+d[0]+'"><label for="'+i+'">'+d[1]+'</label>'+f+'</div>'}).join('')}
 
 const AMT=['allowance','lodging','registration','transport','otherAmt'];
-const daysOf=()=>{const a=$('x_dateFrom').value,b=$('x_dateTo').value||a;if(!a||b<a)return 0;return Math.round((new Date(b+'T00:00')-new Date(a+'T00:00'))/864e5)+1};
+let xr=[];
+const dIn=(a,b)=>a&&b&&b>=a?Math.round((new Date(b+'T00:00')-new Date(a+'T00:00'))/864e5)+1:0;
+function allRanges(){const a=$('x_dateFrom').value,b=$('x_dateTo').value||a,l=[];if(a)l.push({from:a,to:b});xr.forEach(r=>{if(r.from)l.push({from:r.from,to:r.to||r.from})});return l}
+const daysOf=()=>allRanges().reduce((t,r)=>t+dIn(r.from,r.to),0);
+const rangesText=l=>l.map(r=>r.from===r.to?fd(r.from):fd(r.from)+' – '+fd(r.to)).join(', ');
+function renderRanges(){const b=$('x_ranges');if(!b)return;
+b.innerHTML=xr.map((r,i)=>'<div class="dates" style="margin-top:8px"><div><label>ช่วงที่ '+(i+2)+' ตั้งแต่วันที่</label><input type="date" data-ri="'+i+'" data-rk="from" value="'+esc(r.from||'')+'"></div><div><label>ถึงวันที่</label><input type="date" data-ri="'+i+'" data-rk="to" value="'+esc(r.to||'')+'"></div><div><label>&nbsp;</label><button type="button" class="s" data-rdel="'+i+'" style="width:100%" aria-label="ลบช่วงที่ '+(i+2)+'">ลบ</button></div></div>').join('');
+b.querySelectorAll('input').forEach(el=>el.oninput=()=>{xr[+el.dataset.ri][el.dataset.rk]=el.value;calc()});
+b.querySelectorAll('[data-rdel]').forEach(el=>el.onclick=()=>{xr.splice(+el.dataset.rdel,1);renderRanges();calc()})}
 const sumAmt=()=>isProj()?sumList(pitems):AMT.reduce((t,k)=>t+(parseFloat($('x_'+k).value)||0),0);
 const fd=x=>new Date(x+'T00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
 function calc(){const n=daysOf();$('x_days').value=n?n+' วัน':'';$('x_budget').value=sumAmt().toLocaleString('th-TH')+' บาท'}
@@ -637,7 +645,7 @@ $('dlist').querySelectorAll('button').forEach(b=>b.onclick=()=>{docs.splice(+b.d
 function addDoc(){const u=$('x_docUrl').value.trim();if(!u)return true;
 if(!/^https?:\/\//i.test(u)){say('ลิงก์เอกสารต้องขึ้นต้นด้วย http:// หรือ https://','err');return false}
 docs.push({name:$('x_docName').value.trim(),url:u});$('x_docName').value='';$('x_docUrl').value='';renderDocs();return true}
-function initNew(){people=[];docs=[];pitems=[{name:'',amt:''}];build($('f-new'),NEW);renderPeople();renderDocs();$('padd').onclick=addPerson;$('dadd').onclick=addDoc;
+function initNew(){people=[];docs=[];xr=[];pitems=[{name:'',amt:''}];build($('f-new'),NEW);renderPeople();renderDocs();renderRanges();$('x_radd').onclick=()=>{xr.push({from:'',to:''});renderRanges();const i=$('x_ranges').querySelectorAll('input[data-rk=from]');if(i.length)i[i.length-1].focus();calc()};$('padd').onclick=addPerson;$('dadd').onclick=addDoc;
 $('x_docUrl').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addDoc()}});
 $('x_companions').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addPerson()}});
 show('w_categoryOther',false);show('w_sourceOther',false);show('w_typeOther',false);
@@ -735,8 +743,8 @@ const soon=r=>{const s=dueState(r);return !!s&&(s.over||s.n<=5)};
 const dueCell=r=>{if(!r.due)return '-';const b=fd(r.due);if(!tStaff)return b;return r.returnData?b+' · คืนแล้ว':b+' · '+dueTxt(dueState(r))};
 const hasDocs=r=>r.docs.length>0||!!r.file;
 function norm(r,full){
-const dt=r.dateFrom?(r.dateFrom===r.dateTo?fd(r.dateFrom):fd(r.dateFrom)+' – '+fd(r.dateTo)):(r.date||'-');
-return {id:r.id,created:r.created||'',no:r.no||r.id,fy:(/^\d+-(\d{4})$/.exec(r.id)||[])[1]||'',name:r.name||'',dept:r.dept||'',type:r.type||'',category:r.category||'',title:r.title||'',place:r.place||'',dateFrom:r.dateFrom||'',dateTo:r.dateTo||'',dt,due:(r.loanData&&r.loanData.financeDate)?addDays(r.loanData.financeDate,30):(r.due||''),docs:Array.isArray(r.docs)?r.docs:[],file:(r.returnData&&r.returnData.file)||'',raw:r,days:r.days||'',status:r.status||'รอดำเนินการ',loan:r.loan||'',
+const dt=(Array.isArray(r.ranges)&&r.ranges.length)?rangesText(r.ranges):r.dateFrom?(r.dateFrom===r.dateTo?fd(r.dateFrom):fd(r.dateFrom)+' – '+fd(r.dateTo)):(r.date||'-');
+return {id:r.id,created:r.created||'',no:r.no||r.id,fy:(/^\d+-(\d{4})$/.exec(r.id)||[])[1]||'',name:r.name||'',dept:r.dept||'',type:r.type||'',category:r.category||'',title:r.title||'',place:r.place||'',dateFrom:r.dateFrom||'',dateTo:r.dateTo||'',ranges:Array.isArray(r.ranges)?r.ranges:[],dt,due:(r.loanData&&r.loanData.financeDate)?addDays(r.loanData.financeDate,30):(r.due||''),docs:Array.isArray(r.docs)?r.docs:[],file:(r.returnData&&r.returnData.file)||'',raw:r,days:r.days||'',status:r.status||'รอดำเนินการ',loan:r.loan||'',
 cancelled:!!(r.cancelled&&r.cancelled.active),cinfo:r.cancelled||null,email:r.email||'',companions:Array.isArray(r.companions)?r.companions:[],projItems:Array.isArray(r.projItems)?r.projItems:[],budget:r.budget,source:r.source||'',
 items:{allowance:r.allowance,lodging:r.lodging,registration:r.registration,transport:r.transport,otherAmt:r.otherAmt,otherNote:r.otherNote},
 loanData:r.loanData||null,returnData:r.returnData||null,refundData:r.refundData||null}}
@@ -1000,7 +1008,7 @@ $('tv-list').onclick=()=>tv('list');$('tv-rep').onclick=()=>tv('rep');
 $('tq').addEventListener('input',renderT);['tp','td','tt','ts','ty','tc','tm'].forEach(k=>$(k).addEventListener('change',renderT));
 $('tclr').onclick=()=>{['tq','tp','td','tt','ts','ty','tc','tm'].forEach(k=>{$(k).value=''});renderT()};
 
-const staffRows=rows=>rows.map(r=>{const l=r.loanData||{},t=r.returnData||{},f=r.refundData||{},i=r.items;return {'เลขรับ':r.no,'หมวดหมู่':r.category,'ผู้ขอ':r.name,'อีเมล':r.email,'กลุ่มงาน':r.dept,'ผู้ร่วมเดินทาง':r.companions.join(', '),'ประเภท/กิจกรรม':r.type,'ชื่อเรื่อง/โครงการ':r.title,'สถานที่':r.place,'ตั้งแต่วันที่':r.dateFrom,'ถึงวันที่':r.dateTo,'จำนวนวัน':nz(r.days),'ค่าเบี้ยเลี้ยง':nz(i.allowance),'ค่าที่พัก':nz(i.lodging),'ค่าลงทะเบียน':nz(i.registration),'ค่ายานพาหนะ':nz(i.transport),'อื่นๆ (จำนวนเงิน)':nz(i.otherAmt),'อื่นๆ (รายละเอียด)':i.otherNote||'','รายการงบประมาณ (จัดโครงการ)':r.projItems.map(x=>x.name+' '+money(x.amt)).join('; '),'งบประมาณรวม':nz(r.budget),'แหล่งงบประมาณ':r.source,'สถานะ':r.status,'เหตุผลยกเลิก':r.cancelled&&r.cinfo?(r.cinfo.reason||'')+(r.cinfo.note?' – '+r.cinfo.note:''):'','เลขยืมเงิน':r.loan,'เลขที่หนังสือ (ยืม)':l.letterNo||'','วันที่หนังสือ (ยืม)':l.letterDate||'','เงินยืม':nz(l.total),'การเงินเสร็จสิ้นวันที่ (ยืม)':l.financeDate||'','เลขที่หนังสือ (เบิก)':f.letterNo||'','เบิกเงินจริง':f.actual==null?'':f.actual,'วันที่ยื่นคืนเงิน':t.returnDate||'','วันที่ ผอ.ลงนามคืนเงิน':t.signDate||'','ค่าใช้จ่ายจริง (คืนเงินยืม)':t.actual==null?'':t.actual,'ไฟล์เบิก/คืนเงิน':t.file||''}});
+const staffRows=rows=>rows.map(r=>{const l=r.loanData||{},t=r.returnData||{},f=r.refundData||{},i=r.items;return {'เลขรับ':r.no,'หมวดหมู่':r.category,'ผู้ขอ':r.name,'อีเมล':r.email,'กลุ่มงาน':r.dept,'ผู้ร่วมเดินทาง':r.companions.join(', '),'ประเภท/กิจกรรม':r.type,'ชื่อเรื่อง/โครงการ':r.title,'สถานที่':r.place,'ตั้งแต่วันที่':r.dateFrom,'ถึงวันที่':r.dateTo,'ช่วงวันที่ (ทุกรอบ)':r.dt,'จำนวนวัน':nz(r.days),'ค่าเบี้ยเลี้ยง':nz(i.allowance),'ค่าที่พัก':nz(i.lodging),'ค่าลงทะเบียน':nz(i.registration),'ค่ายานพาหนะ':nz(i.transport),'อื่นๆ (จำนวนเงิน)':nz(i.otherAmt),'อื่นๆ (รายละเอียด)':i.otherNote||'','รายการงบประมาณ (จัดโครงการ)':r.projItems.map(x=>x.name+' '+money(x.amt)).join('; '),'งบประมาณรวม':nz(r.budget),'แหล่งงบประมาณ':r.source,'สถานะ':r.status,'เหตุผลยกเลิก':r.cancelled&&r.cinfo?(r.cinfo.reason||'')+(r.cinfo.note?' – '+r.cinfo.note:''):'','เลขยืมเงิน':r.loan,'เลขที่หนังสือ (ยืม)':l.letterNo||'','วันที่หนังสือ (ยืม)':l.letterDate||'','เงินยืม':nz(l.total),'การเงินเสร็จสิ้นวันที่ (ยืม)':l.financeDate||'','เลขที่หนังสือ (เบิก)':f.letterNo||'','เบิกเงินจริง':f.actual==null?'':f.actual,'วันที่ยื่นคืนเงิน':t.returnDate||'','วันที่ ผอ.ลงนามคืนเงิน':t.signDate||'','ค่าใช้จ่ายจริง (คืนเงินยืม)':t.actual==null?'':t.actual,'ไฟล์เบิก/คืนเงิน':t.file||''}});
 const pubRows=rows=>rows.map(r=>({'เลขรับ':r.no,'ผู้ขอ':r.name,'กลุ่มงาน':r.dept,'ประเภท/กิจกรรม':r.type,'ชื่อเรื่อง/โครงการ':r.title,'วันที่':r.dt,'สถานะ':r.status,'เลขยืมเงิน':r.loan}));
 async function exportX(){
 const rows=tFiltered();if(!rows.length)return say('ไม่มีรายการให้ส่งออก','err');
@@ -1043,17 +1051,21 @@ delete f.categoryOther;addPerson();f.companions=people.slice();
 if(!f.dateFrom)return say('เลือกวันที่เดินทางก่อนบันทึก','err');
 if(!f.dateTo)f.dateTo=f.dateFrom;
 if(f.dateTo<f.dateFrom)return say('วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น','err');
+for(const r of xr){if(r.to&&!r.from)return say('ช่วงวันที่เพิ่มเติม: เลือกวันที่เริ่มต้นด้วย','err');if(r.from&&r.to&&r.to<r.from)return say('ช่วงวันที่เพิ่มเติม: วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น','err')}
+{const so=allRanges().sort((a,b)=>a.from.localeCompare(b.from));
+for(let i=1;i<so.length;i++)if(so[i].from<=so[i-1].to)return say('ช่วงวันที่ซ้อนทับกัน กรุณาตรวจสอบ','err');
+f.ranges=so;f.dateFrom=so[0].from;f.dateTo=so.reduce((m,r)=>r.to>m?r.to:m,so[0].to)}
 f.days=daysOf();AMT.forEach(k=>{f[k]=parseFloat(f[k])||0});f.budget=sumAmt();
 if(isProj()){const rows=pitems.filter(r=>String(r.name).trim()||r.amt!=='');
 if(rows.some(r=>!String(r.name).trim()))return say('พิมพ์ชื่อรายการงบประมาณให้ครบทุกแถวที่ใส่จำนวนเงิน','err');
 f.projItems=rows.map(r=>({name:String(r.name).trim(),amt:parseFloat(r.amt)||0}));AMT.forEach(k=>{f[k]=0});f.otherNote='';f.budget=sumList(f.projItems)}
 else f.projItems=[];
-const dateText=f.dateFrom===f.dateTo?fd(f.dateFrom):fd(f.dateFrom)+' – '+fd(f.dateTo);
+const dateText=rangesText(f.ranges);
 say('กำลังบันทึก...','mut');
 if(editing){
 try{['name','email','dept','place','otherNote'].forEach(k=>{f[k]=f[k]||''});
 await db.doc('requests/'+editing.id).update(f);
-await pubSet(editing,{name:f.name,title:f.title,date:dateText,dateFrom:f.dateFrom||'',dateTo:f.dateTo||'',dept:f.dept||'',type:f.type||'',category:f.category||''});
+await pubSet(editing,{name:f.name,title:f.title,date:dateText,dateFrom:f.dateFrom||'',dateTo:f.dateTo||'',ranges:f.ranges||[],dept:f.dept||'',type:f.type||'',category:f.category||''});
 const no=dispNo(editing);say('บันทึกการแก้ไข '+no+' แล้ว','ok');endEdit();loadList()
 }catch(e){say('บันทึกไม่สำเร็จ: '+errTxt(e),'err')}
 return}
@@ -1062,7 +1074,7 @@ const id=n+'-'+fy,no=n+'/'+fy;
 await cd.set({n});
 const status='รอดำเนินการ';
 await db.doc('requests/'+id).set(Object.assign({},f,{id,no,status,created:new Date().toISOString()}));
-await db.doc('public/'+id).set({id,no,name:f.name,dept:f.dept||'',type:f.type||'',category:f.category||'',title:f.title,date:dateText,dateFrom:f.dateFrom||'',dateTo:f.dateTo||'',created:new Date().toISOString(),status,loan:'',due:''});
+await db.doc('public/'+id).set({id,no,name:f.name,dept:f.dept||'',type:f.type||'',category:f.category||'',title:f.title,date:dateText,dateFrom:f.dateFrom||'',dateTo:f.dateTo||'',ranges:f.ranges||[],created:new Date().toISOString(),status,loan:'',due:''});
 say('บันทึกแล้ว เลขรับ '+no,'ok');initNew();loadList()
 }catch(e){say('บันทึกไม่สำเร็จ: '+errTxt(e),'err')}};
 
@@ -1090,6 +1102,7 @@ const r=reqs.find(x=>x.id===id);if(!r)return;
 if(r.cancelled&&r.cancelled.active)return say('รายการนี้ถูกยกเลิกอยู่ กรุณาเรียกคืนก่อนจึงจะแก้ไขได้','err');
 sub('new',true);initNew();editing=r;
 ['name','email','place','title','dateFrom','dateTo','otherNote'].forEach(k=>{$('x_'+k).value=r[k]==null?'':r[k]});
+if(Array.isArray(r.ranges)&&r.ranges.length){$('x_dateFrom').value=r.ranges[0].from;$('x_dateTo').value=r.ranges[0].to;xr=r.ranges.slice(1).map(g=>({from:g.from,to:g.to}));renderRanges();calc()}
 const DEPTS=NEW.find(d=>d[0]==='dept')[3],ds=$('x_dept');
 if(r.dept&&!DEPTS.includes(r.dept))ds.insertAdjacentHTML('beforeend','<option>'+esc(r.dept)+'</option>');
 ds.value=r.dept||'';
@@ -1240,7 +1253,7 @@ const fy=fiscalBE(),t=new Date(),D=n=>{const d=new Date(t);d.setDate(d.getDate()
 const G=['กลุ่มงานบริหารทั่วไป','กลุ่มงานการพยาบาล','กลุ่มงานทันตกรรม','กลุ่มงานเภสัชกรรมและคุ้มครองผู้บริโภค','กลุ่มงานการแพทย์','กลุ่มงานยุทธศาสตร์'];
 const S=['รอดำเนินการ','เสนอ ผอ.','อนุมัติแล้ว','ยืมเงินแล้ว','เสร็จสิ้นการเดินทาง/โครงการ','ยื่นคืนเงินแล้ว','เสร็จสิ้น'];
 const rows=[[0,3,2,'[Demo] ประชุมวิชาการ (ตัวอย่าง)',0,1,'อนุมัติแล้ว'],[1,5,2,'[Demo] อบรมเชิงปฏิบัติการ (ตัวอย่าง)',2,3,'ยืมเงินแล้ว'],[2,0,1,'[Demo] ศึกษาดูงาน (ตัวอย่าง)',6,6,'เสนอ ผอ.'],[3,1,0,'[Demo] ประชุมเครือข่าย (ตัวอย่าง)',9,9,'รอดำเนินการ'],[4,6,3,'[Demo] จัดโครงการส่งเสริมสุขภาพ (ตัวอย่าง)',-3,-2,'เสร็จสิ้นการเดินทาง/โครงการ'],[5,2,2,'[Demo] ประชุมคณะกรรมการ (ตัวอย่าง)',12,12,'อนุมัติแล้ว'],[6,4,1,'[Demo] อบรมวิชาการ (ตัวอย่าง)',-9,-8,'ยื่นคืนเงินแล้ว'],[7,3,4,'[Demo] จัดกิจกรรมรณรงค์ (ตัวอย่าง)',-20,-20,'เสร็จสิ้น'],[8,1,5,'[Demo] ประชุมวางแผน (ตัวอย่าง)',15,16,'รอดำเนินการ'],[9,6,0,'[Demo] ศึกษาดูงาน (ตัวอย่าง)',20,22,'เสนอ ผอ.']];
-return rows.map(function(x,i){const n=i+1;return {id:n+'-'+fy,no:n+'/'+fy,name:'ผู้ใช้ตัวอย่าง '+n,dept:G[x[0]%G.length],type:x[3].indexOf('โครงการ')>-1?'จัดโครงการ':'ประชุม/อบรม/สัมมนา',category:'ตัวอย่าง',title:x[3],dateFrom:D(x[4]),dateTo:D(x[5]),status:x[6],loan:x[6]==='ยืมเงินแล้ว'?'ย'+n+'/'+fy:'',due:x[6]==='ยืมเงินแล้ว'?D(3):'',created:C(x[1]),days:String(x[5]-x[4]+1)}})}
+return rows.map(function(x,i){const n=i+1;return {id:n+'-'+fy,no:n+'/'+fy,name:'ผู้ใช้ตัวอย่าง '+n,dept:G[x[0]%G.length],type:x[3].indexOf('โครงการ')>-1?'จัดโครงการ':'ประชุม/อบรม/สัมมนา',category:'ตัวอย่าง',title:x[3],dateFrom:D(x[4]),dateTo:D(i===1?x[5]+10:x[5]),ranges:i===1?[{from:D(x[4]),to:D(x[5])},{from:D(x[4]+10),to:D(x[5]+10)}]:undefined,status:x[6],loan:x[6]==='ยืมเงินแล้ว'?'ย'+n+'/'+fy:'',due:x[6]==='ยืมเงินแล้ว'?D(3):'',created:C(x[1]),days:String(x[5]-x[4]+1)}})}
 function demoSop(){return [['SOP','[Demo] ขั้นตอนการขออนุมัติไปราชการ (ตัวอย่าง)','ตัวอย่างรายการ — ยังไม่ใช่เอกสารจริงของโรงพยาบาล'],['ระเบียบ/กฎหมาย','[Demo] ระเบียบการเบิกจ่ายค่าใช้จ่ายในการฝึกอบรม (ตัวอย่าง)','ตัวอย่างรายการ'],['แบบฟอร์ม','[Demo] แบบฟอร์มสัญญายืมเงิน (ตัวอย่าง)','ตัวอย่างรายการ'],['คู่มือ','[Demo] คู่มือการใช้งานระบบ (ตัวอย่าง)','ตัวอย่างรายการ']].map(function(x,i){return {id:'demo'+i,cat:x[0],title:x[1],note:x[2],url:'',by:'demo',created:new Date().toISOString()}})}
 async function dataLoad(force){
 if(!force&&LOADED&&Date.now()-LOADED<20000&&LOADED_AS===!!auth.user)return;
@@ -1252,7 +1265,7 @@ DEMO=false;DEMO_WHY=''}
 catch(e){docs=demoDocs();DEMO=true;DEMO_WHY=errTxt(e);tStaff=false}
 T=docs.map(r=>norm(r,tStaff)).sort(byNo);LOADED=Date.now();LOADED_AS=!!auth.user;bellUpd()}
 function demoBanner(id){const b=$(id);if(!b)return;b.hidden=!DEMO;if(DEMO)b.innerHTML='<b>ข้อมูลตัวอย่าง (Demo Data)</b> — ยังไม่ได้เชื่อมต่อฐานข้อมูลจริง ตัวเลขและรายการด้านล่างเป็นตัวอย่างสำหรับดูหน้าตาเท่านั้น ไม่ใช่ข้อมูลของโรงพยาบาล'+(DEMO_WHY?' <small class="mut">('+esc(DEMO_WHY)+')</small>':'')}
-const evts=()=>T.filter(r=>!r.cancelled&&r.dateFrom).map(r=>({id:r.id,no:r.no,title:r.title,from:r.dateFrom,to:r.dateTo||r.dateFrom,dept:r.dept,name:r.name}));
+const evts=()=>T.filter(r=>!r.cancelled&&r.dateFrom).flatMap(r=>(r.ranges&&r.ranges.length?r.ranges:[{from:r.dateFrom,to:r.dateTo||r.dateFrom}]).map(g=>({id:r.id,no:r.no,title:r.title,from:g.from,to:g.to,dept:r.dept,name:r.name})));
 const monTh=(y,m)=>new Date(y,m,1).toLocaleDateString('th-TH',{month:'long',year:'numeric'});
 const dayTh=iso=>new Date(iso+'T00:00:00').toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 let CAL={y:new Date().getFullYear(),m:new Date().getMonth(),sel:isoD(new Date())};
