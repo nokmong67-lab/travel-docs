@@ -1185,7 +1185,8 @@ if(!cur)return;
 const d=cur[mode+'Data']||{},it=d.items||{allowance:cur.allowance,lodging:cur.lodging,registration:cur.registration,transport:cur.transport,otherAmt:cur.otherAmt,otherNote:cur.otherNote};
 const v0=d.source!=null?d.source:cur.source||'',inList=SRC.includes(v0),sv=inList?v0:(v0?'อื่นๆ':''),so=inList?'':v0;
 let h='<fieldset><legend>'+(mode==='loan'?'ยืมเงิน':'เบิกเงิน')+' · '+esc(cur.no||cur.id)+' '+esc(cur.title)+'</legend><div class="grid">';
-if(mode==='loan')h+='<div class="wide"><label>เลขยืมเงิน</label><div style="font-weight:600">'+(cur.loan?esc(cur.loan):'<span class="mut" style="font-weight:400">ออกอัตโนมัติเมื่อบันทึก (รูปแบบ ย1/'+fiscalBE()+')</span>')+'</div></div>';
+if(mode==='loan'){const lm=/^ย?(\d+)\/(\d{4})$/.exec(cur.loan||''),lfy=lm?lm[2]:String(fiscalBE());
+h+='<div class="wide"><label for="m_loanNo">เลขยืมเงิน (พิมพ์เอง) — รูปแบบ เลข/ปีงบประมาณ</label><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input id="m_loanNo" type="text" inputmode="numeric" autocomplete="off" value="'+(lm?lm[1]:'')+'" style="width:140px;font-weight:600"><span>/</span><input id="m_loanFy" type="number" min="2500" max="2700" value="'+lfy+'" style="width:100px;font-weight:600"></div><small class="mut" id="m_loanHint"></small></div>'}
 h+=fld('letterNo','เลขที่หนังสือของกลุ่มงาน','text',d.letterNo||'')+fld('letterDate','วันที่หนังสือ','date',d.letterDate||'');
 h+='<div><label for="m_source">แหล่งงบประมาณ</label><select id="m_source"><option value=""></option>'+SRC.map(o=>'<option'+(o===sv?' selected':'')+'>'+o+'</option>').join('')+'</select></div>';
 h+='<div id="m_wso"'+(sv==='อื่นๆ'?'':' hidden')+'><label for="m_sourceOther">ระบุแหล่งงบประมาณอื่นๆ</label><input id="m_sourceOther" type="text" value="'+esc(so)+'"></div>';
@@ -1202,11 +1203,13 @@ $('m_form').innerHTML=h;show('m_form',true);say('');
 const calcT=()=>{$('m_total').value=(mItems?sumList(mItems):AMT.reduce((t,k)=>t+(parseFloat($('m_'+k).value)||0),0)).toLocaleString('th-TH')+' บาท'};
 if(mItems)drawList($('m_pibox'),mItems,calcT);else AMT.forEach(k=>$('m_'+k).addEventListener('input',calcT));calcT();
 $('m_source').onchange=()=>{const o=$('m_source').value==='อื่นๆ';show('m_wso',o);if(o)$('m_sourceOther').focus()};
-$('m_save').onclick=()=>saveMF(mode);
+$('m_save').onclick=()=>saveMF(mode);if(mode==='loan'){$('m_loanFy').addEventListener('input',loanHint);loanHint()}
 const upDue=()=>{const v=$('m_financeDate').value,el=$('m_due');if(el)el.textContent=v?fd(addDays(v,30)):'-'};upDue();
 $('m_financeDate').addEventListener('change',()=>{if($('m_financeDate').value)$('m_status').value='เสร็จสิ้น';upDue()})}
 $('m_doc').onchange=()=>{cur=reqs.find(r=>r.id===$('m_doc').value)||null;document.querySelectorAll('input[name=m_mode]').forEach(r=>r.checked=false);show('m_form',false);show('m_modes',!!cur);say('')};
 document.querySelectorAll('input[name=m_mode]').forEach(r=>r.onchange=()=>renderMF(r.value));
+function loanNext(fy){let mx=0;reqs.forEach(r=>{const m=/^ย?(\d+)\/(\d{4})$/.exec(r.loan||'');if(m&&m[2]===String(fy)&&+m[1]>mx)mx=+m[1]});return mx?mx+1:0}
+function loanHint(){const a=$('m_loanNo'),b=$('m_loanFy');if(!a)return;const n=loanNext(b.value);a.placeholder=n?String(n):'เช่น 1';const hh=$('m_loanHint');if(hh)hh.textContent=n?'ตัวเลขสีเทาคือเลขถัดไปของปีงบ '+b.value+' — เว้นว่างเพื่อใช้เลขนี้ หรือพิมพ์เลขอื่นทับได้':'ยังไม่มีเลขยืมเงินของปีงบ '+b.value+' — พิมพ์เลขแรกที่ต้องการ'}
 async function saveMF(mode){
 const g=k=>$('m_'+k)?$('m_'+k).value.trim():'';
 if(!g('letterNo')||!g('letterDate'))return say('กรอกเลขที่หนังสือและวันที่หนังสือก่อนบันทึก','err');
@@ -1217,6 +1220,12 @@ if(mItems){const rows=mItems.filter(r=>String(r.name).trim()||r.amt!=='');
 if(rows.some(r=>!String(r.name).trim()))return say('พิมพ์ชื่อรายการให้ครบทุกแถวที่ใส่จำนวนเงิน','err');
 itemsList=rows.map(r=>({name:String(r.name).trim(),amt:parseFloat(r.amt)||0}));total=sumList(itemsList)}
 else{AMT.forEach(k=>{items[k]=parseFloat(g(k))||0});items.otherNote=g('otherNote');total=AMT.reduce((t,k)=>t+items[k],0)}
+let loanIn='';
+if(mode==='loan'){let ln=g('loanNo').replace(/^ย/,''),fy=g('loanFy');if(ln.indexOf('/')>-1){const q=ln.split('/');ln=q[0].trim();fy=q[1].trim()}
+if(!ln)ln=String(loanNext(fy)||'');
+if(!/^\d+$/.test(ln)||!/^\d{4}$/.test(fy))return say('พิมพ์เลขยืมเงินเป็นตัวเลข และปีงบประมาณ 4 หลัก (เช่น 12/'+fiscalBE()+')','err');
+loanIn=(+ln)+'/'+fy;
+if(reqs.some(r=>r.id!==cur.id&&String(r.loan||'').replace(/^ย/,'')===loanIn))return say('เลขยืมเงิน '+loanIn+' ถูกใช้กับรายการอื่นแล้ว กรุณาตรวจสอบเลข','err')}
 const data={letterNo:g('letterNo'),letterDate:g('letterDate'),source,items,total,financeDate:g('financeDate')};
 if(itemsList)data.itemsList=itemsList;
 if(mode==='loan'&&data.financeDate)data.due=addDays(data.financeDate,30);
@@ -1224,9 +1233,8 @@ if(mode==='refund')data.actual=total;
 const upd={status:data.financeDate?'เสร็จสิ้น':(g('status')||cur.status||'')};upd[mode+'Data']=data;
 say('กำลังบันทึก...','mut');
 try{let loan=cur.loan||'',cnt=null;
-if(mode==='loan'&&!loan){const fy=fiscalBE(),cd=db.doc('meta/loan-'+fy),c=await cd.get(),n=(c.exists?c.data().n:0)+1;cnt={cd,n};loan='ย'+n+'/'+fy;upd.loan=loan}
+if(mode==='loan'){loan=cur.loan||'';if(loanIn!==loan){loan=loanIn;upd.loan=loan}}
 await db.doc('requests/'+cur.id).update(upd);
-if(cnt)await cnt.cd.set({n:cnt.n});
 await pubSet(cur,Object.assign({status:upd.status,loan},mode==='loan'?{due:data.due||''}:{}));
 Object.assign(cur,upd);loadList();
 say('บันทึกแล้ว'+(mode==='loan'?' · เลขยืมเงิน '+loan:''),'ok');renderMF(mode);say('บันทึกแล้ว'+(mode==='loan'?' · เลขยืมเงิน '+loan:''),'ok')
