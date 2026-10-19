@@ -383,7 +383,7 @@ window.addEventListener('load',late);
 <button class="tab" role="tab" id="t-cal"></button>
 <div class="ng">คลังความรู้</div>
 <button class="tab" role="tab" id="t-sop"></button>
-<div class="ng">ผู้ดูแลระบบ</div>
+<div class="ng" id="ng-adm">ผู้ดูแลระบบ</div>
 <button class="tab" role="tab" id="t-users"></button>
 <button class="tab" role="tab" id="t-cfg"></button>
 </nav><div class="sb-foot">ระบบลงรับและติดตามเอกสาร</div></aside>
@@ -675,7 +675,7 @@ function clrAuth(){auth.user=null;auth.name='';auth.must=false;auth.role='';auth
 let curTab='track',subTab='new',fails=0,lockUntil=0;
 const okUser=u=>/^[a-z0-9_-]{1,30}$/.test(u);
 function navSel(k){return k==='home'?curTab==='home':k==='track'?curTab==='track'&&tView!=='rep':k==='rep'?curTab==='track'&&tView==='rep':k==='staff'?curTab==='staff'&&subTab!=='adm':(k==='users'||k==='cfg')?curTab==='staff'&&subTab==='adm'&&navK===k:curTab===k}
-function updNav(){TABS.forEach(k=>{const b=$('t-'+k);b.setAttribute('aria-selected',navSel(k));const lk=(STAFF_TABS.includes(k)&&!auth.user)||(ADMIN_TABS.includes(k)&&auth.role!=='admin');b.innerHTML='<i class="ni">'+svg(k)+'</i><span>'+NAV[k]+'</span>'+(lk?'<em class="lk" title="ต้องเข้าสู่ระบบ">'+svg('lock',14)+'</em>':'')});const pt=$('pgt');if(pt)pt.textContent=NAV[curTab==='track'&&tView==='rep'?'rep':(curTab==='staff'&&subTab==='adm')?navK:curTab]||''}
+function updNav(){TABS.forEach(k=>{const b=$('t-'+k);b.setAttribute('aria-selected',navSel(k));const lk=(STAFF_TABS.includes(k)&&!auth.user)||(ADMIN_TABS.includes(k)&&auth.role!=='admin');b.innerHTML='<i class="ni">'+svg(k)+'</i><span>'+NAV[k]+'</span>'+(lk?'<em class="lk" title="ต้องเข้าสู่ระบบ">'+svg('lock',14)+'</em>':'')});{const ad=auth.role==='admin';ADMIN_TABS.forEach(k=>{$('t-'+k).hidden=!ad});$('ng-adm').hidden=!ad}const pt=$('pgt');if(pt)pt.textContent=NAV[curTab==='track'&&tView==='rep'?'rep':(curTab==='staff'&&subTab==='adm')?navK:curTab]||''}
 function updUserbar(){const u=$('userbar');
 if(!auth.user){show('userbar',false);u.innerHTML='';show('pw-warn',false);return}
 u.innerHTML='👤 '+esc(auth.name||auth.user)+(auth.role==='admin'?' (ผู้ดูแลระบบ)':'')+' · <button type="button" class="lnk" id="ub-pw">เปลี่ยนรหัสผ่าน</button> · <button type="button" class="lnk" id="ub-out">ออกจากระบบ</button>';
