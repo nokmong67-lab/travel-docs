@@ -367,6 +367,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 window.addEventListener('load',late);
 })();
 </script>
+<style>.pk{display:inline-flex;gap:5px;align-items:center;margin:2px 12px 2px 0;font-size:.85rem;white-space:nowrap;font-weight:400}.pk input{width:auto;margin:0}#a_nperm{display:flex;flex-wrap:wrap}</style>
 </head>
 <body>
 <div class="app">
@@ -568,6 +569,8 @@ window.addEventListener('load',late);
 <div id="a_users" class="mut">กำลังโหลด...</div>
 <div class="grid" style="margin-top:12px">
 <div><label for="a_nu">ชื่อผู้ใช้ใหม่ (a-z 0-9 _ - อย่างน้อย 3 ตัว)</label><input id="a_nu" autocomplete="off"></div>
+<div><label for="a_nn">ชื่อที่จะแสดง (เช่น ชื่อ-สกุล หรือชื่อตำแหน่ง)</label><input id="a_nn" autocomplete="off"></div>
+<div class="wide"><label>สิทธิ์ที่ให้ผู้ใช้ใหม่</label><div id="a_nperm"></div></div>
 <div><label for="a_np">รหัสผ่านชั่วคราว (อย่างน้อย 6 ตัวอักษร)</label><input id="a_np" type="text" autocomplete="off"></div>
 </div>
 <button class="p" id="a_add" type="button">เพิ่มผู้ใช้</button>
@@ -663,33 +666,37 @@ function say(t,c){$('msg').textContent=t;$('msg').className=c||''}
 let db=null,canWrite=null,cur=null;
 function show(id,on){$(id).hidden=!on}
 const NAV={home:'หน้าแรก',track:'ติดตามสถานะ',staff:'เจ้าหน้าที่',memo:'ทำบันทึกข้อความ',rep:'รายงานและสถิติ',cal:'ปฏิทินกิจกรรม',sop:'คลังเอกสารและระเบียบปฏิบัติ (SOP)',users:'ระบบผู้ใช้งานและกำหนดสิทธิ์',cfg:'ตั้งค่าระบบ'};
-const TABS=Object.keys(NAV),STAFF_TABS=['staff','rep'],ADMIN_TABS=['users','cfg'];
+const TABS=Object.keys(NAV),STAFF_TABS=['staff'],ADMIN_TABS=['users','cfg'];
 let navK='home';
-const auth={user:null,must:false,role:''};
+const auth={user:null,name:'',perms:[],must:false,role:''};
+const can=p=>auth.role==='admin'||(auth.perms||[]).indexOf(p)>-1;
+function setAuth(r){auth.user=r.user;auth.name=r.name||r.user;auth.must=!!r.must;auth.role=r.role||'staff';auth.perms=Array.isArray(r.perms)?r.perms:['doc','money','ret','sop']}
+function clrAuth(){auth.user=null;auth.name='';auth.must=false;auth.role='';auth.perms=[]}
 let curTab='track',subTab='new',fails=0,lockUntil=0;
 const okUser=u=>/^[a-z0-9_-]{1,30}$/.test(u);
 function navSel(k){return k==='home'?curTab==='home':k==='track'?curTab==='track'&&tView!=='rep':k==='rep'?curTab==='track'&&tView==='rep':k==='staff'?curTab==='staff'&&subTab!=='adm':(k==='users'||k==='cfg')?curTab==='staff'&&subTab==='adm'&&navK===k:curTab===k}
 function updNav(){TABS.forEach(k=>{const b=$('t-'+k);b.setAttribute('aria-selected',navSel(k));const lk=(STAFF_TABS.includes(k)&&!auth.user)||(ADMIN_TABS.includes(k)&&auth.role!=='admin');b.innerHTML='<i class="ni">'+svg(k)+'</i><span>'+NAV[k]+'</span>'+(lk?'<em class="lk" title="ต้องเข้าสู่ระบบ">'+svg('lock',14)+'</em>':'')});const pt=$('pgt');if(pt)pt.textContent=NAV[curTab==='track'&&tView==='rep'?'rep':(curTab==='staff'&&subTab==='adm')?navK:curTab]||''}
 function updUserbar(){const u=$('userbar');
 if(!auth.user){show('userbar',false);u.innerHTML='';show('pw-warn',false);return}
-u.innerHTML='👤 '+esc(auth.user)+(auth.role==='admin'?' (ผู้ดูแลระบบ)':'')+' · <button type="button" class="lnk" id="ub-pw">เปลี่ยนรหัสผ่าน</button> · <button type="button" class="lnk" id="ub-out">ออกจากระบบ</button>';
+u.innerHTML='👤 '+esc(auth.name||auth.user)+(auth.role==='admin'?' (ผู้ดูแลระบบ)':'')+' · <button type="button" class="lnk" id="ub-pw">เปลี่ยนรหัสผ่าน</button> · <button type="button" class="lnk" id="ub-out">ออกจากระบบ</button>';
 show('userbar',true);$('ub-pw').onclick=openPw;$('ub-out').onclick=logout;show('pw-warn',auth.must)}
 function renderLogin(on){if(!on)return;
 const bad='';
-$('lg_note').textContent=bad||'สำหรับเจ้าหน้าที่เท่านั้น';show('lg_form',!bad)}
+$('lg_note').textContent=bad||'ทุกคนดูข้อมูลได้ด้านล่าง การเพิ่ม/แก้ไขข้อมูลต้องเข้าสู่ระบบเจ้าหน้าที่';show('lg_form',!bad)}
 function goTab(w,noload){
-if(w==='rep'){if(auth.user){tView='rep';w='track'}else{w='staff';subTab='new'}}
+if(w==='rep'){tView='rep';w='track'}
 if(w==='new'||w==='upd'||w==='ret'||w==='adm'){subTab=w;w='staff'}
-if(subTab==='adm'&&auth.role!=='admin')subTab='new';
+const okSub=k=>k==='adm'?auth.role==='admin':k==='new'?can('doc'):k==='upd'?can('money'):can('ret');
+if(auth.user&&!okSub(subTab))subTab=['new','upd','ret'].find(okSub)||'new';
 curTab=w;say('');
-const st=w==='staff',allowed=!st||!!(auth.user&&db&&canWrite!==false);
-show('p-track',w==='track');show('p-staff',st&&allowed);$('hero').hidden=(w!=='home');show('p-memo',w==='memo');show('p-home',w==='home');show('p-cal',w==='cal');show('p-sop',w==='sop');
-['new','upd','ret','adm'].forEach(k=>{show('p-'+k,st&&allowed&&k===subTab);$('s-'+k).setAttribute('aria-selected',k===subTab)});
-show('s-adm',auth.role==='admin');
-show('login',st&&!allowed);renderLogin(st&&!allowed);
-$('main').classList.toggle('wide',w==='track'&&tView==='rep'&&tStaff);
+const st=w==='staff',anyE=['new','upd','ret','adm'].some(okSub),allowed=!st||!!(auth.user&&db&&canWrite!==false&&anyE),vo=st&&!allowed,tr=w==='track'||vo;
+show('p-track',tr);show('p-staff',st&&allowed);$('hero').hidden=(w!=='home');show('p-memo',w==='memo');show('p-home',w==='home');show('p-cal',w==='cal');show('p-sop',w==='sop');
+['new','upd','ret','adm'].forEach(k=>{show('p-'+k,st&&allowed&&k===subTab);$('s-'+k).setAttribute('aria-selected',k===subTab);show('s-'+k,okSub(k))});
+show('login',vo&&!auth.user);renderLogin(vo&&!auth.user);
+if(vo&&auth.user)say('บัญชีนี้ไม่มีสิทธิ์แก้ไขข้อมูล ดูข้อมูลได้อย่างเดียว (ติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์)','mut');
+$('main').classList.toggle('wide',tr&&tView==='rep'&&tStaff);
 updNav();
-if(!allowed)return;
+if(vo){if(!noload){$('tv-list').setAttribute('aria-selected',tView!=='rep');$('tv-rep').setAttribute('aria-selected',tView==='rep');loadTrack()}return}
 if(w==='home'){homeOpen();return}if(w==='cal'){calOpen();return}if(w==='sop'){sopOpen();return}
 if(w==='memo'){memoOpen();return}
 if(w==='track'){$('tv-list').setAttribute('aria-selected',tView!=='rep');$('tv-rep').setAttribute('aria-selected',tView==='rep');if(!noload)loadTrack()}
@@ -701,14 +708,14 @@ if(!u||!p)return say('กรอกชื่อผู้ใช้และรห�
 say('กำลังตรวจสอบ...','mut');
 try{const r=await run('login',u,p);
 if(!r||!r.ok)return say((r&&r.msg)||'เข้าสู่ระบบไม่สำเร็จ','err');
-TOKEN=r.token;auth.user=r.user;auth.must=!!r.must;auth.role=r.role||'staff';try{sessionStorage.setItem('tp_tok',TOKEN)}catch(e){}
+TOKEN=r.token;setAuth(r);try{sessionStorage.setItem('tp_tok',TOKEN)}catch(e){}
 $('lg_p').value='';say('');updUserbar();goTab(curTab)
 }catch(e){say('เข้าสู่ระบบไม่สำเร็จ: '+errTxt(e),'err')}}
 async function restoreSession(){let t=null;try{t=sessionStorage.getItem('tp_tok')}catch(e){}
 if(!t)return;
-try{const r=await run('me',t);if(r){TOKEN=t;auth.user=r.user;auth.must=!!r.must;auth.role=r.role||'staff'}else{try{sessionStorage.removeItem('tp_tok')}catch(e){}}}catch(e){}}
-function logout(){run('logout',TOKEN).catch(()=>{});TOKEN='';auth.user=null;auth.must=false;auth.role='';tStaff=false;tv('list');try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track')}
-document.addEventListener('sess-expired',()=>{TOKEN='';auth.user=null;auth.must=false;auth.role='';tStaff=false;try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track');say('หมดเวลาการเข้าสู่ระบบ กรุณาเข้าสู่ระบบใหม่','err')});
+try{const r=await run('me',t);if(r){TOKEN=t;setAuth(r)}else{try{sessionStorage.removeItem('tp_tok')}catch(e){}}}catch(e){}}
+function logout(){run('logout',TOKEN).catch(()=>{});TOKEN='';clrAuth();tStaff=false;tv('list');try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track')}
+document.addEventListener('sess-expired',()=>{TOKEN='';clrAuth();tStaff=false;try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track');say('หมดเวลาการเข้าสู่ระบบ กรุณาเข้าสู่ระบบใหม่','err')});
 function openPw(){
 openOv('เปลี่ยนรหัสผ่าน','<label for="cp_old">รหัสผ่านปัจจุบัน</label><input id="cp_old" type="password" autocomplete="current-password"><label for="cp_new" style="margin-top:10px">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)</label><input id="cp_new" type="password" autocomplete="new-password"><label for="cp_new2" style="margin-top:10px">ยืนยันรหัสผ่านใหม่</label><input id="cp_new2" type="password" autocomplete="new-password"><p id="cp_msg" class="err" style="margin:10px 0 0;font-weight:600"></p><button class="p" id="cp_go" type="button">บันทึกรหัสผ่านใหม่</button>');
 $('cp_go').onclick=savePw}
@@ -777,7 +784,7 @@ return rows.map(r=>{const l=r.loanData,t=r.returnData;
 let dl='<dt>ผู้ขอ</dt><dd>'+esc(r.name)+'</dd>'+(r.companions.length?'<dt>ผู้ร่วมเดินทาง</dt><dd>'+esc(r.companions.join(', '))+'</dd>':'')+(r.dept?'<dt>กลุ่มงาน</dt><dd>'+esc(r.dept)+'</dd>':'')+(r.type?'<dt>ประเภท</dt><dd>'+esc(r.type)+'</dd>':'')+'<dt>วันที่</dt><dd>'+esc(r.dt)+'</dd>';
 if(tStaff)dl+='<dt>งบประมาณ</dt><dd>'+(r.budget!=null?money(r.budget)+' บาท':'-')+'</dd>'+(l?'<dt>เงินยืม</dt><dd>'+money(l.total)+' บาท</dd>':'')+(t?'<dt>ค่าใช้จ่ายจริง</dt><dd>'+money(t.actual)+' บาท</dd>':'');
 dl+='<dt>เลขยืมเงิน</dt><dd>'+esc(r.loan||'-')+'</dd>'+(r.due?'<dt>กำหนดคืนเงิน</dt><dd>'+dueCell(r)+'</dd>':'');
-return '<div class="item'+(r.cancelled?' cx':'')+'"><h2>'+esc(r.no)+' · '+esc(r.title)+'</h2><div>สถานะ: '+chip(r.status)+(r.cancelled&&r.cinfo?' · <span class="warn">'+esc(r.cinfo.reason||'')+'</span>':'')+'</div><dl>'+dl+'</dl><div class="row" style="margin:10px 0 0;flex-wrap:wrap"><button type="button" class="s" data-act="detail" data-id="'+esc(r.id)+'">รายละเอียด</button>'+(tStaff&&hasDocs(r)?'<button type="button" class="s" data-act="docs" data-id="'+esc(r.id)+'">ดูเอกสาร</button>':'')+(tStaff?(r.cancelled?'<button type="button" class="s" data-act="restore" data-id="'+esc(r.id)+'">↩️ เรียกคืน (ไม่ยกเลิก)</button>':mailBtn(r)+'<button type="button" class="s" data-act="edit" data-id="'+esc(r.id)+'">แก้ไข</button><button type="button" class="s" data-act="loan" data-id="'+esc(r.id)+'">ยืม / เบิกเงิน</button>'+(r.loan?'<button type="button" class="s" data-act="ret" data-id="'+esc(r.id)+'">คืนเงินยืม</button>':'')+'<button type="button" class="s" data-act="cancel" data-id="'+esc(r.id)+'">🗑️ ยกเลิก</button>'):'')+'</div></div>'}).join('')}
+return '<div class="item'+(r.cancelled?' cx':'')+'"><h2>'+esc(r.no)+' · '+esc(r.title)+'</h2><div>สถานะ: '+chip(r.status)+(r.cancelled&&r.cinfo?' · <span class="warn">'+esc(r.cinfo.reason||'')+'</span>':'')+'</div><dl>'+dl+'</dl><div class="row" style="margin:10px 0 0;flex-wrap:wrap"><button type="button" class="s" data-act="detail" data-id="'+esc(r.id)+'">รายละเอียด</button>'+(tStaff&&hasDocs(r)?'<button type="button" class="s" data-act="docs" data-id="'+esc(r.id)+'">ดูเอกสาร</button>':'')+(tStaff&&auth.user?(r.cancelled?(can('doc')?'<button type="button" class="s" data-act="restore" data-id="'+esc(r.id)+'">↩️ เรียกคืน (ไม่ยกเลิก)</button>':''):mailBtn(r)+(can('doc')?'<button type="button" class="s" data-act="edit" data-id="'+esc(r.id)+'">แก้ไข</button>':'')+(can('money')?'<button type="button" class="s" data-act="loan" data-id="'+esc(r.id)+'">ยืม / เบิกเงิน</button>':'')+(r.loan&&can('ret')?'<button type="button" class="s" data-act="ret" data-id="'+esc(r.id)+'">คืนเงินยืม</button>':'')+(can('doc')?'<button type="button" class="s" data-act="cancel" data-id="'+esc(r.id)+'">🗑️ ยกเลิก</button>':'')):'')+'</div></div>'}).join('')}
 function agg(rows){
 rows=rows.filter(r=>!r.cancelled);
 const a={n:rows.length,budget:0,loan:0,actual:0,byStatus:{},byDept:{},unret:[],finPend:[],noProc:[]};
@@ -830,7 +837,7 @@ if(l)h+=sect('ยืมเงิน',kv('เลขที่หนังสือ
 if(f)h+=sect('เบิกเงิน',kv('เลขที่หนังสือ',esc(f.letterNo))+kv('วันที่หนังสือ',d(f.letterDate))+kv('แหล่งงบประมาณ',esc(f.source))+kv('รายละเอียด',itemsHtml(f.items,f.itemsList))+kv('รวมเบิกจริง',money(f.total)+' บาท')+kv('การเงินเสร็จสิ้นวันที่',d(f.financeDate)));
 if(t)h+=sect('คืนเงินยืม',kv('วันที่ยื่นคืนเงิน',d(t.returnDate))+kv('วันที่ ผอ.ลงนามคืนเงิน',d(t.signDate))+kv('ค่าใช้จ่ายจริง',money(t.actual)+' บาท'));
 if(tStaff)h+='<h3 class="rs">เอกสาร</h3>'+docsHtml(r)+(r.email?'<h3 class="rs">แจ้งเตือนผ่านอีเมล</h3><p class="mut" style="margin:0 0 6px;font-size:.88rem">กดแล้วจะเปิดโปรแกรมอีเมลของคุณพร้อมข้อความที่เตรียมไว้ ตรวจแล้วกดส่งเอง</p>'+mailBtn(r):'');
-if(tStaff)h+='<div class="row" style="margin:16px 0 0">'+(r.cancelled?'<button type="button" class="s" data-act="restore" data-id="'+esc(r.id)+'">↩️ เรียกคืน (ไม่ยกเลิก)</button>':'<button type="button" class="s" data-act="cancel" data-id="'+esc(r.id)+'">🗑️ ยกเลิกรายการ</button>')+'</div>';
+if(tStaff&&can('doc'))h+='<div class="row" style="margin:16px 0 0">'+(r.cancelled?'<button type="button" class="s" data-act="restore" data-id="'+esc(r.id)+'">↩️ เรียกคืน (ไม่ยกเลิก)</button>':'<button type="button" class="s" data-act="cancel" data-id="'+esc(r.id)+'">🗑️ ยกเลิกรายการ</button>')+'</div>';
 return h}
 let ovOpener=null;
 function openOv(title,html){ovOpener=document.activeElement;$('ov-t').textContent=title;$('ov-c').innerHTML=html;show('ov',true);$('ov-x').focus()}
@@ -845,7 +852,7 @@ if(b){const a=b.dataset.act,id=b.dataset.id;
 if(a==='detail'||a==='docs')openDetail(id,a==='docs');else if(a==='edit')startEdit(id);else if(a==='loan')gotoLoan(id);else if(a==='ret')gotoReturn(id);else if(a==='cancel')openCancel(id);else if(a==='restore')openRestore(id);else if(a==='fy-prev')fyStep(-1);else if(a==='fy-next')fyStep(1);
 return}
 const ad=e.target.closest('[data-adm]');
-if(ad){const k=ad.dataset.adm,u=ad.dataset.u;if(k==='reset')openReset(u);else if(k==='del')openDelUser(u);else if(k==='pdel')openPermDel(u);return}
+if(ad){const k=ad.dataset.adm,u=ad.dataset.u;if(k==='usave')saveUser(u,ad);else if(k==='reset')openReset(u);else if(k==='del')openDelUser(u);else if(k==='pdel')openPermDel(u);return}
 const tr=e.target.closest('tr[data-id]');if(tr&&!e.target.closest('button,a'))openDetail(tr.dataset.id)});
 function renderAlerts(){
 const items=tStaff?T.filter(soon).sort((a,b)=>a.due.localeCompare(b.due)):[];
@@ -860,7 +867,7 @@ function mailHref(r){
 const dl=r.dateFrom?bizBefore(r.dateFrom,10):'';
 const body='เรียน '+r.name+'\n\nรายการ '+r.no+' เรื่อง "'+r.title+'" ได้รับการบันทึกและอนุมัติแล้ว\nกำหนดเดินทาง/จัดกิจกรรม: '+r.dt+'\n\nท่านต้องการยืมเงินหรือไม่\n- หากต้องการยืมเงิน กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบก่อนกำหนดเดินทาง 10 วันทำการ'+(dl?' (ภายในวันที่ '+fd(dl)+')':'')+'\n\nเจ้าหน้าที่ผู้รับผิดชอบ';
 return 'mailto:'+r.email+'?subject='+encodeURIComponent('แจ้งผลการอนุมัติ '+r.no+' '+r.title)+'&body='+encodeURIComponent(body)}
-const mailBtn=r=>(tStaff&&r.email)?'<a class="s" href="'+esc(mailHref(r))+'" target="_blank" rel="noopener">✉️ แจ้งอีเมล (อนุมัติแล้ว)</a>':'';
+const mailBtn=r=>(tStaff&&auth.user&&r.email)?'<a class="s" href="'+esc(mailHref(r))+'" target="_blank" rel="noopener">✉️ แจ้งอีเมล (อนุมัติแล้ว)</a>':'';
 function dash(all){
 const rows=all.filter(r=>!r.cancelled);
 const o={cancelledN:all.length-rows.length,n:rows.length,budget:0,spent:0,spentN:0,cat:{},src:{},mon:{},dept:{},per:{},loan:0,loanN:0,loanRet:0,loanOpen:0,cash:0,late:[],over:[]};
@@ -983,8 +990,11 @@ if(!d.length||!t.length||!sr.length||!ca.length||!cr.length)return say('ทุ�
 if(!t.includes('จัดโครงการ'))return say('ประเภท/กิจกรรม ต้องมีตัวเลือก "จัดโครงการ" (ระบบใช้ตัวเลือกนี้เปิดตารางงบแบบรายการ)','err');
 if([t,sr,ca,cr].some(a=>a.some(x=>x==='อื่นๆ'||x==='อื่น ๆ')))return say('ไม่ต้องพิมพ์ "อื่นๆ" ระบบเพิ่มช่องพิมพ์เองให้อัตโนมัติ','err');
 saveCfg({depts:d,types:t,srcs:sr,cats:ca,creas:cr},'บันทึกตัวเลือกในฟอร์มแล้ว')};
+const PERMS=[['doc','ลงรับ/แก้ไข/ยกเลิกเอกสาร'],['money','ยืม/เบิกเงิน'],['ret','คืนเงินยืม'],['sop','จัดการคลัง SOP']];
+const permBoxes=(k,on)=>PERMS.map(p=>'<label class="pk"><input type="checkbox" data-up="'+esc(k)+'" value="'+p[0]+'"'+(on.indexOf(p[0])>-1?' checked':'')+'> '+p[1]+'</label>').join('');
 function renderUsers(list){
-$('a_users').innerHTML='<div class="tw"><table class="t"><thead><tr><th>ชื่อผู้ใช้</th><th>สิทธิ์</th><th>รหัสผ่าน</th><th></th></tr></thead><tbody>'+list.map(u=>'<tr><td>'+esc(u.user)+'</td><td>'+(u.role==='admin'?'ผู้ดูแลระบบ':'เจ้าหน้าที่')+'</td><td>'+(u.must?'<span class="warn">ยังไม่ได้เปลี่ยน</span>':'ปกติ')+'</td><td><button type="button" class="s sm" data-adm="reset" data-u="'+esc(u.user)+'">รีเซ็ตรหัสผ่าน</button>'+(u.role==='admin'?'':' <button type="button" class="s sm" data-adm="del" data-u="'+esc(u.user)+'">ลบ</button>')+'</td></tr>').join('')+'</tbody></table></div>'}
+$('a_users').innerHTML='<div class="tw"><table class="t"><thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อที่แสดง</th><th>สิทธิ์การใช้งาน</th><th>รหัสผ่าน</th><th></th></tr></thead><tbody>'+list.map(u=>{const ad=u.role==='admin';return '<tr><td>'+esc(u.user)+'<br><small class="mut">'+(ad?'ผู้ดูแลระบบ':'เจ้าหน้าที่')+'</small></td><td><input data-un="'+esc(u.user)+'" value="'+esc(u.name&&u.name!==u.user?u.name:'')+'" placeholder="'+esc(u.user)+'" style="min-width:140px" aria-label="ชื่อที่แสดงของ '+esc(u.user)+'"></td><td>'+(ad?'<span class="mut">ทุกสิทธิ์ (รวมหลังบ้าน)</span>':permBoxes(u.user,u.perms||[]))+'</td><td>'+(u.must?'<span class="warn">ยังไม่ได้เปลี่ยน</span>':'ปกติ')+'</td><td><button type="button" class="s sm" data-adm="usave" data-u="'+esc(u.user)+'">บันทึก</button> <button type="button" class="s sm" data-adm="reset" data-u="'+esc(u.user)+'">รีเซ็ตรหัสผ่าน</button>'+(ad?'':' <button type="button" class="s sm" data-adm="del" data-u="'+esc(u.user)+'">ลบ</button>')+'</td></tr>'}).join('')+'</tbody></table></div><p class="mut" style="font-size:.85rem;margin:6px 0 0">ทุกคนดูข้อมูลได้ แต่แก้ไขได้เฉพาะผู้ที่ล็อกอินและมีสิทธิ์ตามที่ติ๊กไว้ · หลังแก้สิทธิ์ ผู้ใช้ต้องล็อกอินใหม่จึงเห็นผล</p>';
+$('a_nperm').innerHTML=permBoxes('__new',['doc','money','ret','sop'])}
 function renderCancelled(){
 const c=T.filter(r=>r.cancelled);
 $('a_cancelled').innerHTML=c.length?'<div class="tw"><table class="t"><thead><tr><th>เลขรับ</th><th>ผู้ขอ</th><th>ชื่อเรื่อง</th><th>เหตุผลยกเลิก</th><th></th></tr></thead><tbody>'+c.map(r=>'<tr><td>'+esc(r.no)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.title)+'</td><td>'+esc(r.cinfo&&r.cinfo.reason||'')+'</td><td><button type="button" class="s sm" data-adm="pdel" data-u="'+esc(r.id)+'">ลบถาวร</button></td></tr>').join('')+'</tbody></table></div>':'<p class="mut" style="margin:0">ไม่มีรายการที่ยกเลิก</p>'}
@@ -996,7 +1006,9 @@ renderCancelled();planAdminInit();
 try{renderUsers(await run('listUsers',TOKEN))}catch(e){$('a_users').textContent='โหลดรายชื่อผู้ใช้ไม่สำเร็จ: '+errTxt(e)}}
 $('a_add').onclick=async()=>{const u=$('a_nu').value.trim().toLowerCase(),p=$('a_np').value;
 if(!u||!p)return say('กรอกชื่อผู้ใช้และรหัสผ่านชั่วคราว','err');
-try{const r=await run('addUser',TOKEN,u,p);if(!r.ok)return say(r.msg,'err');$('a_nu').value='';$('a_np').value='';say('เพิ่มผู้ใช้ '+u+' แล้ว (ต้องเปลี่ยนรหัสผ่านเมื่อเข้าครั้งแรก)','ok');loadAdmin()}catch(e){say('เพิ่มผู้ใช้ไม่สำเร็จ: '+errTxt(e),'err')}};
+try{const r=await run('addUser',TOKEN,u,p,$('a_nn').value,[...document.querySelectorAll('[data-up=__new]:checked')].map(x=>x.value));if(!r.ok)return say(r.msg,'err');$('a_nu').value='';$('a_np').value='';$('a_nn').value='';say('เพิ่มผู้ใช้ '+u+' แล้ว (ต้องเปลี่ยนรหัสผ่านเมื่อเข้าครั้งแรก)','ok');loadAdmin()}catch(e){say('เพิ่มผู้ใช้ไม่สำเร็จ: '+errTxt(e),'err')}};
+async function saveUser(u,btn){const tr=btn.closest('tr'),n=tr.querySelector('[data-un]').value.trim(),pm=[...tr.querySelectorAll('[data-up]:checked')].map(x=>x.value);
+try{const r=await run('updateUser',TOKEN,u,n,pm);if(!r||!r.ok)return say((r&&r.msg)||'บันทึกไม่สำเร็จ','err');say('บันทึกชื่อที่แสดงและสิทธิ์ของ '+u+' แล้ว','ok')}catch(e){say('บันทึกไม่สำเร็จ: '+errTxt(e),'err')}}
 function openReset(u){openOv('รีเซ็ตรหัสผ่าน · '+u,'<label for="rp_pw">รหัสผ่านชั่วคราวใหม่ (อย่างน้อย 6 ตัวอักษร)</label><input id="rp_pw" type="text" autocomplete="off"><p class="mut" style="font-size:.85rem;margin:8px 0 0">ผู้ใช้ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป</p><p id="rp_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="rp_go" type="button">ยืนยันรีเซ็ต</button>');
 $('rp_go').onclick=async()=>{try{const r=await run('resetPassword',TOKEN,u,$('rp_pw').value);if(!r.ok)return $('rp_msg').textContent=r.msg;closeOv();say('รีเซ็ตรหัสผ่านของ '+u+' แล้ว','ok');loadAdmin()}catch(e){$('rp_msg').textContent=errTxt(e)}}}
 function openDelUser(u){openOv('ลบผู้ใช้ · '+u,'<p style="margin-top:0">ลบผู้ใช้ <b>'+esc(u)+'</b> ออกจากระบบ? (ข้อมูลรายการที่เคยบันทึกไม่ถูกลบ)</p><p id="du_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="du_go" type="button" style="background:var(--err)">ยืนยันลบผู้ใช้</button>');
@@ -1008,7 +1020,7 @@ try{await call('delete','requests/'+id);await call('delete','public/'+id);closeO
 $('a_dump').onclick=async()=>{try{say('กำลังเตรียมไฟล์สำรอง...','mut');const d=await run('dump',TOKEN);await DL.save({filename:'สำรองข้อมูล-'+ymd()+'.json',data:JSON.stringify(d,null,1)});say('ดาวน์โหลดไฟล์สำรองแล้ว','ok')}catch(e){say('สำรองไม่สำเร็จ: '+errTxt(e),'err')}};
 function fyStep(d){const el=$('ty'),o=[...el.options].map(x=>x.value).filter(Boolean).sort();if(!o.length)return;let i=o.indexOf(el.value);i=i<0?o.length-1:Math.min(Math.max(i+d,0),o.length-1);el.value=o[i];renderT()}
 function renderT(){const rows=tFiltered();
-$('tcount').textContent='แสดง '+rows.length+' จาก '+T.length+' รายการ'+(tStaff?' · มุมมองเจ้าหน้าที่ (เห็นงบประมาณ)':'')+(DEMO?' · ⚠️ ข้อมูลตัวอย่าง (Demo) ไม่ใช่ข้อมูลจริง':'');
+$('tcount').textContent='แสดง '+rows.length+' จาก '+T.length+' รายการ'+(tStaff?(auth.user?' · มุมมองเจ้าหน้าที่ (เห็นงบประมาณ)':' · ดูอย่างเดียว (เข้าสู่ระบบเจ้าหน้าที่เพื่อแก้ไข)'):'')+(DEMO?' · ⚠️ ข้อมูลตัวอย่าง (Demo) ไม่ใช่ข้อมูลจริง':'');
 const rp=tStaff&&tView==='rep';show('tv-bar',tStaff);show('tout',!rp);show('rout',rp);$('tout').innerHTML=cardsHtml(rows);$('rout').innerHTML=rp?dashHtml(rows):''}
 function tv(w){tView=w;$('tv-list').setAttribute('aria-selected',w==='list');$('tv-rep').setAttribute('aria-selected',w==='rep');$('main').classList.toggle('wide',w==='rep'&&tStaff);renderT()}
 $('tv-list').onclick=()=>tv('list');$('tv-rep').onclick=()=>tv('rep');
@@ -1274,7 +1286,7 @@ async function dataLoad(force){
 if(!force&&LOADED&&Date.now()-LOADED<20000&&LOADED_AS===!!auth.user)return;
 let docs=null;
 try{
-if(canWrite!==false&&auth.user){const s=await db.collection('requests').get();if(s.docs.length){docs=s.docs.map(d=>d.data());reqs=docs.map(d=>Object.assign({},d)).sort(byNo);tStaff=true}}
+if(canWrite!==false){const s=await db.collection('requests').get();if(s.docs.length){docs=s.docs.map(d=>d.data());reqs=docs.map(d=>Object.assign({},d)).sort(byNo);tStaff=true}}
 if(!docs){tStaff=false;const s=await db.collection('public').get();docs=s.docs.map(d=>d.data())}
 DEMO=false;DEMO_WHY=''}
 catch(e){docs=demoDocs();DEMO=true;DEMO_WHY=errTxt(e);tStaff=false}
@@ -1329,14 +1341,14 @@ const SOPC=['SOP','นโยบาย','ระเบียบ/กฎหมาย
 let SOPL=[],SOP_ERR='';
 async function sopOpen(){
 $('sop_list').innerHTML='<p class="mut">กำลังโหลด...</p>';await dataLoad();demoBanner('sop_demo');
-show('sop_add',!!auth.user&&!DEMO);SOP_ERR='';
+show('sop_add',can('sop')&&!DEMO);SOP_ERR='';
 if(DEMO)SOPL=demoSop();else{try{const s=await db.collection('sop').get();SOPL=s.docs.map(d=>d.data())}catch(e){SOPL=[];SOP_ERR='โหลดคลังเอกสารไม่สำเร็จ: '+errTxt(e)+' (ตรวจว่าอัปเดต Code.gs เวอร์ชันล่าสุดและ Deploy แล้ว)'}}
 sopRender()}
 function sopRender(){
 const q=($('sop_q').value||'').trim().toLowerCase(),cat=$('sop_c').value;
 const rows=SOPL.filter(r=>(!cat||r.cat===cat)&&(!q||((r.title||'')+' '+(r.note||'')).toLowerCase().indexOf(q)>-1)).sort((a,b)=>String(b.created||'').localeCompare(String(a.created||'')));
 $('sop_n').textContent=SOP_ERR||('แสดง '+rows.length+' จาก '+SOPL.length+' รายการ');
-$('sop_list').innerHTML=rows.length?rows.map(r=>{const ok=/^https:\/\/[^\s"'<>]+$/.test(r.url||'');return '<div class="sopi"><span class="chip c3">'+esc(r.cat||'อื่นๆ')+'</span><h4>'+esc(r.title)+'</h4>'+(r.note?'<p class="mut">'+esc(r.note)+'</p>':'')+'<div class="row" style="margin:8px 0 0;flex-wrap:wrap">'+(ok?'<a class="s" href="'+esc(r.url)+'" target="_blank" rel="noopener">เปิดเอกสาร '+svg('ext',15)+'</a>':'<span class="mut">ไม่มีลิงก์เอกสาร</span>')+(auth.role==='admin'&&!DEMO?'<button type="button" class="s" data-sopdel="'+esc(r.id)+'">'+svg('trash',15)+' ลบ</button>':'')+'</div></div>'}).join(''):'<p class="mut">'+(SOP_ERR?'':'ยังไม่มีเอกสารในคลัง')+'</p>'}
+$('sop_list').innerHTML=rows.length?rows.map(r=>{const ok=/^https:\/\/[^\s"'<>]+$/.test(r.url||'');return '<div class="sopi"><span class="chip c3">'+esc(r.cat||'อื่นๆ')+'</span><h4>'+esc(r.title)+'</h4>'+(r.note?'<p class="mut">'+esc(r.note)+'</p>':'')+'<div class="row" style="margin:8px 0 0;flex-wrap:wrap">'+(ok?'<a class="s" href="'+esc(r.url)+'" target="_blank" rel="noopener">เปิดเอกสาร '+svg('ext',15)+'</a>':'<span class="mut">ไม่มีลิงก์เอกสาร</span>')+(can('sop')&&!DEMO?'<button type="button" class="s" data-sopdel="'+esc(r.id)+'">'+svg('trash',15)+' ลบ</button>':'')+'</div></div>'}).join(''):'<p class="mut">'+(SOP_ERR?'':'ยังไม่มีเอกสารในคลัง')+'</p>'}
 async function sopAdd(){
 const t=$('sop_t').value.trim(),u=$('sop_u').value.trim(),m=$('sop_m');
 if(!t)return m.textContent='กรอกชื่อเอกสาร';
@@ -1348,7 +1360,6 @@ catch(e){m.textContent='บันทึกไม่สำเร็จ: '+errTxt(
 // ---- แจ้งเตือน / ค้นหา ----
 function bellUpd(){const n=tStaff?T.filter(soon).length:0,b=$('bell-n');if(!b)return;b.hidden=!n;b.textContent=n>9?'9+':n}
 function bellOpen(){
-if(!auth.user)return openOv('การแจ้งเตือน','<p class="mut">เข้าสู่ระบบเจ้าหน้าที่เพื่อดูการแจ้งเตือนกำหนดคืนเงินยืม</p><button type="button" class="p" data-go="staff">เข้าสู่ระบบ</button>');
 const l=T.filter(soon).sort((a,b)=>a.due.localeCompare(b.due));
 openOv('การแจ้งเตือน ('+l.length+')',l.length?l.map(r=>'<button type="button" class="evrow" data-id="'+esc(r.id)+'"><b>'+esc(r.no)+'</b> '+esc(r.title)+'<small>'+esc(r.name)+' · กำหนดคืน '+esc(fd(r.due))+' · '+dueTxt(dueState(r))+'</small></button>').join(''):'<p class="mut">ไม่มีรายการใกล้ครบกำหนดหรือเกินกำหนด</p>')}
 async function globalSearch(v){tView='list';navK='track';goTab('track',true);await loadTrack();$('tq').value=v;$('tq').dispatchEvent(new Event('input'))}
