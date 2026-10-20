@@ -407,7 +407,7 @@ window.addEventListener('load',late);
 <div id="login" class="card2" hidden>
 <h2 style="font-size:1.1rem;margin:0 0 4px;text-align:center">🔐 เข้าสู่ระบบเจ้าหน้าที่</h2>
 <p id="lg_note" class="mut" style="text-align:center;margin:0 0 14px;font-size:.9rem">สำหรับเจ้าหน้าที่เท่านั้น</p>
-<div id="lg_form"><label for="lg_u">ชื่อผู้ใช้</label><input id="lg_u" autocomplete="username"><label for="lg_p" style="margin-top:10px">รหัสผ่าน</label><input id="lg_p" type="password" autocomplete="current-password"><button class="p" id="lg_go" type="button">เข้าสู่ระบบ</button></div>
+<div id="lg_form"><label for="lg_u">อีเมล</label><input id="lg_u" type="text" inputmode="email" autocomplete="username" placeholder="ชื่ออีเมล@gmail.com"><label for="lg_p" style="margin-top:10px">รหัสผ่าน</label><input id="lg_p" type="password" autocomplete="current-password"><button class="p" id="lg_go" type="button">เข้าสู่ระบบ</button></div>
 </div>
 <section id="p-home" hidden>
 <div id="hm_demo" class="alert demo" hidden></div>
@@ -568,14 +568,16 @@ window.addEventListener('load',late);
 <div class="cardx"><h3>👥 ผู้ใช้เจ้าหน้าที่</h3>
 <div id="a_users" class="mut">กำลังโหลด...</div>
 <div class="grid" style="margin-top:12px">
-<div><label for="a_nu">ชื่อผู้ใช้ใหม่ (a-z 0-9 _ - อย่างน้อย 3 ตัว)</label><input id="a_nu" autocomplete="off"></div>
-<div><label for="a_nn">ชื่อที่จะแสดง (เช่น ชื่อ-สกุล หรือชื่อตำแหน่ง)</label><input id="a_nn" autocomplete="off"></div>
+<div><label for="a_nu">อีเมลผู้ใช้ใหม่</label><input id="a_nu" autocomplete="off" inputmode="email" placeholder="name@gmail.com"></div>
+<div><label for="a_nn">ชื่อที่จะแสดง (ชื่อ-สกุลจริง ใช้จับคู่รายการของผู้ใช้)</label><input id="a_nn" autocomplete="off"></div>
+<div><label for="a_nd">กลุ่มงาน (ถ้ามี)</label><input id="a_nd" autocomplete="off"></div>
 <div class="wide"><label>สิทธิ์ที่ให้ผู้ใช้ใหม่</label><div id="a_nperm"></div></div>
-<div><label for="a_np">รหัสผ่านชั่วคราว (อย่างน้อย 6 ตัวอักษร)</label><input id="a_np" type="text" autocomplete="off"></div>
+<div><label for="a_np">รหัสผ่านชั่วคราว (เว้นว่าง = ระบบสุ่มให้)</label><div style="display:flex;gap:8px"><input id="a_np" type="text" autocomplete="off"><button class="s" id="a_rnd" type="button">สุ่มรหัสผ่าน</button></div></div>
 </div>
 <button class="p" id="a_add" type="button">เพิ่มผู้ใช้</button>
-<p class="mut" style="font-size:.85rem;margin:8px 0 0">ผู้ใช้ใหม่ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งแรก และเปลี่ยนรหัสผ่านของตัวเองได้จากแถบด้านบน</p>
+<p class="mut" style="font-size:.85rem;margin:8px 0 0">ผู้ใช้ใหม่ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งแรก · ไม่ติ๊กสิทธิ์ใดเลย = เห็นเฉพาะรายการของตนเอง</p>
 </div>
+<div class="cardx"><h3>📥 นำเข้ารายชื่อเจ้าหน้าที่ (หลายคนพร้อมกัน)</h3><p class="mut" style="margin-top:0">วางข้อมูลหรือเลือกไฟล์ CSV คอลัมน์ ชื่อ-นามสกุล, อีเมล, กลุ่มงาน, ตำแหน่ง · ระบบสุ่มรหัสผ่านชั่วคราวให้ทุกคนและดาวน์โหลดเป็นไฟล์ครั้งเดียว</p><input type="file" id="a_imp_f" accept=".csv,.txt" aria-label="เลือกไฟล์ CSV"><textarea id="a_imp_t" style="min-height:90px;margin-top:8px" placeholder="ชื่อ-นามสกุล,อีเมล,กลุ่มงาน,ตำแหน่ง"></textarea><button class="p" id="a_imp_go" type="button">นำเข้ารายชื่อ</button></div>
 <div class="cardx"><h3>💰 งบแผนไปราชการ/โครงการ รายกลุ่มงาน</h3>
 <p class="mut" style="margin-top:0">กรอกงบแผนของแต่ละกลุ่มงานต่อปีงบประมาณ แยกไปราชการกับโครงการ ระบบจะนำไปตัดกับยอดใช้ในแดชบอร์ด (ปีงบ พ.ศ. 2569 = 1 ต.ค. 2568 – 30 ก.ย. 2569)</p>
 <div class="grid"><div><label for="pl_fy">ปีงบประมาณ (พ.ศ.)</label><select id="pl_fy"></select></div></div>
@@ -606,12 +608,12 @@ const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;cha
 let j;try{j=await res.json()}catch(e){throw new Error('เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (ตรวจว่าใช้ลิงก์ /exec และตั้งค่า Who has access = Anyone)')}
 if(!j.ok)throw new Error(j.error||'เกิดข้อผิดพลาด');
 return j.result};
-const call=async(op,path,data)=>{try{return await run('rpc',TOKEN,op,path,data===undefined?null:data)}catch(e){if(String(e&&e.message).indexOf('SESSION_EXPIRED')>-1)document.dispatchEvent(new Event('sess-expired'));throw e}};
+const call=async(op,path,data)=>{try{return await run('rpc',TOKEN,op,path,data===undefined?null:data)}catch(e){if(String(e&&e.message).indexOf('SESSION_EXPIRED')>-1)document.dispatchEvent(new Event('sess-expired'));if(String(e&&e.message).indexOf('MUST_CHANGE')>-1){auth.must=true;updUserbar()}throw e}};
 const DB={
 doc(path){return {path,async get(){const d=await call('get',path);return {exists:d!=null,data:()=>d}},async set(o){await call('set',path,o)},async update(o){await call('update',path,o)}}},
 collection(c){return {async get(){const a=await call('list',c);return {docs:a.map(x=>({id:x.id,data:()=>x.data}))}}}}};
 const DL={async save({filename,data}){
-const type=/\.xlsx$/i.test(filename)?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':/\.json$/i.test(filename)?'application/json;charset=utf-8':'text/html;charset=utf-8';
+const type=/\.xlsx$/i.test(filename)?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':/\.json$/i.test(filename)?'application/json;charset=utf-8':/\.csv$/i.test(filename)?'text/csv;charset=utf-8':'text/html;charset=utf-8';
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=filename;document.body.appendChild(a);a.click();
 setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}};
 </script>
@@ -670,25 +672,27 @@ const TABS=Object.keys(NAV),STAFF_TABS=['staff'],ADMIN_TABS=['users','cfg'];
 let navK='home';
 const auth={user:null,name:'',perms:[],must:false,role:''};
 const can=p=>auth.role==='admin'||(auth.perms||[]).indexOf(p)>-1;
-function setAuth(r){auth.user=r.user;auth.name=r.name||r.user;auth.must=!!r.must;auth.role=r.role||'staff';auth.perms=Array.isArray(r.perms)?r.perms:['doc','money','ret','sop']}
-function clrAuth(){auth.user=null;auth.name='';auth.must=false;auth.role='';auth.perms=[]}
+function setAuth(r){auth.user=r.user;auth.dept=r.dept||'';auth.name=r.name||r.user;auth.must=!!r.must;auth.role=r.role||'staff';auth.perms=Array.isArray(r.perms)?r.perms:[]}
+const canAll=()=>can('viewall')||can('doc')||can('money')||can('ret');
+function clrAuth(){auth.user=null;auth.name='';auth.dept='';auth.must=false;auth.role='';auth.perms=[]}
 let curTab='track',subTab='new',fails=0,lockUntil=0;
 const okUser=u=>/^[a-z0-9_-]{1,30}$/.test(u);
 function navSel(k){return k==='home'?curTab==='home':k==='track'?curTab==='track'&&tView!=='rep':k==='rep'?curTab==='track'&&tView==='rep':k==='staff'?curTab==='staff'&&subTab!=='adm':(k==='users'||k==='cfg')?curTab==='staff'&&subTab==='adm'&&navK===k:curTab===k}
 function updNav(){TABS.forEach(k=>{const b=$('t-'+k);b.setAttribute('aria-selected',navSel(k));const lk=(STAFF_TABS.includes(k)&&!auth.user)||(ADMIN_TABS.includes(k)&&auth.role!=='admin');b.innerHTML='<i class="ni">'+svg(k)+'</i><span>'+NAV[k]+'</span>'+(lk?'<em class="lk" title="ต้องเข้าสู่ระบบ">'+svg('lock',14)+'</em>':'')});{const ad=auth.role==='admin';ADMIN_TABS.forEach(k=>{$('t-'+k).hidden=!ad});$('ng-adm').hidden=!ad}const pt=$('pgt');if(pt)pt.textContent=NAV[curTab==='track'&&tView==='rep'?'rep':(curTab==='staff'&&subTab==='adm')?navK:curTab]||''}
 function updUserbar(){const u=$('userbar');
 if(!auth.user){show('userbar',false);u.innerHTML='';show('pw-warn',false);return}
-u.innerHTML='👤 '+esc(auth.name||auth.user)+(auth.role==='admin'?' (ผู้ดูแลระบบ)':'')+' · <button type="button" class="lnk" id="ub-pw">เปลี่ยนรหัสผ่าน</button> · <button type="button" class="lnk" id="ub-out">ออกจากระบบ</button>';
-show('userbar',true);$('ub-pw').onclick=openPw;$('ub-out').onclick=logout;show('pw-warn',auth.must)}
+u.innerHTML='👤 '+esc(auth.name||auth.user)+(auth.dept?' <small class="mut">('+esc(auth.dept)+')</small>':'')+(auth.role==='admin'?' (ผู้ดูแลระบบ)':'')+' · <button type="button" class="lnk" id="ub-pw">เปลี่ยนรหัสผ่าน</button> · <button type="button" class="lnk" id="ub-out">ออกจากระบบ</button>';
+show('userbar',true);$('ub-pw').onclick=()=>openPw();$('ub-out').onclick=logout;show('pw-warn',false);if(auth.must&&$('ov').hidden)openPw(true)}
 function renderLogin(on){if(!on)return;
 const bad='';
-$('lg_note').textContent=bad||'ทุกคนดูข้อมูลได้ด้านล่าง การเพิ่ม/แก้ไขข้อมูลต้องเข้าสู่ระบบเจ้าหน้าที่';show('lg_form',!bad)}
+$('lg_note').textContent=bad||'เข้าสู่ระบบด้วยอีเมลที่โรงพยาบาลลงทะเบียนไว้เท่านั้น จึงจะดูข้อมูลได้';show('lg_form',!bad)}
 function goTab(w,noload){
 if(w==='rep'){tView='rep';w='track'}
 if(w==='new'||w==='upd'||w==='ret'||w==='adm'){subTab=w;w='staff'}
 const okSub=k=>k==='adm'?auth.role==='admin':k==='new'?can('doc'):k==='upd'?can('money'):can('ret');
 if(auth.user&&!okSub(subTab))subTab=['new','upd','ret'].find(okSub)||'new';
 curTab=w;say('');
+if(!auth.user||auth.must){['p-track','p-staff','p-memo','p-home','p-cal','p-sop'].forEach(k=>show(k,false));$('hero').hidden=true;show('login',!auth.user);renderLogin(!auth.user);updNav();return}
 const st=w==='staff',anyE=['new','upd','ret','adm'].some(okSub),allowed=!st||!!(auth.user&&db&&canWrite!==false&&anyE),vo=st&&!allowed,tr=w==='track'||vo;
 show('p-track',tr);show('p-staff',st&&allowed);$('hero').hidden=(w!=='home');show('p-memo',w==='memo');show('p-home',w==='home');show('p-cal',w==='cal');show('p-sop',w==='sop');
 ['new','upd','ret','adm'].forEach(k=>{show('p-'+k,st&&allowed&&k===subTab);$('s-'+k).setAttribute('aria-selected',k===subTab);show('s-'+k,okSub(k))});
@@ -704,7 +708,7 @@ else if(!noload){const pr=loadList();if(subTab==='adm')pr.then(loadAdmin)}}
 const sub=(w,noload)=>goTab(w,noload);
 async function doLogin(){
 const u=$('lg_u').value.trim().toLowerCase(),p=$('lg_p').value;
-if(!u||!p)return say('กรอกชื่อผู้ใช้และรหัสผ่าน','err');
+if(!u||!p)return say('กรอกอีเมลและรหัสผ่าน','err');
 say('กำลังตรวจสอบ...','mut');
 try{const r=await run('login',u,p);
 if(!r||!r.ok)return say((r&&r.msg)||'เข้าสู่ระบบไม่สำเร็จ','err');
@@ -716,9 +720,9 @@ if(!t)return;
 try{const r=await run('me',t);if(r){TOKEN=t;setAuth(r)}else{try{sessionStorage.removeItem('tp_tok')}catch(e){}}}catch(e){}}
 function logout(){run('logout',TOKEN).catch(()=>{});TOKEN='';clrAuth();tStaff=false;tv('list');try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track')}
 document.addEventListener('sess-expired',()=>{TOKEN='';clrAuth();tStaff=false;try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track');say('หมดเวลาการเข้าสู่ระบบ กรุณาเข้าสู่ระบบใหม่','err')});
-function openPw(){
-openOv('เปลี่ยนรหัสผ่าน','<label for="cp_old">รหัสผ่านปัจจุบัน</label><input id="cp_old" type="password" autocomplete="current-password"><label for="cp_new" style="margin-top:10px">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)</label><input id="cp_new" type="password" autocomplete="new-password"><label for="cp_new2" style="margin-top:10px">ยืนยันรหัสผ่านใหม่</label><input id="cp_new2" type="password" autocomplete="new-password"><p id="cp_msg" class="err" style="margin:10px 0 0;font-weight:600"></p><button class="p" id="cp_go" type="button">บันทึกรหัสผ่านใหม่</button>');
-$('cp_go').onclick=savePw}
+function openPw(force){
+openOv(force?'ตั้งรหัสผ่านใหม่ก่อนเริ่มใช้งาน':'เปลี่ยนรหัสผ่าน',(force?'<p style="margin-top:0">นี่คือการเข้าสู่ระบบครั้งแรก (หรือผู้ดูแลระบบเพิ่งรีเซ็ตรหัสให้) กรุณาตั้งรหัสผ่านของคุณเองก่อนใช้งาน ผู้ดูแลระบบจะไม่เห็นรหัสผ่านที่คุณตั้ง</p>':'')+'<label for="cp_old">'+(force?'รหัสผ่านชั่วคราวที่ได้รับ':'รหัสผ่านปัจจุบัน')+'</label><input id="cp_old" type="password" autocomplete="current-password"><label for="cp_new" style="margin-top:10px">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)</label><input id="cp_new" type="password" autocomplete="new-password"><label for="cp_new2" style="margin-top:10px">ยืนยันรหัสผ่านใหม่</label><input id="cp_new2" type="password" autocomplete="new-password"><p id="cp_msg" class="err" style="margin:10px 0 0;font-weight:600"></p><button class="p" id="cp_go" type="button">บันทึกรหัสผ่านใหม่</button>'+(force?' <button class="s" id="cp_out" type="button">ออกจากระบบ</button>':''));
+$('cp_go').onclick=savePw;if(force){ovLock=true;$('ov-x').hidden=true;$('cp_out').onclick=()=>{closeOv();logout()}}}
 async function savePw(){
 const o=$('cp_old').value,n=$('cp_new').value,n2=$('cp_new2').value,m=$('cp_msg');
 if(!o)return m.textContent='กรอกรหัสผ่านปัจจุบัน';
@@ -727,10 +731,10 @@ if(n==='1234'||n===o)return m.textContent='รหัสผ่านใหม่�
 if(n!==n2)return m.textContent='ยืนยันรหัสผ่านใหม่ไม่ตรงกัน';
 try{const r=await run('changePassword',TOKEN,o,n);
 if(!r||!r.ok)return m.textContent=(r&&r.msg)||'เปลี่ยนรหัสผ่านไม่สำเร็จ';
-auth.must=false;show('pw-warn',false);closeOv();say('เปลี่ยนรหัสผ่านแล้ว','ok')
+auth.must=false;show('pw-warn',false);closeOv();goTab(curTab);say('เปลี่ยนรหัสผ่านแล้ว','ok')
 }catch(e){m.textContent='เปลี่ยนรหัสผ่านไม่สำเร็จ: '+errTxt(e)}}
 $('lg_go').onclick=doLogin;['lg_u','lg_p'].forEach(k=>$(k).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()}));
-$('pw-warn-btn').onclick=openPw;
+$('pw-warn-btn').onclick=()=>openPw();
 function navGo(k){navK=k;
 if(k==='track'){tView='list';goTab('track')}
 else if(k==='users'||k==='cfg'){goTab('adm');if(auth.role==='admin')setTimeout(()=>{const t=$(k==='users'?'a_users':'a_hosp');if(t)t.scrollIntoView({behavior:'smooth',block:'center'})},150);else if(auth.user)say('เมนูนี้สำหรับผู้ดูแลระบบเท่านั้น','err')}
@@ -841,9 +845,10 @@ if(tStaff&&can('doc'))h+='<div class="row" style="margin:16px 0 0">'+(r.cancelle
 return h}
 let ovOpener=null;
 function openOv(title,html){ovOpener=document.activeElement;$('ov-t').textContent=title;$('ov-c').innerHTML=html;show('ov',true);$('ov-x').focus()}
-function closeOv(){show('ov',false);if(ovOpener&&ovOpener.focus)ovOpener.focus()}
-$('ov-x').onclick=closeOv;$('ov').addEventListener('click',e=>{if(e.target===$('ov'))closeOv()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('ov').hidden)closeOv()});
+let ovLock=false;
+function closeOv(){ovLock=false;$('ov-x').hidden=false;show('ov',false);if(ovOpener&&ovOpener.focus)ovOpener.focus()}
+$('ov-x').onclick=closeOv;$('ov').addEventListener('click',e=>{if(e.target===$('ov')&&!ovLock)closeOv()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('ov').hidden&&!ovLock)closeOv()});
 function openDetail(id,onlyDocs){const r=T.find(x=>x.id===id);if(!r)return;
 openOv((onlyDocs?'เอกสาร · ':'รายละเอียด · ')+r.no+' '+r.title,onlyDocs?docsHtml(r):detailHtml(r))}
 document.addEventListener('click',e=>{
@@ -990,11 +995,34 @@ if(!d.length||!t.length||!sr.length||!ca.length||!cr.length)return say('ทุ�
 if(!t.includes('จัดโครงการ'))return say('ประเภท/กิจกรรม ต้องมีตัวเลือก "จัดโครงการ" (ระบบใช้ตัวเลือกนี้เปิดตารางงบแบบรายการ)','err');
 if([t,sr,ca,cr].some(a=>a.some(x=>x==='อื่นๆ'||x==='อื่น ๆ')))return say('ไม่ต้องพิมพ์ "อื่นๆ" ระบบเพิ่มช่องพิมพ์เองให้อัตโนมัติ','err');
 saveCfg({depts:d,types:t,srcs:sr,cats:ca,creas:cr},'บันทึกตัวเลือกในฟอร์มแล้ว')};
-const PERMS=[['doc','ลงรับ/แก้ไข/ยกเลิกเอกสาร'],['money','ยืม/เบิกเงิน'],['ret','คืนเงินยืม'],['sop','จัดการคลัง SOP']];
+const PERMS=[['doc','ลงรับ/แก้ไข/ยกเลิกเอกสาร'],['money','ยืม/เบิกเงิน'],['ret','คืนเงินยืม'],['sop','จัดการคลัง SOP'],['viewall','ดูข้อมูลของทุกคน (ไม่แก้ไข)']];
 const permBoxes=(k,on)=>PERMS.map(p=>'<label class="pk"><input type="checkbox" data-up="'+esc(k)+'" value="'+p[0]+'"'+(on.indexOf(p[0])>-1?' checked':'')+'> '+p[1]+'</label>').join('');
-function renderUsers(list){
-$('a_users').innerHTML='<div class="tw"><table class="t"><thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อที่แสดง</th><th>สิทธิ์การใช้งาน</th><th>รหัสผ่าน</th><th></th></tr></thead><tbody>'+list.map(u=>{const ad=u.role==='admin';return '<tr><td>'+esc(u.user)+'<br><small class="mut">'+(ad?'ผู้ดูแลระบบ':'เจ้าหน้าที่')+'</small></td><td><input data-un="'+esc(u.user)+'" value="'+esc(u.name&&u.name!==u.user?u.name:'')+'" placeholder="'+esc(u.user)+'" style="min-width:140px" aria-label="ชื่อที่แสดงของ '+esc(u.user)+'"></td><td>'+(ad?'<span class="mut">ทุกสิทธิ์ (รวมหลังบ้าน)</span>':permBoxes(u.user,u.perms||[]))+'</td><td>'+(u.must?'<span class="warn">ยังไม่ได้เปลี่ยน</span>':'ปกติ')+'</td><td><button type="button" class="s sm" data-adm="usave" data-u="'+esc(u.user)+'">บันทึก</button> <button type="button" class="s sm" data-adm="reset" data-u="'+esc(u.user)+'">รีเซ็ตรหัสผ่าน</button>'+(ad?'':' <button type="button" class="s sm" data-adm="del" data-u="'+esc(u.user)+'">ลบ</button>')+'</td></tr>'}).join('')+'</tbody></table></div><p class="mut" style="font-size:.85rem;margin:6px 0 0">ทุกคนดูข้อมูลได้ แต่แก้ไขได้เฉพาะผู้ที่ล็อกอินและมีสิทธิ์ตามที่ติ๊กไว้ · หลังแก้สิทธิ์ ผู้ใช้ต้องล็อกอินใหม่จึงเห็นผล</p>';
-$('a_nperm').innerHTML=permBoxes('__new',['doc','money','ret','sop'])}
+let USERS=[];
+const PWA='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+function rndPw(){const a=new Uint32Array(10);crypto.getRandomValues(a);return [...a].map(x=>PWA[x%PWA.length]).join('')}
+function userRow(u){const ad=u.role==='admin';return '<tr><td>'+esc(u.email||u.user)+'<br><small class="mut">'+(ad?'ผู้ดูแลระบบ':'เจ้าหน้าที่')+(u.dept?' · '+esc(u.dept):'')+'</small></td><td><input data-un="'+esc(u.user)+'" value="'+esc(u.name&&u.name!==u.user?u.name:'')+'" placeholder="'+esc(u.user)+'" style="min-width:140px" aria-label="ชื่อที่แสดงของ '+esc(u.user)+'"></td><td>'+(ad?'<span class="mut">ทุกสิทธิ์ (รวมหลังบ้าน)</span>':permBoxes(u.user,u.perms||[]))+'</td><td>'+(u.must?'<span class="warn">ยังไม่ได้เข้า/ยังไม่เปลี่ยนรหัส</span>':'เปลี่ยนรหัสแล้ว')+'</td><td><button type="button" class="s sm" data-adm="usave" data-u="'+esc(u.user)+'">บันทึก</button> <button type="button" class="s sm" data-adm="reset" data-u="'+esc(u.user)+'">รีเซ็ตรหัสผ่าน</button>'+(ad?'':' <button type="button" class="s sm" data-adm="del" data-u="'+esc(u.user)+'">ลบ</button>')+'</td></tr>'}
+function drawUsers(){const q=($('a_usq')&&$('a_usq').value||'').trim().toLowerCase(),l=USERS.filter(u=>!q||[u.user,u.email,u.name,u.dept].some(x=>String(x||'').toLowerCase().indexOf(q)>-1));
+$('a_utb').innerHTML=l.map(userRow).join('')||'<tr><td colspan="5" class="mut">ไม่พบผู้ใช้</td></tr>';$('a_ucnt').textContent='แสดง '+l.length+' จาก '+USERS.length+' บัญชี'}
+function renderUsers(list){USERS=list;
+$('a_users').innerHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px"><input id="a_usq" placeholder="ค้นหาชื่อ / อีเมล / กลุ่มงาน" style="max-width:300px" aria-label="ค้นหาผู้ใช้"><span id="a_ucnt" class="mut"></span></div><div class="tw"><table class="t"><thead><tr><th>อีเมล / ชื่อผู้ใช้</th><th>ชื่อที่แสดง</th><th>สิทธิ์การใช้งาน</th><th>สถานะรหัสผ่าน</th><th></th></tr></thead><tbody id="a_utb"></tbody></table></div><p class="mut" style="font-size:.85rem;margin:6px 0 0">ผู้ที่ไม่มีสิทธิ์ใดเลยจะเห็นเฉพาะรายการที่เป็นชื่อของตนเอง · ผู้ดูแลระบบดูรหัสผ่านของใครไม่ได้ ทำได้เพียงรีเซ็ต/สุ่มรหัสใหม่ · หลังแก้สิทธิ์ ผู้ใช้ต้องล็อกอินใหม่จึงเห็นผล</p>';
+$('a_usq').oninput=drawUsers;drawUsers();
+$('a_nperm').innerHTML=permBoxes('__new',[])}
+function showPw(title,who,pw){openOv(title,'<p style="margin-top:0">บัญชี: <b>'+esc(who)+'</b></p><p>รหัสผ่านชั่วคราว (แสดงครั้งเดียว กรุณาแจ้งผู้ใช้ — ผู้ใช้ต้องเปลี่ยนรหัสเมื่อเข้าครั้งแรก):</p><p style="font-size:1.4rem;font-weight:700;letter-spacing:.06em;user-select:all" id="sp_pw">'+esc(pw)+'</p><button class="s" id="sp_cp" type="button">คัดลอกรหัสผ่าน</button>');
+$('sp_cp').onclick=async()=>{try{await navigator.clipboard.writeText(pw);$('sp_cp').textContent='คัดลอกแล้ว'}catch(e){const r=document.createRange();r.selectNodeContents($('sp_pw'));const g=getSelection();g.removeAllRanges();g.addRange(r)}}}
+function parseCsv(t){const rows=[];let r=[],c='',q=false;t=String(t||'').replace(/^﻿/,'');
+for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else if(ch==='"')q=true;else if(ch===','||ch==='\t'){r.push(c);c=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);rows.push(r);r=[];c=''}else c+=ch}
+if(c||r.length){r.push(c);rows.push(r)}return rows.filter(x=>x.some(y=>String(y).trim()))}
+async function importRoster(text){
+const rows=parseCsv(text),list=[];let bad=0;
+rows.forEach(r=>{if(r.some(x=>/^(อีเมล|e-?mail)$/i.test(String(x).trim())))return;const m=r.findIndex(x=>/^\S+@\S+\.\S+$/.test(String(x).trim()));if(m<0){if(r.length>1)bad++;return}
+const em=String(r[m]).trim().toLowerCase(),nm=String(r[m-1]!==undefined&&m>0?r[m-1]:'').trim();list.push({email:em,name:nm,dept:String(r[m+1]||'').trim(),pos:String(r[m+2]||'').trim()})});
+if(!list.length)return say('ไม่พบอีเมลในข้อมูลที่ใส่ (ต้องมีคอลัมน์ ชื่อ-นามสกุล,อีเมล,กลุ่มงาน,ตำแหน่ง)','err');
+const out=[];let skipped=0,badSrv=0;
+try{for(let i=0;i<list.length;i+=30){say('กำลังนำเข้า '+Math.min(i+30,list.length)+'/'+list.length+' ...','mut');const r=await run('importUsers',TOKEN,list.slice(i,i+30));out.push(...r.created);skipped+=r.skipped.length;badSrv+=r.bad.length}}
+catch(e){say('นำเข้าไม่สำเร็จระหว่างทาง: '+errTxt(e)+' (รายที่นำเข้าแล้วจะไม่ซ้ำเมื่อลองใหม่)','err')}
+if(out.length){const q=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
+await DL.save({filename:'รหัสผ่านชั่วคราว-'+ymd()+'.csv',data:'﻿'+'อีเมล,ชื่อ-นามสกุล,กลุ่มงาน,รหัสผ่านชั่วคราว\n'+out.map(o=>[o.email,o.name,o.dept,o.pw].map(q).join(',')).join('\n')})}
+say('นำเข้าใหม่ '+out.length+' บัญชี · ข้าม(มีอยู่แล้ว) '+skipped+' · อีเมลไม่ถูกต้อง '+(bad+badSrv)+(out.length?' — ดาวน์โหลดไฟล์รหัสผ่านชั่วคราวแล้ว (เก็บให้ดี ห้ามอัปโหลดขึ้น GitHub)':''),out.length?'ok':'err');loadAdmin()}
 function renderCancelled(){
 const c=T.filter(r=>r.cancelled);
 $('a_cancelled').innerHTML=c.length?'<div class="tw"><table class="t"><thead><tr><th>เลขรับ</th><th>ผู้ขอ</th><th>ชื่อเรื่อง</th><th>เหตุผลยกเลิก</th><th></th></tr></thead><tbody>'+c.map(r=>'<tr><td>'+esc(r.no)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.title)+'</td><td>'+esc(r.cinfo&&r.cinfo.reason||'')+'</td><td><button type="button" class="s sm" data-adm="pdel" data-u="'+esc(r.id)+'">ลบถาวร</button></td></tr>').join('')+'</tbody></table></div>':'<p class="mut" style="margin:0">ไม่มีรายการที่ยกเลิก</p>'}
@@ -1005,12 +1033,16 @@ $('a_depts').value=OPT.dept.join('\n');$('a_types').value=baseOf(OPT.type).join(
 renderCancelled();planAdminInit();
 try{renderUsers(await run('listUsers',TOKEN))}catch(e){$('a_users').textContent='โหลดรายชื่อผู้ใช้ไม่สำเร็จ: '+errTxt(e)}}
 $('a_add').onclick=async()=>{const u=$('a_nu').value.trim().toLowerCase(),p=$('a_np').value;
-if(!u||!p)return say('กรอกชื่อผู้ใช้และรหัสผ่านชั่วคราว','err');
-try{const r=await run('addUser',TOKEN,u,p,$('a_nn').value,[...document.querySelectorAll('[data-up=__new]:checked')].map(x=>x.value));if(!r.ok)return say(r.msg,'err');$('a_nu').value='';$('a_np').value='';$('a_nn').value='';say('เพิ่มผู้ใช้ '+u+' แล้ว (ต้องเปลี่ยนรหัสผ่านเมื่อเข้าครั้งแรก)','ok');loadAdmin()}catch(e){say('เพิ่มผู้ใช้ไม่สำเร็จ: '+errTxt(e),'err')}};
+if(!u)return say('กรอกอีเมลของผู้ใช้','err');
+try{const r=await run('addUser',TOKEN,u,p,$('a_nn').value,[...document.querySelectorAll('[data-up=__new]:checked')].map(x=>x.value),$('a_nd').value);if(!r.ok)return say(r.msg,'err');$('a_nu').value='';$('a_np').value='';$('a_nn').value='';$('a_nd').value='';say('เพิ่มผู้ใช้ '+u+' แล้ว','ok');showPw('เพิ่มผู้ใช้แล้ว',u,r.pw||p);loadAdmin()}catch(e){say('เพิ่มผู้ใช้ไม่สำเร็จ: '+errTxt(e),'err')}};
+$('a_rnd').onclick=()=>{$('a_np').value=rndPw()};
+$('a_imp_go').onclick=()=>{const t=$('a_imp_t').value;if(!t.trim())return say('วางข้อมูลรายชื่อ หรือเลือกไฟล์ CSV ก่อน','err');importRoster(t)};
+$('a_imp_f').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('a_imp_t').value=await f.text();e.target.value=''};
 async function saveUser(u,btn){const tr=btn.closest('tr'),n=tr.querySelector('[data-un]').value.trim(),pm=[...tr.querySelectorAll('[data-up]:checked')].map(x=>x.value);
 try{const r=await run('updateUser',TOKEN,u,n,pm);if(!r||!r.ok)return say((r&&r.msg)||'บันทึกไม่สำเร็จ','err');say('บันทึกชื่อที่แสดงและสิทธิ์ของ '+u+' แล้ว','ok')}catch(e){say('บันทึกไม่สำเร็จ: '+errTxt(e),'err')}}
-function openReset(u){openOv('รีเซ็ตรหัสผ่าน · '+u,'<label for="rp_pw">รหัสผ่านชั่วคราวใหม่ (อย่างน้อย 6 ตัวอักษร)</label><input id="rp_pw" type="text" autocomplete="off"><p class="mut" style="font-size:.85rem;margin:8px 0 0">ผู้ใช้ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป</p><p id="rp_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="rp_go" type="button">ยืนยันรีเซ็ต</button>');
-$('rp_go').onclick=async()=>{try{const r=await run('resetPassword',TOKEN,u,$('rp_pw').value);if(!r.ok)return $('rp_msg').textContent=r.msg;closeOv();say('รีเซ็ตรหัสผ่านของ '+u+' แล้ว','ok');loadAdmin()}catch(e){$('rp_msg').textContent=errTxt(e)}}}
+function openReset(u){openOv('รีเซ็ตรหัสผ่าน · '+u,'<label for="rp_pw">รหัสผ่านชั่วคราวใหม่ (เว้นว่างหรือกดสุ่ม = ระบบสุ่มให้)</label><div style="display:flex;gap:8px"><input id="rp_pw" type="text" autocomplete="off"><button class="s" id="rp_rnd" type="button">สุ่มรหัสผ่าน</button></div><p class="mut" style="font-size:.85rem;margin:8px 0 0">ผู้ใช้ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป · ผู้ดูแลระบบดูรหัสที่ผู้ใช้ตั้งเองไม่ได้</p><p id="rp_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="rp_go" type="button">ยืนยันรีเซ็ต</button>');
+$('rp_rnd').onclick=()=>{$('rp_pw').value=rndPw()};
+$('rp_go').onclick=async()=>{try{const r=await run('resetPassword',TOKEN,u,$('rp_pw').value);if(!r.ok)return $('rp_msg').textContent=r.msg;closeOv();showPw('รีเซ็ตรหัสผ่านแล้ว',u,r.pw||$('rp_pw').value);loadAdmin()}catch(e){$('rp_msg').textContent=errTxt(e)}}}
 function openDelUser(u){openOv('ลบผู้ใช้ · '+u,'<p style="margin-top:0">ลบผู้ใช้ <b>'+esc(u)+'</b> ออกจากระบบ? (ข้อมูลรายการที่เคยบันทึกไม่ถูกลบ)</p><p id="du_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="du_go" type="button" style="background:var(--err)">ยืนยันลบผู้ใช้</button>');
 $('du_go').onclick=async()=>{try{const r=await run('deleteUser',TOKEN,u);if(!r.ok)return $('du_msg').textContent=r.msg;closeOv();say('ลบผู้ใช้ '+u+' แล้ว','ok');loadAdmin()}catch(e){$('du_msg').textContent=errTxt(e)}}}
 function openPermDel(id){const r=T.find(x=>x.id===id);if(!r)return;
@@ -1392,7 +1424,7 @@ if(e.target.id==='pl_save'){const fy=+$('pl_fy').value,o={};document.querySelect
 Object.keys(o).forEach(k=>{if(!o[k][0]&&!o[k][1])delete o[k]});
 try{say('กำลังบันทึก...','mut');await db.doc('meta/plan-'+fy).set({fy,plan:o,updated:new Date().toISOString()});PLANS[fy]=o;say('บันทึกงบแผนปีงบประมาณ '+fy+' แล้ว','ok')}catch(er){say('บันทึกงบแผนไม่สำเร็จ: '+errTxt(er),'err')}}});
 function planCard(fy){
-if(!fy)return '';const p=PLANS[fy];
+if(!fy||!canAll())return '';const p=PLANS[fy];
 if(p===undefined){planGet(fy).then(()=>{if(tView==='rep')renderT()});return '<div class="cardx"><h3>งบแผนรายกลุ่มงาน</h3><p class="mut">กำลังโหลด...</p></div>'}
 const rows=T.filter(r=>!r.cancelled&&r.fy===String(fy)),NO='(ไม่ระบุกลุ่มงาน)';
 const gs=[...new Set(OPT.dept.concat(Object.keys(p),rows.map(r=>r.dept||NO)))];
@@ -1500,8 +1532,8 @@ function mmPack(){const f={};MM.ids.forEach(k=>f[k]=$('mm_'+k).value);exPull();f
 async function mmSaveSrv(quiet){
 if(!mmv('act')&&!mmv('dept')){if(!quiet)mmSt('กรอกชื่อกิจกรรมหรือเลือกกลุ่มงานก่อนบันทึก','err');return false}
 try{const rec=mmPack(),keys=mmKeys();let r;
-try{r=await run('memoSave',rec,MM.cur.id,keys[MM.cur.id]||'')}
-catch(e){if(MM.cur.id&&/สิทธิ์/.test(mmErr(e)))r=await run('memoSave',rec,'','');else throw e}
+try{r=await run('memoSave',TOKEN,rec,MM.cur.id,keys[MM.cur.id]||'')}
+catch(e){if(MM.cur.id&&/สิทธิ์/.test(mmErr(e)))r=await run('memoSave',TOKEN,rec,'','');else throw e}
 MM.cur={id:r.id};keys[r.id]=r.key;try{localStorage.setItem('memo_keys',JSON.stringify(keys))}catch(_){}
 mmSt('บันทึกข้อมูลเข้าระบบแล้ว','ok');mmLoadList();return true}
 catch(e){mmSt('บันทึกเข้าระบบไม่สำเร็จ: '+mmErr(e),'err');return false}}
@@ -1509,9 +1541,9 @@ function mmRenderList(){const q=mmv('q').toLowerCase(),sel=$('mm_list');
 const rows=MM.list.filter(r=>!q||((r.act||'')+' '+(r.dept||'')+' '+(r.by||'')).toLowerCase().includes(q));
 sel.innerHTML=rows.map(r=>'<option value="'+esc(r.id)+'">'+esc((r.at||'').slice(0,10)+' · '+(TLAB[r.type]||'')+' · '+(r.act||'(ไม่มีชื่อกิจกรรม)')+(r.dept?' · '+r.dept:''))+'</option>').join('');
 $('mm_ls').textContent=MM.list.length?(rows.length?'พบ '+rows.length+' รายการ — เลือกแล้วกด "เรียกใช้ข้อมูลนี้"':'ไม่พบรายการที่ค้นหา'):(MM.listErr||'ยังไม่มีข้อมูลที่บันทึกไว้')}
-async function mmLoadList(){try{MM.list=await run('memoList');MM.listErr=''}catch(e){MM.list=[];MM.listErr='ดึงรายการที่บันทึกไว้ไม่ได้: '+mmErr(e)}mmRenderList()}
+async function mmLoadList(){try{MM.list=await run('memoList',TOKEN);MM.listErr=''}catch(e){MM.list=[];MM.listErr='ดึงรายการที่บันทึกไว้ไม่ได้: '+mmErr(e)}mmRenderList()}
 async function mmLoadOne(){const id=$('mm_list').value;if(!id)return mmSt('เลือกรายการก่อน','err');
-try{const r=await run('memoGet',id);if(r.type&&TLAB[r.type]){$('mm_type').value=r.type}exLoad((r.f&&r.f.x)||'{}');MM.ids.forEach(k=>{const el=$('mm_'+k);let v=(r.f&&r.f[k])||'';
+try{const r=await run('memoGet',TOKEN,id);if(r.type&&TLAB[r.type]){$('mm_type').value=r.type}exLoad((r.f&&r.f.x)||'{}');MM.ids.forEach(k=>{const el=$('mm_'+k);let v=(r.f&&r.f[k])||'';
 if(k==='dept'&&v&&![...el.options].some(o=>o.value===v)){const o=document.createElement('option');o.textContent=v;el.appendChild(o)}el.value=v});
 ['s1','s2','s3'].forEach(k=>MM.dirty[k]=true);
 MM.sigs=(r.sigs&&r.sigs.length)?r.sigs.map(x=>({n:x.n||'',p:x.p||''})):[{n:'',p:''}];
@@ -1597,7 +1629,7 @@ function exLoad(x){try{const o=typeof x==='string'?JSON.parse(x||'{}'):(x||{});E
 const thaiDateTxt=iso=>{const x=mmBE(iso);return x?(x.d+' '+TMON[x.m-1]+' '+x.y):''};
 function refNoOf(f){const d=(f&&f.dept)||'',g=grp(d),b=(f&&f.no)||'';if(!b)return'';if(b.includes('/'))return MEMO_NOP()+b;return MEMO_NOP()+(g?g[1]+'/':'')+b}
 async function mmUseAct(){const id=$('mm_list').value;if(!id)return mmSt('เลือกรายการ “ขออนุมัติจัด” ในช่องด้านบนก่อน','err');
-try{const r=await run('memoGet',id);if(r.type!=='approve')return mmSt('รายการที่เลือกไม่ใช่ “ขออนุมัติจัด” — เลือกรายการประเภทขออนุมัติจัด','err');
+try{const r=await run('memoGet',TOKEN,id);if(r.type!=='approve')return mmSt('รายการที่เลือกไม่ใช่ “ขออนุมัติจัด” — เลือกรายการประเภทขออนุมัติจัด','err');
 const f=r.f||{};['act','prj','mon','ven','n','src','amt','tg','obj','plan','py'].forEach(k=>{if(f[k]!=null&&f[k]!=='')$('mm_'+k).value=f[k]});
 if(!mmv('dept')&&f.dept){mmDeptOpts();$('mm_dept').value=f.dept;updNop()}
 EX.ref.no=refNoOf(f);EX.ref.date=thaiDateTxt(f.date);exSync();exItemsUI();mmRender();mmSt('ดึงข้อมูลกิจกรรมมาใส่แล้ว — ตรวจ/แก้ไขได้ทุกช่อง','ok')}
