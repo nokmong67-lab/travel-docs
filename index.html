@@ -368,6 +368,31 @@ window.addEventListener('load',late);
 })();
 </script>
 <style>.pk{display:inline-flex;gap:5px;align-items:center;margin:2px 12px 2px 0;font-size:.85rem;white-space:nowrap;font-weight:400}.pk input{width:auto;margin:0}#a_nperm{display:flex;flex-wrap:wrap}</style>
+<style>
+html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);max-width:none;width:auto;margin:0;padding:0;border:0!important;border-radius:0!important;box-shadow:none!important;background:var(--bg);overflow:auto;text-align:left}
+#login .lg-l{background:linear-gradient(165deg,var(--g1,#0b6e6c) 0%,#083f42 100%);color:#fff;display:flex;align-items:center;padding:48px 56px}
+#login .lg-in{max-width:520px;width:100%;margin:0 auto}
+#login .lg-mark{width:68px;height:68px;border-radius:18px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;margin-bottom:22px;overflow:hidden}
+#login .lg-mark img{width:100%;height:100%;object-fit:contain;background:#fff}
+#login .lg-h{font-size:1.75rem;line-height:1.3;margin:0 0 4px;color:#fff}
+#login .lg-s{margin:0 0 20px;opacity:.85}
+#login .lg-q{font-weight:700;font-size:1.05rem;margin:0 0 2px}
+#login .lg-qs{margin:0 0 22px;font-size:.85rem;opacity:.75}
+#login .lg-ul{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+#login .lg-ul li{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start}
+#login .lg-ul i{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:1.05rem}
+#login .lg-ul b{display:block;font-size:.95rem}
+#login .lg-ul span{display:block;font-size:.83rem;opacity:.8;line-height:1.5}
+#login .lg-ft{margin:26px 0 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.22);font-size:.78rem;opacity:.75}
+#login .lg-r{display:flex;align-items:center;justify-content:center;padding:32px 24px}
+#login .lg-card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 26px;box-shadow:0 8px 30px rgba(20,40,60,.1)}
+#login .lg-card h2{font-size:1.15rem;margin:0 0 4px}
+#login .lg-card .p{width:100%;margin-top:16px}
+#login #lg_msg{min-height:1.3em;margin:10px 0 0;font-size:.9rem;font-weight:600}
+#login #lg_msg.err{color:var(--err)}#login #lg_msg.ok{color:var(--ok)}#login #lg_msg.mut{color:var(--mut);font-weight:400}
+#login .lg-help{margin:14px 0 0;font-size:.82rem;color:var(--mut);text-align:center}
+@media(max-width:820px){html body #login.lgs{grid-template-columns:1fr}#login .lg-r{order:1;padding:24px 16px}#login .lg-l{order:2;padding:28px 20px}#login .lg-h{font-size:1.4rem}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -404,10 +429,28 @@ window.addEventListener('load',late);
 </div></header>
 <main id="main">
 <div id="pw-warn" class="alert" role="alert" hidden>⚠️ ยังใช้รหัสผ่านเริ่มต้น กรุณา <button type="button" class="lnk" id="pw-warn-btn">เปลี่ยนรหัสผ่านตอนนี้</button></div>
-<div id="login" class="card2" hidden>
-<h2 style="font-size:1.1rem;margin:0 0 4px;text-align:center">🔐 เข้าสู่ระบบเจ้าหน้าที่</h2>
-<p id="lg_note" class="mut" style="text-align:center;margin:0 0 14px;font-size:.9rem">สำหรับเจ้าหน้าที่เท่านั้น</p>
+<div id="login" class="lgs" hidden>
+<aside class="lg-l"><div class="lg-in">
+<div class="lg-mark" id="lg_mark" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></svg></div>
+<h1 class="lg-h" id="lg_title">ระบบลงรับและติดตามเอกสาร</h1>
+<p class="lg-s" id="lg_sub">โรงพยาบาลตาพระยา จังหวัดสระแก้ว</p>
+<p class="lg-q">ไปราชการ / โครงการ</p>
+<p class="lg-qs">ลงรับ ติดตาม และคืนเงินยืมให้ทันกำหนด ในที่เดียว</p>
+<ul class="lg-ul">
+<li><i>📋</i><div><b>ติดตามสถานะได้ทุกขั้นตอน</b><span>ตั้งแต่ลงรับเอกสาร ผอ.อนุมัติ ยืมเงิน จนเสร็จสิ้น</span></div></li>
+<li><i>👤</i><div><b>เห็นข้อมูลของตนเองก่อนใคร</b><span>เจ้าหน้าที่ทั่วไปเห็นเฉพาะรายการที่ตนเองเป็นผู้ขอหรือผู้ร่วมเดินทาง</span></div></li>
+<li><i>✉️</i><div><b>แจ้งเตือนทางอีเมล</b><span>เมื่อ ผอ.อนุมัติ ออกสัญญายืมเงิน ใกล้ครบกำหนดคืนเงินยืม และเสร็จสิ้น</span></div></li>
+<li><i>💰</i><div><b>ค่าใช้จ่ายแยกรายบุคคล</b><span>บันทึกและสรุปเบี้ยเลี้ยง ที่พัก ลงทะเบียน ยานพาหนะ เป็นรายคน</span></div></li>
+</ul>
+<p class="lg-ft">ข้อมูลถูกเก็บในระบบของโรงพยาบาล · เข้าระบบได้เฉพาะอีเมลที่ลงทะเบียนไว้</p>
+</div></aside>
+<section class="lg-r"><div class="lg-card">
+<h2>🔐 เข้าสู่ระบบ</h2>
+<p id="lg_note" class="mut" style="margin:0 0 14px;font-size:.9rem">ใช้อีเมลที่โรงพยาบาลลงทะเบียนไว้</p>
 <div id="lg_form"><label for="lg_u">อีเมล</label><input id="lg_u" type="text" inputmode="email" autocomplete="username" placeholder="ชื่ออีเมล@gmail.com"><label for="lg_p" style="margin-top:10px">รหัสผ่าน</label><input id="lg_p" type="password" autocomplete="current-password"><button class="p" id="lg_go" type="button">เข้าสู่ระบบ</button></div>
+<div id="lg_msg" role="status"></div>
+<p class="lg-help">เข้าระบบไม่ได้ ติดต่อผู้ดูแลระบบ (รหัสผ่านครั้งแรกแจ้งโดยผู้ดูแลระบบ และต้องเปลี่ยนทันที)</p>
+</div></section>
 </div>
 <section id="p-home" hidden>
 <div id="hm_demo" class="alert demo" hidden></div>
@@ -572,16 +615,27 @@ window.addEventListener('load',late);
 <div><label for="a_nn">ชื่อที่จะแสดง (ชื่อ-สกุลจริง ใช้จับคู่รายการของผู้ใช้)</label><input id="a_nn" autocomplete="off"></div>
 <div><label for="a_nd">กลุ่มงาน (ถ้ามี)</label><input id="a_nd" autocomplete="off"></div>
 <div class="wide"><label>สิทธิ์ที่ให้ผู้ใช้ใหม่</label><div id="a_nperm"></div></div>
-<div><label for="a_np">รหัสผ่านชั่วคราว (เว้นว่าง = ระบบสุ่มให้)</label><div style="display:flex;gap:8px"><input id="a_np" type="text" autocomplete="off"><button class="s" id="a_rnd" type="button">สุ่มรหัสผ่าน</button></div></div>
+<div><label for="a_np">รหัสผ่านชั่วคราว (เว้นว่าง = 1234)</label><div style="display:flex;gap:8px"><input id="a_np" type="text" autocomplete="off"><button class="s" id="a_rnd" type="button">สุ่มรหัสผ่าน</button></div></div>
 </div>
 <button class="p" id="a_add" type="button">เพิ่มผู้ใช้</button>
 <p class="mut" style="font-size:.85rem;margin:8px 0 0">ผู้ใช้ใหม่ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งแรก · ไม่ติ๊กสิทธิ์ใดเลย = เห็นเฉพาะรายการของตนเอง</p>
 </div>
-<div class="cardx"><h3>📥 นำเข้ารายชื่อเจ้าหน้าที่ (หลายคนพร้อมกัน)</h3><p class="mut" style="margin-top:0">วางข้อมูลหรือเลือกไฟล์ CSV คอลัมน์ ชื่อ-นามสกุล, อีเมล, กลุ่มงาน, ตำแหน่ง · ระบบสุ่มรหัสผ่านชั่วคราวให้ทุกคนและดาวน์โหลดเป็นไฟล์ครั้งเดียว</p><input type="file" id="a_imp_f" accept=".csv,.txt" aria-label="เลือกไฟล์ CSV"><textarea id="a_imp_t" style="min-height:90px;margin-top:8px" placeholder="ชื่อ-นามสกุล,อีเมล,กลุ่มงาน,ตำแหน่ง"></textarea><button class="p" id="a_imp_go" type="button">นำเข้ารายชื่อ</button></div>
+<div class="cardx"><h3>📥 นำเข้ารายชื่อเจ้าหน้าที่ (หลายคนพร้อมกัน)</h3><p class="mut" style="margin-top:0">วางข้อมูลหรือเลือกไฟล์ CSV คอลัมน์ ชื่อ-นามสกุล, อีเมล, กลุ่มงาน, ตำแหน่ง · ทุกบัญชีได้รหัสผ่านเริ่มต้น 1234 และต้องเปลี่ยนเมื่อเข้าสู่ระบบครั้งแรก</p><input type="file" id="a_imp_f" accept=".csv,.txt" aria-label="เลือกไฟล์ CSV"><textarea id="a_imp_t" style="min-height:90px;margin-top:8px" placeholder="ชื่อ-นามสกุล,อีเมล,กลุ่มงาน,ตำแหน่ง"></textarea><button class="p" id="a_imp_go" type="button">นำเข้ารายชื่อ</button>
+<hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><p class="mut" style="margin:0 0 8px">บัญชีที่นำเข้าไว้ก่อนหน้า (ยังไม่เคยเปลี่ยนรหัสเอง) ตั้งรหัสผ่านเป็น 1234 ให้ทั้งหมดได้ ผู้ที่เปลี่ยนรหัสเองแล้วและ admin จะไม่ถูกแตะต้อง</p><button class="s" id="a_all1234" type="button">ตั้งรหัสผ่านเป็น 1234 ให้ทุกบัญชีที่ยังไม่เคยเปลี่ยนรหัส</button></div>
 <div class="cardx"><h3>💰 งบแผนไปราชการ/โครงการ รายกลุ่มงาน</h3>
 <p class="mut" style="margin-top:0">กรอกงบแผนของแต่ละกลุ่มงานต่อปีงบประมาณ แยกไปราชการกับโครงการ ระบบจะนำไปตัดกับยอดใช้ในแดชบอร์ด (ปีงบ พ.ศ. 2569 = 1 ต.ค. 2568 – 30 ก.ย. 2569)</p>
 <div class="grid"><div><label for="pl_fy">ปีงบประมาณ (พ.ศ.)</label><select id="pl_fy"></select></div></div>
 <div id="pl_tbl"></div><button class="p" id="pl_save" type="button">บันทึกงบแผน</button>
+</div>
+<div class="cardx"><h3>✉️ แจ้งเตือนทางอีเมล</h3>
+<p class="mut" style="margin-top:0">ส่งถึงผู้ขอแต่ละราย เมื่อ ผอ.อนุมัติแล้ว · ออกสัญญายืมเงินแล้ว · เสร็จสิ้น · ใกล้/ถึง/เกินกำหนดคืนเงินยืม (ตรวจทุกเช้า 08:00) ส่งจากอีเมลของเจ้าของระบบ Apps Script</p>
+<label class="pk"><input type="checkbox" id="n_on"> เปิดการแจ้งเตือนทางอีเมล</label>
+<div class="grid" style="margin-top:8px"><div><label for="n_cc">ส่งสำเนา (CC) ถึง</label><input id="n_cc" type="email" autocomplete="off"></div><div><label for="n_url">ลิงก์เว็บระบบ (ใส่ท้ายอีเมล)</label><input id="n_url" type="url" placeholder="https://..." autocomplete="off"></div></div>
+<button class="p" id="n_save" type="button">บันทึกการตั้งค่า</button>
+<div id="n_stat" class="mut" style="margin:10px 0"></div>
+<div class="row" style="flex-wrap:wrap;gap:8px;align-items:center"><input id="n_to" type="email" placeholder="อีเมลสำหรับทดสอบ" style="flex:1 1 220px" autocomplete="off"><button class="s" id="n_test" type="button" style="width:auto">ส่งอีเมลทดสอบ</button><button class="s" id="n_trig" type="button" style="width:auto">ติดตั้งตัวตั้งเวลาทุกเช้า</button><button class="s" id="n_run" type="button" style="width:auto">ตรวจและส่งแจ้งเตือนตอนนี้</button></div>
+<div id="n_log"></div>
+<p class="mut" style="font-size:.85rem;margin:8px 0 0">Gmail ทั่วไปส่งได้ราว 100 ผู้รับต่อวัน (อีเมลที่มี CC นับเป็น 2 ผู้รับ)</p>
 </div>
 <div class="cardx"><h3>💾 ข้อมูลและการสำรอง</h3>
 <button class="s" id="a_dump" type="button">ดาวน์โหลดไฟล์สำรองข้อมูลทั้งหมด (.json)</button>
@@ -623,7 +677,7 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;',
 const STATUS=['รอดำเนินการ','เสนอ ผอ.','อนุมัติแล้ว','ยืมเงินแล้ว','เสร็จสิ้นการเดินทาง/โครงการ','ยื่นคืนเงินแล้ว','เสร็จสิ้น'];
 const NEW=[['category','หมวดหมู่','select',['ไปราชการ','โครงการ','อื่นๆ']],['categoryOther','ระบุหมวดหมู่อื่น ๆ','text'],['name','ชื่อผู้ขอ / ผู้รับผิดชอบ','text'],['email','อีเมลผู้รับผิดชอบ','email','wide'],['dept','สังกัดกลุ่มงาน','select',['กลุ่มงานบริหารทั่วไป','กลุ่มงานการพยาบาล','กลุ่มงานทันตกรรม','กลุ่มงานเภสัชกรรมและคุ้มครองผู้บริโภค','กลุ่มงานบริการด้านปฐมภูมิและองค์รวม','กลุ่มงานประกันสุขภาพและศูนย์จัดเก็บรายได้','กลุ่มงานเทคนิคการแพทย์และรังสีวิทยา','กลุ่มงานการแพทย์','กลุ่มงานแพทย์แผนไทยและเวชกรรมฟื้นฟู','กลุ่มงานสุขภาพดิจิทัล','กลุ่มงานยุทธศาสตร์']],['companions','ผู้ร่วมเดินทาง','people','wide'],['type','ประเภท / กิจกรรม','select',['ประชุม','อบรม','จัดโครงการ','อื่น ๆ']],['typeOther','ระบุประเภท/กิจกรรมอื่น ๆ','text'],['title','ชื่อเรื่อง / ชื่อโครงการ','text','wide'],['place','สถานที่','text'],['dateFrom','ตั้งแต่วันที่','date'],['dateTo','ถึงวันที่','date'],['days','จำนวนวัน (คำนวณอัตโนมัติ)','ro','wide'],['_h','รายละเอียดงบประมาณ (บาท)','head','wide'],['pex','ค่าใช้จ่ายรายบุคคล','pex','wide'],['allowance','ค่าเบี้ยเลี้ยง','number'],['lodging','ค่าที่พัก','number'],['registration','ค่าลงทะเบียน','number'],['transport','ค่ายานพาหนะ','number'],['otherAmt','อื่นๆ (จำนวนเงิน)','number'],['otherNote','อื่นๆ (พิมพ์รายละเอียด)','text'],['projItems','รายละเอียดงบประมาณ — จัดโครงการ','plist','wide'],['budget','รวมเงินทั้งสิ้น (คำนวณอัตโนมัติ)','ro','wide'],['source','แหล่งงบประมาณ','select',['เงินบำรุงโรงพยาบาล','เงินสวัสดิการ','อื่นๆ']],['sourceOther','ระบุแหล่งงบประมาณอื่นๆ','text'],['docs','เอกสาร (วางลิงก์)','links','wide']];
 function build(box,defs){box.innerHTML=defs.map(d=>{const w=d[3]==='wide'?' class="wide"':'';const i='x_'+d[0];
-if(d[2]==='people')return '<div class="wide" id="w_companions"><label for="'+i+'">'+d[1]+'</label><div id="plist"></div><div class="row" style="margin:6px 0 0"><input id="'+i+'" placeholder="พิมพ์ชื่อแล้วกดเพิ่ม"><button type="button" class="s" id="padd" style="width:auto">เพิ่ม</button></div></div>';
+if(d[2]==='people')return '<div class="wide" id="w_companions"><label for="'+i+'">'+d[1]+'</label><div id="plist"></div><div class="row" style="margin:6px 0 0"><input id="'+i+'" list="dl_staff" autocomplete="off" placeholder="พิมพ์ชื่อแล้วเลือกจากรายชื่อ แล้วกดเพิ่ม"><button type="button" class="s" id="padd" style="width:auto">เพิ่ม</button></div></div>';
 if(d[0]==='dateTo'||d[0]==='days')return '';
 if(d[0]==='dateFrom')return '<div class="dates"><div><label for="x_dateFrom">ตั้งแต่วันที่</label><input id="x_dateFrom" type="date"></div><div><label for="x_dateTo">ถึงวันที่</label><input id="x_dateTo" type="date"></div><div><label for="x_days">จำนวนวัน (รวมทุกช่วง)</label><input id="x_days" type="text" readonly style="text-align:center;font-weight:600"></div></div><div class="wide" id="w_ranges"><div id="x_ranges"></div><button type="button" class="s" id="x_radd" style="margin-top:8px">➕ เพิ่มช่วงวันที่ (ไปหลายรอบในเอกสารฉบับเดียว)</button></div>';
 if(d[2]==='links')return '<div class="wide" id="w_docs"><label for="x_docUrl">'+d[1]+'</label><div id="dlist"></div><div class="row" style="margin:6px 0 0;flex-wrap:wrap"><input id="x_docName" placeholder="ชื่อเอกสาร (ไม่บังคับ)" style="flex:1 1 150px"><input id="x_docUrl" type="url" placeholder="วางลิงก์ https://..." style="flex:2 1 220px"><button type="button" class="s" id="dadd" style="width:auto">เพิ่ม</button></div></div>';
@@ -631,9 +685,20 @@ if(d[2]==='pex')return '<div class="wide" id="w_pex" hidden><div class="tw" id="
 if(d[2]==='plist')return '<div class="wide" id="w_projItems" hidden><div style="font-weight:600;margin-top:6px">รายละเอียดงบประมาณ (บาท) — จัดโครงการ</div><div id="pibox"></div></div>';
 if(d[2]==='head')return '<div class="wide" id="w_'+d[0]+'" style="margin-top:6px;font-weight:600">'+d[1]+'</div>';
 if(d[2]==='ro')return '<div'+w+' id="w_'+d[0]+'"><label for="'+i+'">'+d[1]+'</label><input id="'+i+'" type="text" readonly style="font-weight:600"></div>';
-const f=d[2]==='select'?'<select id="'+i+'"><option value=""></option>'+d[3].map(o=>'<option>'+o+'</option>').join('')+'</select>':'<input id="'+i+'" type="'+d[2]+'"'+(d[2]==='number'?' inputmode="decimal" min="0" step="any"':'')+'>';return '<div'+w+' id="w_'+d[0]+'"><label for="'+i+'">'+d[1]+'</label>'+f+'</div>'}).join('')}
+const f=d[2]==='select'?'<select id="'+i+'"><option value=""></option>'+d[3].map(o=>'<option>'+o+'</option>').join('')+'</select>':'<input id="'+i+'" type="'+d[2]+'"'+(d[2]==='number'?' inputmode="decimal" min="0" step="any"':d[0]==='name'?' list="dl_staff" autocomplete="off" placeholder="พิมพ์ชื่อแล้วเลือกจากรายชื่อที่เปิดใช้งาน"':d[0]==='email'?' readonly placeholder="ขึ้นอัตโนมัติเมื่อเลือกชื่อผู้ขอ"':'')+'>';return '<div'+w+' id="w_'+d[0]+'"><label for="'+i+'">'+d[1]+'</label>'+f+'</div>'}).join('')}
 
 const AMT=['allowance','lodging','registration','transport','otherAmt'];
+let DIR=null,DIRP=null,DIRV={};
+function buildDL(){let d=$('dl_staff');if(!d){d=document.createElement('datalist');d.id='dl_staff';document.body.appendChild(d)}
+const c={};DIR.forEach(e=>{c[e.name]=(c[e.name]||0)+1});DIRV={};
+d.innerHTML=DIR.map(e=>{const v=c[e.name]>1?e.name+' ('+e.email+')':e.name;DIRV[v.toLowerCase()]=e;return '<option value="'+esc(v)+'" label="'+esc(String(e.dept||'').split('→')[0].trim())+'"></option>'}).join('')}
+function ensureDir(){if(DIR)return Promise.resolve(DIR);if(!DIRP)DIRP=run('staffDirectory',TOKEN).then(l=>{DIR=Array.isArray(l)?l:[];buildDL();return DIR}).catch(e=>{DIRP=null;throw e});return DIRP}
+const dirFind=v=>DIR?(DIRV[String(v||'').trim().toLowerCase()]||null):null;
+function namePick(keepDept){const el=$('x_name');if(!el)return;const e=dirFind(el.value),em=$('x_email');
+if(e){em.value=e.email;const b=String(e.dept||'').split('→')[0].trim(),ds=$('x_dept');
+if(b&&!keepDept){let o=[...ds.options].find(x=>x.value===b)||[...ds.options].find(x=>x.value&&(b.indexOf(x.value)>-1||x.value.indexOf(b)>-1));if(!o){ds.insertAdjacentHTML('beforeend','<option>'+esc(b)+'</option>');o=ds.options[ds.options.length-1]}ds.value=o.value}}
+else if(!editing||el.value.trim()!==editing.name)em.value=''}
+
 let xr=[];
 const dIn=(a,b)=>a&&b&&b>=a?Math.round((new Date(b+'T00:00')-new Date(a+'T00:00'))/864e5)+1:0;
 function allRanges(){const a=$('x_dateFrom').value,b=$('x_dateTo').value||a,l=[];if(a)l.push({from:a,to:b});xr.forEach(r=>{if(r.from)l.push({from:r.from,to:r.to||r.from})});return l}
@@ -653,14 +718,14 @@ function pexRefresh(){if(!$('w_pex')){calc();return}const on=!isProj()&&people.l
 while(pexV.length<people.length+1)pexV.push({});pexV.length=people.length+1;
 show('w_pex',on);AMT.forEach(k=>show('w_'+k,!on&&!isProj()));
 if(on)pexDraw($('pexbox'),[$('x_name').value.trim()].concat(people),pexV,calc);calc()}
-function addPerson(){const v=$('x_companions').value.trim();if(!v)return;if(!people.length&&!isProj()){PXK.forEach(k=>{pexV[0][k[0]]=$('x_'+k[0]).value;$('x_'+k[0]).value=''})}people.push(v);pexV.push({});$('x_companions').value='';renderPeople();$('x_companions').focus()}
+function addPerson(){let v=$('x_companions').value.trim();if(!v)return;const en=dirFind(v);if(!DIR){say('รายชื่อผู้ใช้ยังโหลดไม่เสร็จ ลองใหม่อีกครั้ง','err');return false}if(!en){say('เลือกผู้ร่วมเดินทางจากรายชื่อที่เปิดใช้งานเท่านั้น (พิมพ์ชื่อแล้วเลือกจากรายการ)','err');return false}v=en.name;if(people.includes(v)||v===$('x_name').value.trim()){say('ชื่อนี้อยู่ในรายการแล้ว','err');return false}if(!people.length&&!isProj()){PXK.forEach(k=>{pexV[0][k[0]]=$('x_'+k[0]).value;$('x_'+k[0]).value=''})}people.push(v);pexV.push({});$('x_companions').value='';renderPeople();$('x_companions').focus()}
 let docs=[];
 function renderDocs(){$('dlist').innerHTML=docs.map((d,i)=>'<div class="row" style="margin-bottom:4px;align-items:center"><a href="'+esc(d.url)+'" target="_blank" rel="noopener" style="flex:1;word-break:break-all;color:var(--acc)">'+esc(d.name||d.url)+'</a><button type="button" class="s" data-i="'+i+'" style="width:auto" aria-label="ลบเอกสาร">ลบ</button></div>').join('');
 $('dlist').querySelectorAll('button').forEach(b=>b.onclick=()=>{docs.splice(+b.dataset.i,1);renderDocs()})}
 function addDoc(){const u=$('x_docUrl').value.trim();if(!u)return true;
 if(!/^https?:\/\//i.test(u)){say('ลิงก์เอกสารต้องขึ้นต้นด้วย http:// หรือ https://','err');return false}
 docs.push({name:$('x_docName').value.trim(),url:u});$('x_docName').value='';$('x_docUrl').value='';renderDocs();return true}
-function initNew(){people=[];pexV=[{}];docs=[];xr=[];pitems=[{name:'',amt:''}];build($('f-new'),NEW);$('x_name').addEventListener('input',()=>{if(people.length&&!isProj())pexRefresh()});renderPeople();renderDocs();renderRanges();$('x_radd').onclick=()=>{xr.push({from:'',to:''});renderRanges();const i=$('x_ranges').querySelectorAll('input[data-rk=from]');if(i.length)i[i.length-1].focus();calc()};$('padd').onclick=addPerson;$('dadd').onclick=addDoc;
+function initNew(){people=[];pexV=[{}];docs=[];xr=[];pitems=[{name:'',amt:''}];build($('f-new'),NEW);$('x_name').addEventListener('input',()=>{namePick();if(people.length&&!isProj())pexRefresh()});$('x_name').addEventListener('change',()=>{const e=dirFind($('x_name').value);if(e&&$('x_name').value!==e.name)$('x_name').value=e.name;namePick();if(people.length&&!isProj())pexRefresh()});if(TOKEN)ensureDir().catch(()=>{});renderPeople();renderDocs();renderRanges();$('x_radd').onclick=()=>{xr.push({from:'',to:''});renderRanges();const i=$('x_ranges').querySelectorAll('input[data-rk=from]');if(i.length)i[i.length-1].focus();calc()};$('padd').onclick=addPerson;$('dadd').onclick=addDoc;
 $('x_docUrl').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addDoc()}});
 $('x_companions').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addPerson()}});
 show('w_categoryOther',false);show('w_sourceOther',false);show('w_typeOther',false);
@@ -669,7 +734,7 @@ $('x_source').onchange=()=>{const o=$('x_source').value==='อื่นๆ';show
 ['dateFrom','dateTo'].concat(AMT).forEach(k=>$('x_'+k).addEventListener('input',calc));calc();
 $('x_category').onchange=()=>{const o=$('x_category').value==='อื่นๆ';show('w_categoryOther',o);if(o)$('x_categoryOther').focus()}}
 function collect(defs){const o={};defs.forEach(d=>{const el=$('x_'+d[0]);if(!el)return;const v=el.value.trim();if(v!=='')o[d[0]]=v});return o}
-function say(t,c){$('msg').textContent=t;$('msg').className=c||''}
+function say(t,c){$('msg').textContent=t;$('msg').className=c||'';const l=$('lg_msg');if(l){l.textContent=t;l.className=c||''}}
 let db=null,canWrite=null,cur=null;
 function show(id,on){$(id).hidden=!on}
 const NAV={home:'หน้าแรก',track:'ติดตามสถานะ',staff:'เจ้าหน้าที่',memo:'ทำบันทึกข้อความ',rep:'รายงานและสถิติ',cal:'ปฏิทินกิจกรรม',sop:'คลังเอกสารและระเบียบปฏิบัติ (SOP)',users:'ระบบผู้ใช้งานและกำหนดสิทธิ์',cfg:'ตั้งค่าระบบ'};
@@ -690,7 +755,8 @@ u.innerHTML='👤 '+esc(auth.name||auth.user)+(auth.dept?' <small class="mut">('
 show('userbar',true);$('ub-pw').onclick=()=>openPw();$('ub-out').onclick=logout;show('pw-warn',false);if(auth.must&&$('ov').hidden)openPw(true)}
 function renderLogin(on){if(!on)return;
 const bad='';
-$('lg_note').textContent=bad||'เข้าสู่ระบบด้วยอีเมลที่โรงพยาบาลลงทะเบียนไว้เท่านั้น จึงจะดูข้อมูลได้';show('lg_form',!bad)}
+$('lg_note').textContent=bad||'ใช้อีเมลที่โรงพยาบาลลงทะเบียนไว้ จึงจะดูข้อมูลได้';show('lg_form',!bad);
+try{if(CFG&&CFG.title)$('lg_title').textContent=CFG.title;if(CFG&&CFG.hosp)$('lg_sub').textContent=CFG.hosp;if(CFG&&/^(https:|data:image)/.test(CFG.logo||'')){const m=$('lg_mark');if(!m.querySelector('img')){m.innerHTML='<img alt="">';m.firstChild.src=CFG.logo}}}catch(e){}}
 function goTab(w,noload){
 if(w==='rep'){tView='rep';w='track'}
 if(w==='new'||w==='upd'||w==='ret'||w==='adm'){subTab=w;w='staff'}
@@ -709,7 +775,7 @@ if(vo){if(!noload){$('tv-list').setAttribute('aria-selected',tView!=='rep');$('t
 if(w==='home'){homeOpen();return}if(w==='cal'){calOpen();return}if(w==='sop'){sopOpen();return}
 if(w==='memo'){memoOpen();return}
 if(w==='track'){$('tv-list').setAttribute('aria-selected',tView!=='rep');$('tv-rep').setAttribute('aria-selected',tView==='rep');if(!noload)loadTrack()}
-else if(!noload){const pr=loadList();if(subTab==='adm')pr.then(loadAdmin)}}
+else if(!noload){const pr=loadList();if(subTab==='new')ensureDir().catch(()=>{});if(subTab==='adm')pr.then(loadAdmin)}}
 const sub=(w,noload)=>goTab(w,noload);
 async function doLogin(){
 const u=$('lg_u').value.trim().toLowerCase(),p=$('lg_p').value;
@@ -723,7 +789,7 @@ $('lg_p').value='';say('');updUserbar();goTab(curTab)
 async function restoreSession(){let t=null;try{t=sessionStorage.getItem('tp_tok')}catch(e){}
 if(!t)return;
 try{const r=await run('me',t);if(r){TOKEN=t;setAuth(r)}else{try{sessionStorage.removeItem('tp_tok')}catch(e){}}}catch(e){}}
-function logout(){run('logout',TOKEN).catch(()=>{});TOKEN='';clrAuth();tStaff=false;tv('list');try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track')}
+function logout(){run('logout',TOKEN).catch(()=>{});TOKEN='';DIR=null;DIRP=null;clrAuth();tStaff=false;tv('list');try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track')}
 document.addEventListener('sess-expired',()=>{TOKEN='';clrAuth();tStaff=false;try{sessionStorage.removeItem('tp_tok')}catch(e){}updUserbar();goTab('track');say('หมดเวลาการเข้าสู่ระบบ กรุณาเข้าสู่ระบบใหม่','err')});
 function openPw(force){
 openOv(force?'ตั้งรหัสผ่านใหม่ก่อนเริ่มใช้งาน':'เปลี่ยนรหัสผ่าน',(force?'<p style="margin-top:0">นี่คือการเข้าสู่ระบบครั้งแรก (หรือผู้ดูแลระบบเพิ่งรีเซ็ตรหัสให้) กรุณาตั้งรหัสผ่านของคุณเองก่อนใช้งาน ผู้ดูแลระบบจะไม่เห็นรหัสผ่านที่คุณตั้ง</p>':'')+'<label for="cp_old">'+(force?'รหัสผ่านชั่วคราวที่ได้รับ':'รหัสผ่านปัจจุบัน')+'</label><input id="cp_old" type="password" autocomplete="current-password"><label for="cp_new" style="margin-top:10px">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)</label><input id="cp_new" type="password" autocomplete="new-password"><label for="cp_new2" style="margin-top:10px">ยืนยันรหัสผ่านใหม่</label><input id="cp_new2" type="password" autocomplete="new-password"><p id="cp_msg" class="err" style="margin:10px 0 0;font-weight:600"></p><button class="p" id="cp_go" type="button">บันทึกรหัสผ่านใหม่</button>'+(force?' <button class="s" id="cp_out" type="button">ออกจากระบบ</button>':''));
@@ -1069,9 +1135,7 @@ if(!list.length)return say('ไม่พบอีเมลในข้อมู�
 const out=[];let skipped=0,badSrv=0;
 try{for(let i=0;i<list.length;i+=30){say('กำลังนำเข้า '+Math.min(i+30,list.length)+'/'+list.length+' ...','mut');const r=await run('importUsers',TOKEN,list.slice(i,i+30));out.push(...r.created);skipped+=r.skipped.length;badSrv+=r.bad.length}}
 catch(e){say('นำเข้าไม่สำเร็จระหว่างทาง: '+errTxt(e)+' (รายที่นำเข้าแล้วจะไม่ซ้ำเมื่อลองใหม่)','err')}
-if(out.length){const q=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
-await DL.save({filename:'รหัสผ่านชั่วคราว-'+ymd()+'.csv',data:'﻿'+'อีเมล,ชื่อ-นามสกุล,กลุ่มงาน,รหัสผ่านชั่วคราว\n'+out.map(o=>[o.email,o.name,o.dept,o.pw].map(q).join(',')).join('\n')})}
-say('นำเข้าใหม่ '+out.length+' บัญชี · ข้าม(มีอยู่แล้ว) '+skipped+' · อีเมลไม่ถูกต้อง '+(bad+badSrv)+(out.length?' — ดาวน์โหลดไฟล์รหัสผ่านชั่วคราวแล้ว (เก็บให้ดี ห้ามอัปโหลดขึ้น GitHub)':''),out.length?'ok':'err');loadAdmin()}
+say('นำเข้าใหม่ '+out.length+' บัญชี · ข้าม(มีอยู่แล้ว) '+skipped+' · อีเมลไม่ถูกต้อง '+(bad+badSrv)+(out.length?' — รหัสผ่านเริ่มต้นคือ 1234 ทุกบัญชี ระบบบังคับเปลี่ยนเมื่อเข้าครั้งแรก':''),out.length?'ok':'err');loadAdmin()}
 function renderCancelled(){
 const c=T.filter(r=>r.cancelled);
 $('a_cancelled').innerHTML=c.length?'<div class="tw"><table class="t"><thead><tr><th>เลขรับ</th><th>ผู้ขอ</th><th>ชื่อเรื่อง</th><th>เหตุผลยกเลิก</th><th></th></tr></thead><tbody>'+c.map(r=>'<tr><td>'+esc(r.no)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.title)+'</td><td>'+esc(r.cinfo&&r.cinfo.reason||'')+'</td><td><button type="button" class="s sm" data-adm="pdel" data-u="'+esc(r.id)+'">ลบถาวร</button></td></tr>').join('')+'</tbody></table></div>':'<p class="mut" style="margin:0">ไม่มีรายการที่ยกเลิก</p>'}
@@ -1079,17 +1143,18 @@ async function loadAdmin(){
 $('a_hosp').value=CFG.hosp||DEF.hosp;$('a_title').value=CFG.title||DEF.title;$('a_sub').value=CFG.sub===undefined?DEF.sub:CFG.sub;
 admLogo=CFG.logo||'';drawLogoPrev();$('a_hero').value=CFG.heroImage||'';
 $('a_depts').value=OPT.dept.join('\n');$('a_types').value=baseOf(OPT.type).join('\n');$('a_srcs').value=baseOf(SRC).join('\n');$('a_cats').value=baseOf(OPT.cat).join('\n');$('a_creas').value=baseOf(CREASONS).join('\n');
-renderCancelled();planAdminInit();
+renderCancelled();planAdminInit();loadNotify();
 try{renderUsers(await run('listUsers',TOKEN))}catch(e){$('a_users').textContent='โหลดรายชื่อผู้ใช้ไม่สำเร็จ: '+errTxt(e)}}
 $('a_add').onclick=async()=>{const u=$('a_nu').value.trim().toLowerCase(),p=$('a_np').value;
 if(!u)return say('กรอกอีเมลของผู้ใช้','err');
 try{const r=await run('addUser',TOKEN,u,p,$('a_nn').value,[...document.querySelectorAll('[data-up=__new]:checked')].map(x=>x.value),$('a_nd').value);if(!r.ok)return say(r.msg,'err');$('a_nu').value='';$('a_np').value='';$('a_nn').value='';$('a_nd').value='';say('เพิ่มผู้ใช้ '+u+' แล้ว','ok');showPw('เพิ่มผู้ใช้แล้ว',u,r.pw||p);loadAdmin()}catch(e){say('เพิ่มผู้ใช้ไม่สำเร็จ: '+errTxt(e),'err')}};
 $('a_rnd').onclick=()=>{$('a_np').value=rndPw()};
+$('a_all1234').onclick=async()=>{if(!confirm('ตั้งรหัสผ่านเป็น 1234 ให้ทุกบัญชีที่ยังไม่เคยเปลี่ยนรหัสเอง ใช่หรือไม่?'))return;try{const r=await run('resetAllTemp',TOKEN);say('ตั้งรหัสผ่านเป็น 1234 แล้ว '+r.n+' บัญชี (ต้องเปลี่ยนเมื่อเข้าครั้งแรก)','ok');loadAdmin()}catch(e){say('ไม่สำเร็จ: '+errTxt(e),'err')}};
 $('a_imp_go').onclick=()=>{const t=$('a_imp_t').value;if(!t.trim())return say('วางข้อมูลรายชื่อ หรือเลือกไฟล์ CSV ก่อน','err');importRoster(t)};
 $('a_imp_f').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('a_imp_t').value=await f.text();e.target.value=''};
 async function saveUser(u,btn){const tr=btn.closest('tr'),n=tr.querySelector('[data-un]').value.trim(),pm=[...tr.querySelectorAll('[data-up]:checked')].map(x=>x.value);
 try{const r=await run('updateUser',TOKEN,u,n,pm);if(!r||!r.ok)return say((r&&r.msg)||'บันทึกไม่สำเร็จ','err');say('บันทึกชื่อที่แสดงและสิทธิ์ของ '+u+' แล้ว','ok')}catch(e){say('บันทึกไม่สำเร็จ: '+errTxt(e),'err')}}
-function openReset(u){openOv('รีเซ็ตรหัสผ่าน · '+u,'<label for="rp_pw">รหัสผ่านชั่วคราวใหม่ (เว้นว่างหรือกดสุ่ม = ระบบสุ่มให้)</label><div style="display:flex;gap:8px"><input id="rp_pw" type="text" autocomplete="off"><button class="s" id="rp_rnd" type="button">สุ่มรหัสผ่าน</button></div><p class="mut" style="font-size:.85rem;margin:8px 0 0">ผู้ใช้ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป · ผู้ดูแลระบบดูรหัสที่ผู้ใช้ตั้งเองไม่ได้</p><p id="rp_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="rp_go" type="button">ยืนยันรีเซ็ต</button>');
+function openReset(u){openOv('รีเซ็ตรหัสผ่าน · '+u,'<label for="rp_pw">รหัสผ่านชั่วคราวใหม่ (เว้นว่าง = 1234)</label><div style="display:flex;gap:8px"><input id="rp_pw" type="text" autocomplete="off"><button class="s" id="rp_rnd" type="button">สุ่มรหัสผ่าน</button></div><p class="mut" style="font-size:.85rem;margin:8px 0 0">ผู้ใช้ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป · ผู้ดูแลระบบดูรหัสที่ผู้ใช้ตั้งเองไม่ได้</p><p id="rp_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="rp_go" type="button">ยืนยันรีเซ็ต</button>');
 $('rp_rnd').onclick=()=>{$('rp_pw').value=rndPw()};
 $('rp_go').onclick=async()=>{try{const r=await run('resetPassword',TOKEN,u,$('rp_pw').value);if(!r.ok)return $('rp_msg').textContent=r.msg;closeOv();showPw('รีเซ็ตรหัสผ่านแล้ว',u,r.pw||$('rp_pw').value);loadAdmin()}catch(e){$('rp_msg').textContent=errTxt(e)}}}
 function openDelUser(u){openOv('ลบผู้ใช้ · '+u,'<p style="margin-top:0">ลบผู้ใช้ <b>'+esc(u)+'</b> ออกจากระบบ? (ข้อมูลรายการที่เคยบันทึกไม่ถูกลบ)</p><p id="du_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="du_go" type="button" style="background:var(--err)">ยืนยันลบผู้ใช้</button>');
@@ -1098,6 +1163,14 @@ function openPermDel(id){const r=T.find(x=>x.id===id);if(!r)return;
 openOv('ลบถาวร · '+r.no,'<p style="margin-top:0"><b>'+esc(r.title)+'</b><br><span class="mut">'+esc(r.name)+'</span></p><p class="warn">การลบถาวรกู้คืนไม่ได้ (เลขรับนี้จะไม่ถูกนำกลับมาใช้) แนะนำให้ดาวน์โหลดไฟล์สำรองก่อน</p><label for="pd_t">พิมพ์คำว่า ลบถาวร เพื่อยืนยัน</label><input id="pd_t" autocomplete="off"><p id="pd_msg" class="err" style="margin:8px 0 0;font-weight:600"></p><button class="p" id="pd_go" type="button" style="background:var(--err)">ลบถาวร</button>');
 $('pd_go').onclick=async()=>{if($('pd_t').value.trim()!=='ลบถาวร')return $('pd_msg').textContent='พิมพ์คำว่า ลบถาวร ให้ถูกต้องก่อน';
 try{await call('delete','requests/'+id);await call('delete','public/'+id);closeOv();say('ลบรายการ '+r.no+' ถาวรแล้ว','ok');await loadTrack();await loadList();loadAdmin()}catch(e){$('pd_msg').textContent='ลบไม่สำเร็จ: '+errTxt(e)}}}
+async function loadNotify(){try{const r=await run('getNotify',TOKEN);$('n_on').checked=!!r.cfg.enabled;$('n_cc').value=r.cfg.cc||'';$('n_url').value=r.cfg.url||'';
+$('n_stat').textContent='โควตาส่งอีเมลที่เหลือวันนี้: '+(r.quota==null?'ยังไม่ทราบ (ยังไม่ได้อนุญาตสิทธิ์ส่งอีเมล)':r.quota+' ฉบับ')+' · ตัวตั้งเวลาทุกเช้า 08:00: '+(r.trigger?'ติดตั้งแล้ว':'ยังไม่ได้ติดตั้ง');
+$('n_log').innerHTML=r.log&&r.log.length?'<div class="tw"><table class="t"><thead><tr><th>เวลา</th><th>ถึง</th><th>เรื่อง</th><th>ผล</th></tr></thead><tbody>'+r.log.slice(0,15).map(x=>'<tr><td>'+esc(new Date(x.t).toLocaleString('th-TH'))+'</td><td>'+esc(x.to)+'</td><td>'+esc(x.subj)+'</td><td>'+(x.ok?'ส่งแล้ว':'<span class="warn">'+esc(x.err||'ไม่สำเร็จ')+'</span>')+'</td></tr>').join('')+'</tbody></table></div>':'<p class="mut" style="margin:6px 0 0">ยังไม่มีประวัติการส่ง</p>'}
+catch(e){$('n_stat').textContent='โหลดการตั้งค่าแจ้งเตือนไม่สำเร็จ: '+errTxt(e)}}
+$('n_save').onclick=async()=>{try{const r=await run('setNotify',TOKEN,{enabled:$('n_on').checked,cc:$('n_cc').value,url:$('n_url').value});if(!r.ok)return say(r.msg,'err');say('บันทึกการตั้งค่าแจ้งเตือนแล้ว','ok');loadNotify()}catch(e){say('บันทึกไม่สำเร็จ: '+errTxt(e),'err')}};
+$('n_test').onclick=async()=>{const to=$('n_to').value.trim();if(!to)return say('ใส่อีเมลปลายทางสำหรับทดสอบ','err');say('กำลังส่งอีเมลทดสอบ...','mut');try{const r=await run('testMail',TOKEN,to);say(r.ok?'ส่งอีเมลทดสอบถึง '+to+' แล้ว (ตรวจกล่องจดหมายและ Junk)':r.msg,r.ok?'ok':'err');loadNotify()}catch(e){say('ส่งไม่สำเร็จ: '+errTxt(e),'err')}};
+$('n_trig').onclick=async()=>{try{const r=await run('installTriggers',TOKEN);say(r.ok?'ติดตั้งตัวตั้งเวลาแล้ว (ตรวจทุกเช้า 08:00)':r.msg,r.ok?'ok':'err');loadNotify()}catch(e){say('ติดตั้งไม่สำเร็จ: '+errTxt(e),'err')}};
+$('n_run').onclick=async()=>{say('กำลังตรวจรายการที่ต้องแจ้งเตือน...','mut');try{const r=await run('runReminders',TOKEN);say(r.off?'การแจ้งเตือนถูกปิดอยู่':'ส่งแจ้งเตือนแล้ว '+r.sent+' ฉบับ'+(r.noMail?' · ไม่มีอีเมลผู้ขอ '+r.noMail+' รายการ':''),r.off?'err':'ok');loadNotify()}catch(e){say('ไม่สำเร็จ: '+errTxt(e),'err')}};
 $('a_dump').onclick=async()=>{try{say('กำลังเตรียมไฟล์สำรอง...','mut');const d=await run('dump',TOKEN);await DL.save({filename:'สำรองข้อมูล-'+ymd()+'.json',data:JSON.stringify(d,null,1)});say('ดาวน์โหลดไฟล์สำรองแล้ว','ok')}catch(e){say('สำรองไม่สำเร็จ: '+errTxt(e),'err')}};
 function fyStep(d){const el=$('ty'),o=[...el.options].map(x=>x.value).filter(Boolean).sort();if(!o.length)return;let i=o.indexOf(el.value);i=i<0?o.length-1:Math.min(Math.max(i+d,0),o.length-1);el.value=o[i];renderT()}
 function renderT(){const rows=tFiltered();
@@ -1146,13 +1219,15 @@ $('ex-x').onclick=exportX;$('ex-r').onclick=exportR;
 
 $('save-new').onclick=async()=>{
 const f=collect(NEW);if(!f.name||!f.title)return say('กรอกชื่อผู้ขอและชื่อเรื่องก่อนบันทึก','err');
+try{await ensureDir()}catch(e){return say('โหลดรายชื่อผู้ใช้ไม่สำเร็จ: '+errTxt(e),'err')}
+{const en=dirFind(f.name);if(en){f.name=en.name;f.email=en.email}else if(!(editing&&editing.name===f.name))return say('ผู้ขอต้องเป็นรายชื่อที่เปิดใช้งานในระบบ — พิมพ์ชื่อแล้วเลือกจากรายการ','err')}
 if(f.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))return say('รูปแบบอีเมลไม่ถูกต้อง','err');
 if(f.category==='อื่นๆ'){if(!f.categoryOther)return say('พิมพ์ระบุหมวดหมู่อื่น ๆ ก่อนบันทึก','err');f.category=f.categoryOther}
 if(f.source==='อื่นๆ'){if(!f.sourceOther)return say('พิมพ์ระบุแหล่งงบประมาณอื่นๆ ก่อนบันทึก','err');f.source=f.sourceOther}
 delete f.sourceOther;
 if(f.type==='อื่น ๆ'){if(!f.typeOther)return say('พิมพ์ระบุประเภท/กิจกรรมอื่น ๆ ก่อนบันทึก','err');f.type=f.typeOther}
 delete f.typeOther;if(!addDoc())return;f.docs=docs.slice();
-delete f.categoryOther;addPerson();f.companions=people.slice();
+delete f.categoryOther;if(addPerson()===false)return;f.companions=people.slice();
 if(!f.dateFrom)return say('เลือกวันที่เดินทางก่อนบันทึก','err');
 if(!f.dateTo)f.dateTo=f.dateFrom;
 if(f.dateTo<f.dateFrom)return say('วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น','err');
@@ -1208,6 +1283,7 @@ const r=reqs.find(x=>x.id===id);if(!r)return;
 if(r.cancelled&&r.cancelled.active)return say('รายการนี้ถูกยกเลิกอยู่ กรุณาเรียกคืนก่อนจึงจะแก้ไขได้','err');
 sub('new',true);initNew();editing=r;
 ['name','email','place','title','dateFrom','dateTo','otherNote'].forEach(k=>{$('x_'+k).value=r[k]==null?'':r[k]});
+ensureDir().then(()=>namePick(true)).catch(()=>{});
 if(Array.isArray(r.ranges)&&r.ranges.length){$('x_dateFrom').value=r.ranges[0].from;$('x_dateTo').value=r.ranges[0].to;xr=r.ranges.slice(1).map(g=>({from:g.from,to:g.to}));renderRanges();calc()}
 const DEPTS=NEW.find(d=>d[0]==='dept')[3],ds=$('x_dept');
 if(r.dept&&!DEPTS.includes(r.dept))ds.insertAdjacentHTML('beforeend','<option>'+esc(r.dept)+'</option>');
