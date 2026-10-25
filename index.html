@@ -369,6 +369,13 @@ window.addEventListener('load',late);
 </script>
 <style>.pk{display:inline-flex;gap:5px;align-items:center;margin:2px 12px 2px 0;font-size:.85rem;white-space:nowrap;font-weight:400}.pk input{width:auto;margin:0}#a_nperm{display:flex;flex-wrap:wrap}</style>
 <style>
+#p-memo .mm2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:20px;align-items:start;margin-top:12px}
+#p-memo .mm-l{min-width:0}
+#p-memo .mm-r{position:sticky;top:12px;min-width:0}
+#p-memo .mm-r .memo-wrap{margin-top:0;max-height:calc(100vh - 24px);overflow:auto}
+@media(max-width:1000px){#p-memo .mm2{grid-template-columns:1fr}#p-memo .mm-r{position:static}#p-memo .mm-r .memo-wrap{max-height:none;margin-top:16px}}
+</style>
+<style>
 html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);max-width:none;width:auto;margin:0;padding:0;border:0!important;border-radius:0!important;box-shadow:none!important;background:var(--bg);overflow:auto;text-align:left}
 #login .lg-l{background:linear-gradient(165deg,var(--g1,#0b6e6c) 0%,#083f42 100%);color:#fff;display:flex;align-items:center;padding:48px 56px}
 #login .lg-in{max-width:520px;width:100%;margin:0 auto}
@@ -481,7 +488,7 @@ html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-templa
 <p class="mut" style="margin:0 0 10px;font-size:.9rem">เปิดให้ทุกคนใช้งานโดยไม่ต้องเข้าสู่ระบบ — กรอกข้อมูลแล้วพิมพ์/บันทึกเป็น PDF หรือดาวน์โหลดเป็นไฟล์ Word (กด “💾 บันทึกข้อมูลเข้าระบบ” หรือพิมพ์เอกสาร ข้อมูลจะถูกเก็บไว้ในชีต “บันทึกข้อความ” และเรียกกลับมาใช้ซ้ำได้)</p>
 <label for="mm_type">เลือกประเภทบันทึกข้อความ</label>
 <select id="mm_type"><option value="approve">ขออนุมัติจัด</option><option value="proc">ขออนุมัติดำเนินการ (จ้างเหมา/เช่า)</option><option value="loan">ขออนุมัติยืมเงิน</option><option value="pay">ขออนุมัติเบิกจ่ายเงิน</option><option value="refund">ขออนุมัติคืนเงินยืม</option></select>
-<div id="mm_form">
+<div id="mm_form"><div class="mm2"><div class="mm-l">
 <fieldset id="mm_saved"><legend>📂 ข้อมูลที่บันทึกไว้ (เรียกกลับมาใช้ซ้ำได้)</legend>
 <input id="mm_q" placeholder="ค้นหา เช่น ชื่อกิจกรรม กลุ่มงาน" style="margin-top:6px"><select id="mm_list" size="5" style="margin-top:8px"></select>
 <div class="acts" style="margin-top:8px"><button type="button" id="mm_load">เรียกใช้ข้อมูลนี้</button><button type="button" id="mm_useact" hidden>↪ ใช้เป็นกิจกรรมต้นทาง (สำหรับดำเนินการ/ยืม/เบิก/คืนเงิน)</button><button type="button" id="mm_del" hidden>🗑️ ลบรายการ (เจ้าหน้าที่)</button></div>
@@ -538,8 +545,9 @@ html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-templa
 </fieldset>
 <div class="acts"><button type="button" class="pri" id="mm_print">🖨️ พิมพ์ / บันทึกเป็น PDF</button><button type="button" id="mm_savesrv">💾 บันทึกข้อมูลเข้าระบบ</button><button type="button" id="mm_doc">⬇️ ดาวน์โหลดไฟล์ Word</button><button type="button" id="mm_clear">ล้างแบบฟอร์ม</button></div>
 <div id="mm_st" class="sm" role="status" style="margin-top:8px;font-weight:600"></div>
-<div class="memo-wrap" id="mm_wrap"><div id="mm_pv" class="memo-pv"></div></div>
 </div>
+<div class="mm-r"><div class="memo-wrap" id="mm_wrap"><div id="mm_pv" class="memo-pv"></div></div></div>
+</div></div>
 </section>
 <section id="p-track">
 <div id="al-track"></div>
@@ -769,7 +777,7 @@ show('p-track',tr);show('p-staff',st&&allowed);$('hero').hidden=(w!=='home');sho
 ['new','upd','ret','adm'].forEach(k=>{show('p-'+k,st&&allowed&&k===subTab);$('s-'+k).setAttribute('aria-selected',k===subTab);show('s-'+k,okSub(k))});
 show('login',vo&&!auth.user);renderLogin(vo&&!auth.user);
 if(vo&&auth.user)say('บัญชีนี้ไม่มีสิทธิ์แก้ไขข้อมูล ดูข้อมูลได้อย่างเดียว (ติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์)','mut');
-$('main').classList.toggle('wide',tr&&tView==='rep'&&tStaff);
+$('main').classList.toggle('wide',(tr&&tView==='rep'&&tStaff)||w==='memo');
 updNav();
 if(vo){if(!noload){$('tv-list').setAttribute('aria-selected',tView!=='rep');$('tv-rep').setAttribute('aria-selected',tView==='rep');loadTrack()}return}
 if(w==='home'){homeOpen();return}if(w==='cal'){calOpen();return}if(w==='sop'){sopOpen();return}
