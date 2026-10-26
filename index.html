@@ -41,7 +41,7 @@ main.wide{max-width:1280px}.rep table.t{font-size:.8rem}.rep table.t th,.rep tab
 tr.clk{cursor:pointer}tr.clk:hover{background:rgba(127,127,127,.1)}.sm{padding:2px 8px!important;font-size:.78rem!important;width:auto}
 .alert{border:1px solid var(--err);border-left:5px solid var(--err);background:var(--card);padding:8px 14px;margin:0 0 14px;font-size:.92rem}.alert ul{margin:6px 0 0;padding-left:18px}
 .lnk{background:none;border:0;padding:0;font:inherit;color:var(--acc);text-decoration:underline;cursor:pointer}
-.ov{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px))}.ov[hidden]{display:none}
+.ov{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px))}.ov[hidden]{display:none}
 .ovb{position:relative;width:100%;max-width:720px;margin:auto 0;padding:16px 18px;background:var(--bg);color:var(--fg);border-radius:10px}.ovb h2{font-size:1.1rem;margin:0 60px 8px 0}#ov-x{position:absolute;top:12px;right:14px;padding:6px 14px;font:inherit;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
 .dl2{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;margin:0}.dl2 dt{color:var(--mut)}.dl2 dd{margin:0}
 .btn{display:block;margin-top:6px;padding:9px 14px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--acc);text-decoration:none;word-break:break-all}
@@ -368,6 +368,8 @@ window.addEventListener('load',late);
 })();
 </script>
 <style>.pk{display:inline-flex;gap:5px;align-items:center;margin:2px 12px 2px 0;font-size:.85rem;white-space:nowrap;font-weight:400}.pk input{width:auto;margin:0}#a_nperm{display:flex;flex-wrap:wrap}</style>
+<style>.segm{display:flex;gap:10px;margin:10px 0 14px}.segm button{flex:1;padding:14px 10px;font:inherit;font-weight:700;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--fg);cursor:pointer}.segm button[aria-pressed=true]{border-color:var(--acc);background:var(--tint,#e3f3f2);color:var(--navy)}#tr_pv{border:0;background:#e3e8ef;transform-origin:0 0;display:block}#tr_box{overflow:hidden}#p-memo .frs .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}#p-memo .frs .wide,#p-memo .frs .w{grid-column:1/-1}@media(max-width:560px){#p-memo .frs .grid{grid-template-columns:1fr}}</style>
+<style>.ovb.frmw{max-width:980px}.frs{border:1px solid var(--line);border-radius:12px;margin:10px 0 0;padding:6px 14px 12px}.frs legend{padding:0 6px;font-weight:600;color:var(--navy)}.frs .grid{margin-top:6px}.frs .t input{width:100%;padding:5px 6px}.frs .t input[type=checkbox]{width:auto}</style>
 <style>
 #p-memo .mm2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:20px;align-items:start;margin-top:12px}
 #p-memo .mm-l{min-width:0}
@@ -485,7 +487,10 @@ html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-templa
 </section>
 <section id="p-memo" hidden>
 <h2>📄 ทำบันทึกข้อความ</h2>
-<p class="mut" style="margin:0 0 10px;font-size:.9rem">เปิดให้ทุกคนใช้งานโดยไม่ต้องเข้าสู่ระบบ — กรอกข้อมูลแล้วพิมพ์/บันทึกเป็น PDF หรือดาวน์โหลดเป็นไฟล์ Word (กด “💾 บันทึกข้อมูลเข้าระบบ” หรือพิมพ์เอกสาร ข้อมูลจะถูกเก็บไว้ในชีต “บันทึกข้อความ” และเรียกกลับมาใช้ซ้ำได้)</p>
+<p class="mut" style="margin:0 0 10px;font-size:.9rem">เลือกประเภทงานก่อน แล้วกรอกข้อมูลเพื่อพิมพ์/บันทึกเป็น PDF หรือดาวน์โหลดเป็นไฟล์ Word (กด “💾 บันทึกข้อมูลเข้าระบบ” หรือพิมพ์เอกสาร ข้อมูลจะถูกเก็บไว้ในชีต “บันทึกข้อความ” และเรียกกลับมาใช้ซ้ำได้)</p>
+<div id="mm_modes" class="segm" role="group" aria-label="เลือกประเภทงาน"><button type="button" id="mm_m_trip" aria-pressed="false">🧳 ไปราชการ</button><button type="button" id="mm_m_proj" aria-pressed="false">📁 จัดโครงการ</button></div>
+<p id="mm_pick" class="mut" style="text-align:center">เลือกประเภทงานที่ต้องการทำเอกสาร — แบบฟอร์มของไปราชการและจัดโครงการไม่เหมือนกัน</p>
+<div id="mm_proj" hidden>
 <label for="mm_type">เลือกประเภทบันทึกข้อความ</label>
 <select id="mm_type"><option value="approve">ขออนุมัติจัด</option><option value="proc">ขออนุมัติดำเนินการ (จ้างเหมา/เช่า)</option><option value="loan">ขออนุมัติยืมเงิน</option><option value="pay">ขออนุมัติเบิกจ่ายเงิน</option><option value="refund">ขออนุมัติคืนเงินยืม</option></select>
 <div id="mm_form"><div class="mm2"><div class="mm-l">
@@ -547,7 +552,13 @@ html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-templa
 <div id="mm_st" class="sm" role="status" style="margin-top:8px;font-weight:600"></div>
 </div>
 <div class="mm-r"><div class="memo-wrap" id="mm_wrap"><div id="mm_pv" class="memo-pv"></div></div></div>
-</div></div>
+</div></div></div>
+<div id="mm_trip" hidden><div class="mm2"><div class="mm-l">
+<fieldset class="frs"><legend>เลือกรายการและเอกสาร</legend><div class="grid"><div class="w"><label for="tr_req">รายการไปราชการในระบบ (เลือกแล้วข้อมูลจะถูกเติมให้)</label><select id="tr_req"></select></div><div class="w"><label for="tr_doc">เอกสารที่จะทำ</label><select id="tr_doc"></select></div></div></fieldset>
+<div id="tr_f"></div>
+<div class="acts"><button type="button" class="pri" id="tr_print">🖨️ พิมพ์ / บันทึกเป็น PDF</button><button type="button" id="tr_word">⬇️ ดาวน์โหลดไฟล์ Word</button></div>
+<div id="tr_msg" class="sm err" role="status" style="margin-top:8px;font-weight:600"></div>
+</div><div class="mm-r"><div class="memo-wrap" id="tr_wrap"><div id="tr_box"><iframe id="tr_pv" title="ตัวอย่างเอกสาร"></iframe></div></div></div></div></div>
 </section>
 <section id="p-track">
 <div id="al-track"></div>
@@ -967,11 +978,12 @@ if(f)h+=sect('เบิกเงิน',kv('เลขที่หนังสื
 if(t)h+=sect('คืนเงินยืม',kv('วันที่ยื่นคืนเงิน',d(t.returnDate))+kv('วันที่ ผอ.ลงนามคืนเงิน',d(t.signDate))+kv('ค่าใช้จ่ายจริง',money(t.actual)+' บาท'+(Array.isArray(t.pex)&&t.pex.length>1?pexTblHtml(t.pex,x,true):'')));
 if(tStaff)h+='<h3 class="rs">เอกสาร</h3>'+docsHtml(r)+(r.email?'<h3 class="rs">แจ้งเตือนผ่านอีเมล</h3><p class="mut" style="margin:0 0 6px;font-size:.88rem">กดแล้วจะเปิดโปรแกรมอีเมลของคุณพร้อมข้อความที่เตรียมไว้ ตรวจแล้วกดส่งเอง</p>'+mailBtn(r):'');
 if(tStaff&&can('doc'))h+='<div class="row" style="margin:16px 0 0">'+(r.cancelled?'<button type="button" class="s" data-act="restore" data-id="'+esc(r.id)+'">↩️ เรียกคืน (ไม่ยกเลิก)</button>':'<button type="button" class="s" data-act="cancel" data-id="'+esc(r.id)+'">🗑️ ยกเลิกรายการ</button>')+'</div>';
+if(tStaff&&auth.user&&(can('doc')||can('money')||can('ret')))h+='<div class="row" style="margin:10px 0 0"><button type="button" class="s" data-act="forms" data-id="'+esc(r.id)+'">🖨️ เอกสารเบิก/ยืมไปราชการ</button></div>';
 return h}
 let ovOpener=null;
 function openOv(title,html){ovOpener=document.activeElement;$('ov-t').textContent=title;$('ov-c').innerHTML=html;show('ov',true);$('ov-x').focus()}
 let ovLock=false;
-function closeOv(){ovLock=false;$('ov-x').hidden=false;show('ov',false);if(ovOpener&&ovOpener.focus)ovOpener.focus()}
+function closeOv(){ovLock=false;const ob=document.querySelector('.ovb');if(ob)ob.classList.remove('frmw');$('ov-x').hidden=false;show('ov',false);if(ovOpener&&ovOpener.focus)ovOpener.focus()}
 $('ov-x').onclick=closeOv;$('ov').addEventListener('click',e=>{if(e.target===$('ov')&&!ovLock)closeOv()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('ov').hidden&&!ovLock)closeOv()});
 function openDetail(id,onlyDocs){const r=T.find(x=>x.id===id);if(!r)return;
@@ -979,7 +991,7 @@ openOv((onlyDocs?'เอกสาร · ':'รายละเอียด · ')+
 document.addEventListener('click',e=>{
 const b=e.target.closest('[data-act]');
 if(b){const a=b.dataset.act,id=b.dataset.id;
-if(a==='detail'||a==='docs')openDetail(id,a==='docs');else if(a==='edit')startEdit(id);else if(a==='loan')gotoLoan(id);else if(a==='ret')gotoReturn(id);else if(a==='cancel')openCancel(id);else if(a==='restore')openRestore(id);else if(a==='fy-prev')fyStep(-1);else if(a==='fy-next')fyStep(1);
+if(a==='detail'||a==='docs')openDetail(id,a==='docs');else if(a==='edit')startEdit(id);else if(a==='forms')openForms(id);else if(a==='loan')gotoLoan(id);else if(a==='ret')gotoReturn(id);else if(a==='cancel')openCancel(id);else if(a==='restore')openRestore(id);else if(a==='fy-prev')fyStep(-1);else if(a==='fy-next')fyStep(1);
 return}
 const ad=e.target.closest('[data-adm]');
 if(ad){const k=ad.dataset.adm,u=ad.dataset.u;if(k==='usave')saveUser(u,ad);else if(k==='reset')openReset(u);else if(k==='del')openDelUser(u);else if(k==='pdel')openPermDel(u);return}
@@ -1831,7 +1843,321 @@ document.querySelectorAll('#p-memo .ap-only').forEach(el=>el.hidden=!ap);
 document.querySelectorAll('#p-memo .exv').forEach(el=>el.hidden=!(el.dataset.t||'').split(' ').includes(t));
 $('ex_leg').textContent=({proc:'ขออนุมัติดำเนินการ — เลือกสิ่งที่จะขออนุมัติ',loan:'ขออนุมัติยืมเงิน',pay:'ขออนุมัติเบิกจ่ายเงิน — เลือกรายการที่เบิก',refund:'ขออนุมัติคืนเงินยืม'})[t]||'';
 if(!ap)exItemsUI();mmRender();mmFit()}
-function memoOpen(){$('mm_type').onchange=()=>{MM.cur={id:''};mmTypeUI()};mmInit();mmTypeUI();mmDeptOpts();mmGen(false);mmRender();$('mm_del').hidden=!(auth&&auth.user);mmLoadList()}
+function memoOpenProj(){$('mm_type').onchange=()=>{MM.cur={id:''};mmTypeUI()};mmInit();mmTypeUI();mmDeptOpts();mmGen(false);mmRender();$('mm_del').hidden=!(auth&&auth.user);mmLoadList()}
+function mmMode(m){MM.mode=m;$('mm_m_trip').setAttribute('aria-pressed',m==='trip');$('mm_m_proj').setAttribute('aria-pressed',m==='proj');show('mm_pick',!m);show('mm_proj',m==='proj');show('mm_trip',m==='trip');
+if(m==='proj')memoOpenProj();else if(m==='trip')tripOpen().then(()=>{if(window.__trFit)window.__trFit()})}
+function memoOpen(){mmMode(MM.mode||'')}
+$('mm_m_trip').onclick=()=>mmMode('trip');$('mm_m_proj').onclick=()=>mmMode('proj');
+</script>
+<script id="forms-js">
+/* ===== ชุดเอกสารเบิก/ยืมไปราชการ (แบบ 8708 ส่วนที่ 1-2, ใบทางเดินเอกสาร, สรุปค่าใช้จ่าย, บก.111, สัญญายืมเงิน) ===== */
+(function(){
+const E=esc,TM=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const iso=s=>/^\d{4}-\d{2}-\d{2}/.test(s||'')?String(s).slice(0,10):'';
+const P3=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso(s));return m?{d:+m[3],m:TM[+m[2]-1],y:+m[1]+543}:{d:'',m:'',y:''}};
+const thL=s=>{const p=P3(s);return p.d?p.d+' '+p.m+' '+p.y:''};
+const m2=v=>nz(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const U=(t,w)=>'<span class="u"'+(w?' style="min-width:'+w+'mm"':'')+'>'+((t===''||t==null)?'&nbsp;':E(t))+'</span>';
+const CK=on=>'<span class="ck">'+(on?'☑':'☐')+'</span>';
+const BT=n=>'('+bahtText(n)+')';
+const SUM=(a,k)=>a.reduce((t,o)=>t+nz(o[k]),0);
+const tot=o=>PXK.reduce((t,k)=>t+nz(o[k[0]]),0);
+const KEY='frm_cfg';
+const loadC=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}};
+const saveC=o=>{try{localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}};
+const parseT=s=>{const m=/^(\d{1,2})[.:](\d{2})$/.exec(String(s||'').trim());return m?(+m[1]*60+ +m[2]):null};
+function dur(d1,t1,d2,t2){const a=iso(d1),b=iso(d2);if(!a||!b)return{d:'',h:''};const x=parseT(t1),y=parseT(t2);if(x==null||y==null)return{d:'',h:''};
+const mins=Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/6e4)+y-x;if(mins<0)return{d:'',h:''};const h=Math.floor(mins/60);return{d:Math.floor(h/24),h:h%24}}
+const dayDiff=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+let S=null;
+function infer(v,tot,den){return(tot>0&&den>0&&Math.abs(tot/den-Math.round(tot/den*100)/100)<1e-9)?String(Math.round(tot/den*100)/100):''}
+// ---------- ตัวช่วยสร้างข้อความ ----------
+const hosp=()=>($('hosp').textContent||'โรงพยาบาลตาพระยา').trim();
+function descs(v,grpPeople){const n=grpPeople.length;
+const aN=grpPeople.filter(p=>nz(p.allowance)>0).length||1,lN=grpPeople.filter(p=>nz(p.lodging)>0).length||1;
+const aD=v.aRate&&v.days?'('+v.aRate+' บาท x '+v.days+' วัน x '+aN+' คน)':'',lD=v.lRate&&v.nights?'('+v.lRate+' บาท x '+v.nights+' คืน x '+(v.rooms||1)*(n>1?lN:1)+' ห้อง)':'';
+let tD=v.trdesc;if(!tD){tD=v.veh||'';if(v.plate)tD+=' ทะเบียน '+v.plate;if(v.km&&v.kmRate)tD+=' ('+v.km+' กม. x '+v.kmRate+' บาท x 2 ไป-กลับ)'}
+return{aD:aD,lD:lD,tD:tD}}
+function amounts(list){const a=SUM(list,'allowance'),l=SUM(list,'lodging'),t=SUM(list,'transport'),o=SUM(list,'registration')+SUM(list,'otherAmt');return{a:a,l:l,t:t,o:o,all:a+l+t+o}}
+function otherDesc(list,r){const reg=SUM(list,'registration'),oth=SUM(list,'otherAmt');const a=[];if(reg)a.push('ค่าลงทะเบียน');if(oth)a.push(r.items&&r.items.otherNote?r.items.otherNote:'อื่นๆ');return a.join(', ')}
+function sigBlock(name,pos,extra){return '<div class="sg"><div>ลงชื่อ'+U('',55)+(extra||'')+'</div><div>('+(name?E(name):U('',45))+')</div><div>ตำแหน่ง '+(pos?E(pos):U('',40))+'</div></div>'}
+// ---------- แบบฟอร์ม ----------
+function fA(p,list,v,r){const am=amounts(list),ds=descs(v,list),grp=list.length>1;
+const row=(l,right)=>'<tr><td>'+l+'</td><td class="rs">'+(right===0?'':(right||'ลงชื่อ'+U('',30)))+'</td></tr>';
+const hasL=!!v.loanNo||nz(v.loanAmt)>0;
+const it=(k,l,val)=>row(CK(nz(val)>0)+' มี '+CK(!nz(val))+' ไม่มี &nbsp; '+l+' '+U(nz(val)?m2(val):'',40)+' บาท');
+return '<div class="pg"><div class="box"><div class="bar">ใบทางเดินเอกสารเบิกค่าใช้จ่ายเดินทางไปราชการ</div><table class="rt">'
++row('<b>หน่วยงาน</b> '+U(p.dept||r.dept,80),0)
++row('<b>ชื่อ-สกุล</b> '+U(p.n+(grp&&p.main?' และคณะ':''),60)+' <b>ตำแหน่ง</b> '+U(p.pos,50))
++row(U(v.title,150))+row('ณ '+U(v.place,140))
++row('บันทึกข้อความฝ่ายเลขที่ '+U(v.apprNo,40)+' ลงวันที่ '+U(thL(v.apprDate),40))
++row('วันที่เดินทางไปราชการ '+U(thL(v.dep),38)+' วันที่เดินทางกลับ '+U(thL(v.ret),38))
++'<tr><td colspan="2" class="sec">การเงินตรวจสอบ</td></tr>'
++row(CK(1)+' บันทึกข้อความเลขที่ '+U(v.clNo,40)+' ลงวันที่ '+U(thL(v.clDate),40))
++row(CK(hasL)+' ยืม &nbsp;&nbsp; '+CK(!hasL)+' ไม่ยืม',0)
++row(CK(hasL)+' สัญญายืมเงินเลขที่ '+U(v.loanNo,40)+' จำนวนเงิน '+U(nz(v.loanAmt)?m2(v.loanAmt):'',30)+' บาท')
++row(CK(hasL)+' วันที่(วันที่จ่ายเงิน) '+U(thL(v.loanDate),38)+' วันครบกำหนด '+U(thL(v.due),38))
++row(CK(0)+' ขอคืน &nbsp;&nbsp; '+CK(1)+' ขอเบิก',0)
++it('a','ค่าเบี้ยเลี้ยงเดินทาง',am.a)+it('l','ค่าที่พัก',am.l)+it('t','ค่าพาหนะ/วัสดุเชื้อเพลิง',am.t)+it('o','ค่าใช้จ่ายอื่นๆ (ค่าลงทะเบียน)',am.o)
++row('<span style="margin-left:60mm"><b>ยอดเงินรวม</b> '+U(m2(am.all),40)+' บาท</span>',0)
++'<tr><td colspan="2" class="sec">บัญชี (บันทึกใบสำคัญค้างจ่าย)</td></tr>'
++row(CK(0)+' ครั้งที่ 1 &nbsp; วันที่ '+U('',50))
++'<tr><td colspan="2" class="sec">การเงิน</td></tr>'
++row(CK(0)+' วันที่ขออนุมัติเบิกจ่าย '+U('',70))+row(CK(0)+' วันที่เขียนเช็ค '+U('',35)+' เลขที่เช็ค '+U('',40))+row(CK(0)+' วันที่รับเช็ค '+U('',70))
++'<tr><td colspan="2" class="sec">บัญชี (บันทึกค่าใช้จ่าย)</td></tr>'
++row(CK(0)+' ล้างหนี้ &nbsp; วันที่ '+U('',50))
++'</table><div class="ft">เอกสารเริ่มจัดทำเมื่อ 28 เมษายน 2560</div></div></div>'}
+function itemsTbl(list,v,r){const am=amounts(list),ds=descs(v,list),n=list.length;
+const days=v.days||'',ni=v.nights||'',line=(l,d,cnt,unit,amt)=>'<tr><td class="il">'+l+(d?' <span class="sm">'+E(d)+'</span>':'')+'</td><td class="ic">'+(cnt?'จำนวน '+E(cnt)+' '+unit:'')+'</td><td class="ic">รวม</td><td class="ir">'+(nz(amt)?m2(amt):'')+'</td><td class="ic">บาท</td></tr>';
+return '<table class="it">'+line('ค่าเบี้ยเลี้ยงเดินทาง',ds.aD,am.a?days:'','วัน',am.a)+line('ค่าที่พัก',ds.lD,am.l?ni:'','วัน',am.l)+line('ค่าพาหนะ',ds.tD,'','',am.t)+line('ค่าใช้จ่ายอื่น ๆ',otherDesc(list,r),'','',am.o)
++'<tr class="tt"><td></td><td></td><td class="ic"><b>รวมเงินทั้งสิ้น</b></td><td class="ir"><b>'+m2(am.all)+'</b></td><td class="ic">บาท</td></tr></table>'+'<div class="bl">จำนวนเงิน (ตัวอักษร) <b>'+(am.all?BT(am.all):'')+'</b></div>'}
+function fB(p,list,v,r){const grp=list.length>1,am=amounts(list),d=dur(v.dep,v.depT,v.ret,v.retT),pd=P3(v.docDate),dp=P3(v.dep),rp=P3(v.ret);
+const ck3=(sel)=>['บ้านพัก','สำนักงาน','ประเทศไทย'].map(x=>CK(sel===x)+x).join(' ');
+const p1='<div class="pg"><table class="hd"><tr><td>สัญญาเงินยืมเลขที่ '+U(v.loanNo,50)+'<br>ชื่อผู้ยืม '+U(v.borrower,60)+'</td><td>วันที่ '+U(thL(v.loanDate),40)+'<br>จำนวนเงิน '+U(nz(v.loanAmt)?m2(v.loanAmt):'',38)+'</td><td class="r">ส่วนที่ 1<br>แบบ 8708</td></tr></table>'
++'<h1>ใบเบิกค่าใช้จ่ายในการเดินทางไปราชการ</h1><div class="rt2">ที่ทำการ '+U(hosp(),50)+'<br>วันที่ '+U(pd.d,12)+' เดือน '+U(pd.m,30)+' พ.ศ. '+U(pd.y,18)+'</div>'
++'<p><b>เรื่อง</b> &nbsp; ขออนุมัติเบิกค่าใช้จ่ายในการเดินทางไปราชการ</p><p><b>เรียน</b> &nbsp; ผู้อำนวยการ'+E(hosp())+'</p>'
++'<p class="ind">ตามคำสั่ง/บันทึก ที่ '+U(v.apprNo,45)+' ลงวันที่ '+U(thL(v.apprDate),40)+' ได้อนุมัติให้</p>'
++'<p><b>ข้าพเจ้า</b> '+U(p.n,55)+' <b>ตำแหน่ง</b> '+U(p.pos,55)+' <b>สังกัด</b> '+U(p.dept||r.dept||hosp(),60)+'</p>'
++'<p>เดินทางไปปฏิบัติราชการ เรื่อง '+U(v.title,130)+'</p><p>ณ '+U(v.place,150)+'</p>'
++'<p>โดยออกเดินทางจาก '+ck3(v.from)+' ตั้งแต่วันที่ '+U(dp.d,10)+' เดือน '+U(dp.m,26)+' พ.ศ. '+U(dp.y,16)+' เวลา '+U(v.depT,14)+' น.</p>'
++'<p>และกลับ '+ck3(v.to2)+' วันที่ '+U(rp.d,10)+' เดือน '+U(rp.m,26)+' พ.ศ. '+U(rp.y,16)+' เวลา '+U(v.retT,14)+' น.</p>'
++'<p>รวมเวลาไปราชการครั้งนี้ '+U(d.d,12)+' วัน '+U(d.h,12)+' ชั่วโมง</p>'
++'<p class="ind">ข้าพเจ้าขอเบิกค่าใช้จ่ายในการเดินทางไปราชการสำหรับ '+CK(!grp)+' ข้าพเจ้า '+CK(grp)+' คณะเดินทาง ดังนี้</p>'
++itemsTbl(list,v,r)
++'<p class="ind" style="margin-top:10px">ข้าพเจ้าขอรับรองว่ารายการที่กล่าวมาข้างต้นเป็นความจริง และหลักฐานการจ่ายที่ส่งมาด้วย จำนวน '+U('',12)+' ฉบับ รวมทั้งจำนวนเงินที่ขอเบิกถูกต้องตามกฎหมายทุกประการ</p>'
++'<div class="sgr"><div>ลงชื่อ'+U('',55)+' ผู้รับเงิน</div><div>('+E(p.n)+')</div><div>ตำแหน่ง '+(p.pos?E(p.pos):U('',40))+'</div></div></div>';
+const p2='<div class="pg"><div class="cn">- 2 -</div><div class="two"><div><p>ได้ตรวจสอบหลักฐานการเบิกจ่ายเงินที่แนบถูกต้องแล้ว<br>เห็นควรอนุมัติให้เบิกจ่ายได้</p>'+sigBlock(v.fin,v.finPos)+'<div>วันที่ '+U('',45)+'</div></div>'
++'<div><p>อนุมัติให้จ่ายได้</p>'+sigBlock(v.dir,v.dirPos)+'<div>วันที่ '+U('',45)+'</div></div></div>'
++'<p class="ind" style="margin-top:14px">ได้รับเงินค่าใช้จ่ายในการเดินทางไปราชการ จำนวนเงิน <b>'+m2(am.all)+'</b> บาท<br>ตัวอักษร <b>'+(am.all?BT(am.all):'')+'</b> ไว้เป็นการถูกต้องแล้ว</p>'
++'<div class="two"><div>'+sigBlock(p.n,p.pos,' ผู้รับเงิน')+'<div>วันที่ '+U('',45)+'</div></div><div>'+sigBlock(v.fin,v.finPos,' ผู้จ่ายเงิน')+'<div>วันที่ '+U('',45)+'</div></div></div>'
++'<p>จากเงินยืมตามสัญญาเลขที่ '+U(v.loanNo,50)+' วันที่ '+U(thL(v.loanDate),45)+'</p>'
++'<p>หมายเหตุ '+U('',140)+'</p><p>'+U('',165)+'</p><p>'+U('',165)+'</p><p>'+U('',165)+'</p>'
++'<div class="note"><b>คำชี้แจง</b><ol><li>กรณีเดินทางเป็นหมู่คณะและจัดทำใบเบิกค่าใช้จ่ายรวมฉบับเดียวกัน หากระยะเวลาในการเริ่มต้นและสิ้นสุดการเดินทางของแต่ละบุคคลแตกต่างกัน ให้แสดงรายละเอียดของวันเวลาที่แตกต่างกันของบุคคลนั้น ในช่องหมายเหตุ</li>'
++'<li>กรณียื่นขอเบิกค่าใช้จ่ายรายบุคคล ให้ผู้ขอรับเงินเป็นผู้ลงลายมือชื่อผู้รับเงินและวันเดือนปีที่รับเงิน กรณีที่มีการยืมเงิน ให้ระบุวันที่ที่ได้รับเงินยืม เลขที่สัญญายืมและวันที่อนุมัติเงินยืมด้วย</li>'
++'<li>กรณีที่ยื่นขอเบิกค่าใช้จ่ายรวมเป็นหมู่คณะ ผู้ขอรับเงินมิต้องลงลายมือชื่อในช่องผู้รับเงิน ทั้งนี้ให้ผู้มีสิทธิแต่ละคนลงลายมือชื่อผู้รับเงินในหลักฐานการจ่ายเงิน (ส่วนที่ 2)</li></ol></div></div>';
+return p1+p2}
+function fC(people,v,r){const L=people.filter(p=>p.on),pd=P3(v.docDate);
+const rows=L.map((p,i)=>'<tr><td class="c">'+(i+1)+'</td><td>'+E(p.n)+'</td><td>'+E(p.pos)+'</td><td class="n">'+(nz(p.allowance)?m2(p.allowance):'')+'</td><td class="n">'+(nz(p.lodging)?m2(p.lodging):'')+'</td><td class="n">'+(nz(p.transport)?m2(p.transport):'')+'</td><td class="n">'+(nz(p.registration)+nz(p.otherAmt)?m2(nz(p.registration)+nz(p.otherAmt)):'')+'</td><td class="n"><b>'+m2(tot(p))+'</b></td><td></td><td></td><td></td></tr>').join('');
+const blank=Array.from({length:Math.max(0,8-L.length)}).map(()=>'<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>').join('');
+const am=amounts(L);
+return '<div class="pg l"><table class="hd"><tr><td></td><td class="r">ส่วนที่ 2<br>แบบ 8708</td></tr></table><h1>หลักฐานการจ่ายเงินค่าใช้จ่ายในการเดินทางไปราชการ</h1>'
++'<div class="c">ชื่อส่วนราชการ '+U(hosp(),60)+' จังหวัด '+U('สระแก้ว',30)+'</div>'
++'<div class="c">ประกอบใบเบิกค่าใช้จ่ายในการเดินทางของ '+U((L[0]?L[0].n:'')+(L.length>1?' และคณะ':''),70)+' ลงวันที่ '+U(pd.d,8)+' เดือน '+U(pd.m,22)+' พ.ศ. '+U(pd.y,14)+'</div>'
++'<table class="grid8"><thead><tr><th rowspan="2" style="width:8mm">ลำดับที่</th><th rowspan="2">ชื่อ-สกุล</th><th rowspan="2">ตำแหน่ง</th><th colspan="4">ค่าใช้จ่าย</th><th rowspan="2">รวม</th><th rowspan="2">ลายมือชื่อ<br>ผู้รับเงิน</th><th rowspan="2">วัน เดือน ปี<br>ที่รับเงิน</th><th rowspan="2">หมายเหตุ</th></tr><tr><th>ค่าเบี้ยเลี้ยง</th><th>ค่าที่พัก</th><th>ค่าพาหนะ</th><th>ค่าใช้จ่ายอื่น</th></tr></thead><tbody>'+rows+blank
++'<tr class="tt"><td colspan="3" class="c"><b>รวม</b></td><td class="n"><b>'+m2(am.a)+'</b></td><td class="n"><b>'+m2(am.l)+'</b></td><td class="n"><b>'+m2(am.t)+'</b></td><td class="n"><b>'+m2(am.o)+'</b></td><td class="n"><b>'+m2(am.all)+'</b></td><td colspan="3" class="sm">ตามสัญญาเงินยืมเลขที่ '+E(v.loanNo)+'<br>วันที่ '+E(thL(v.loanDate))+'</td></tr></tbody></table>'
++'<div class="two" style="margin-top:8px"><div><p>จำนวนเงินรวมทั้งสิ้น (ตัวอักษร) <b>'+(am.all?BT(am.all):'')+'</b></p></div><div>'+sigBlock(v.fin,v.finPos,' ผู้จ่ายเงิน')+'<div>วันที่ '+U('',45)+'</div></div></div>'
++'<div class="note"><b>คำชี้แจง</b> 1. ค่าเบี้ยเลี้ยงและค่าเช่าที่พักให้ระบุอัตราวันละและจำนวนวันที่ขอเบิกของแต่ละบุคคลในช่องหมายเหตุ<br>2. ให้ผู้มีสิทธิแต่ละคนเป็นผู้ลงลายมือชื่อผู้รับเงินและวันเดือนปีที่ได้รับเงิน กรณีเป็นการรับจากเงินยืมให้ระบุวันที่ที่ได้รับจากเงินยืม<br>3. ผู้จ่ายเงินหมายถึงผู้ที่ขอยืมเงินจากทางราชการ และจ่ายเงินยืมนั้นให้แก่ผู้เดินทางแต่ละคนเป็นผู้ลงลายมือชื่อผู้จ่ายเงิน</div></div>'}
+function fD(p,list,v,r){const grp=list.length>1,am=amounts(list),dp=P3(v.dep),rp=P3(v.ret),pd=P3(v.docDate),isB=v.fund==='เงินบำรุง';
+return '<div class="pg"><h1 style="margin-top:6mm">สรุปค่าใช้จ่ายในการเดินทางไปประชุม/สัมมนา/อบรมระยะสั้น</h1>'
++'<p class="c">'+CK(1)+' ได้รับมอบหมาย &nbsp;&nbsp;&nbsp; '+CK(0)+' ขอสมัครไป</p>'
++'<p><b>ข้าพเจ้า</b> '+U(p.n+(grp?' และคณะ':''),55)+' <b>ตำแหน่ง</b> '+U(p.pos,50)+' <b>สังกัด</b> '+U(p.dept||r.dept||hosp(),50)+'</p>'
++'<p>เดินทางไปปฏิบัติราชการ เรื่อง '+U(v.title,130)+'</p><p>ณ '+U(v.place,150)+'</p>'
++'<p>ระหว่างวันที่ '+U(dp.d,10)+' เดือน '+U(dp.m,24)+' พ.ศ. '+U(dp.y,14)+' ถึงวันที่ '+U(rp.d,10)+' เดือน '+U(rp.m,24)+' พ.ศ. '+U(rp.y,14)+'</p>'
++'<h2 class="c">รายละเอียดค่าใช้จ่าย</h2>'+itemsTbl(list,v,r)
++'<p style="margin-top:12px">'+CK(isB)+' เงินบำรุง</p><p>'+CK(!isB)+' เงินงบประมาณ จาก '+U('',50)+' หมวด '+U('',40)+'</p><p style="margin-left:7mm">งาน '+U('',60)+' รหัส '+U('',50)+'</p>'
++'<p class="c" style="margin-top:10px"><b>รวมค่าใช้จ่ายทั้งหมด</b> '+U(m2(am.all),40)+' บาท<br>ตัวอักษร <b>'+(am.all?BT(am.all):'')+'</b></p>'
++'<div class="sgr" style="margin-top:14px"><div>ลงชื่อ'+U('',55)+'</div><div>('+E(p.n)+')</div><div>ตำแหน่ง '+(p.pos?E(p.pos):U('',40))+'</div><div>'+pd.d+' / '+pd.m+' / '+pd.y+'</div></div>'
++'<p class="note"><b>หมายเหตุ</b> สรุปค่าใช้จ่ายแนบส่งพร้อมรายงานการเดินทางทุกครั้ง</p></div>'}
+function fE(p,v,r){const t=nz(p.transport);if(!t)return '';const half=Math.round(t*50)/100,rest=Math.round((t-half)*100)/100,pd=P3(v.docDate);
+const kmTxt=(v.km&&v.kmRate)?'('+v.km+' กม. x '+v.kmRate+' บาท)':'';
+const veh=(v.veh||'')+(v.plate?' ทะเบียน '+v.plate:'');
+const mk=(date,f,to,amt)=>{const dd=P3(date);return '<tr><td class="c">'+(dd.d?dd.d+' '+dd.m:'')+'<br>'+dd.y+'</td><td>- ชดเชยค่าพาหนะ '+E(veh)+'<br>จาก '+E(f)+' ถึง '+E(to)+'<br>'+E(kmTxt)+'</td><td class="n">'+m2(amt)+'</td><td></td></tr>'};
+const pad=Array.from({length:7}).map(()=>'<tr><td>&nbsp;</td><td></td><td></td><td></td></tr>').join('');
+return '<div class="pg"><h1 style="margin-top:4mm">ใบรับรองแทนใบเสร็จรับเงิน</h1><div class="r" style="text-align:right;margin-top:-9mm;font-weight:700">แบบ บก. 111</div><p class="c"><b>ส่วนราชการ</b> '+E(hosp())+'</p>'
++'<table class="grid8 b111"><thead><tr><th style="width:26mm">วัน เดือน ปี</th><th>รายการ</th><th style="width:30mm">จำนวนเงิน<br>บาท</th><th style="width:26mm">หมายเหตุ</th></tr></thead><tbody>'
++mk(v.dep,v.routeFrom,v.routeTo,half)+mk(v.ret,v.routeTo,v.routeFrom,rest)+pad+'<tr class="tt"><td colspan="2" class="c"><b>รวม</b></td><td class="n"><b>'+m2(t)+'</b></td><td></td></tr></tbody></table>'
++'<p>จำนวนเงิน (ตัวอักษร) <b>'+BT(t)+'</b></p>'
++'<p class="ind">ข้าพเจ้า '+U(p.n,55)+' ตำแหน่ง '+U(p.pos,50)+'<br>สังกัด '+E(hosp())+' ขอรับรองว่ารายจ่ายข้างต้นนี้ไม่อาจเรียกใบเสร็จรับเงินจากผู้รับได้ และข้าพเจ้าได้จ่ายไปในงานของทางราชการโดยแท้</p>'
++'<div class="sgr" style="margin-top:12mm"><div>ลงชื่อ'+U('',60)+'</div><div>('+E(p.n)+')</div><div>วันที่ '+U(pd.d,10)+' เดือน '+U(pd.m,24)+' พ.ศ. '+U(pd.y,14)+'</div></div></div>'}
+function fF(list,v,r){const am=amounts(list),total=nz(v.loanAmt)||am.all,ds=descs(v,list),pd=P3(v.docDate),dp=P3(v.dep),rp=P3(v.ret),b=list[0]||{},bw=v.borrower||b.n||'';
+const bp=(list.find(p=>p.n===bw)||b).pos||'',bd=(list.find(p=>p.n===bw)||b).dept||r.dept||'';
+const rows=[['ค่าเบี้ยเลี้ยงเดินทาง'+(ds.aD?' '+ds.aD:''),am.a],['ค่าที่พัก'+(ds.lD?' '+ds.lD:''),am.l],['ค่าพาหนะ'+(ds.tD?' '+ds.tD:''),am.t],['ค่าใช้จ่ายอื่น ๆ'+(otherDesc(list,r)?' ('+otherDesc(list,r)+')':''),am.o]].filter(x=>nz(x[1])>0);
+const tr=rows.map((x,i)=>'<tr><td>'+(i+1)+'. '+E(x[0])+'</td><td class="n">'+m2(x[1])+'</td></tr>').join('')||'<tr><td>&nbsp;</td><td></td></tr>';
+const sum=am.all;
+return '<div class="pg"><table class="hd"><tr><td></td><td class="r" style="width:75mm;white-space:nowrap">สัญญาเลขที่ '+U(v.loanNo,40)+'<br>วันที่ '+U(thL(v.loanDate||v.docDate),40)+'</td></tr></table><h1>สัญญาการยืมเงิน</h1>'
++'<p class="c">ส่วนราชการ '+U(hosp(),60)+'</p>'
++'<p>ข้าพเจ้า '+U(bw,55)+' ตำแหน่ง '+U(bp,50)+'<br>สังกัด '+U(bd,60)+' มีความประสงค์ขอยืม'+E(v.fund)+' จาก'+E(hosp())+' เพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการ</p>'
++'<p>เรื่อง '+U(v.title,130)+'<br>ณ '+U(v.place,150)+'<br>ตั้งแต่วันที่ '+U(thL(v.dep),42)+' ถึงวันที่ '+U(thL(v.ret),42)+(list.length>1?' (ผู้เดินทางรวม '+list.length+' คน)':'')+' ดังรายการต่อไปนี้</p>'
++'<table class="grid8"><thead><tr><th>รายการ</th><th style="width:34mm">จำนวนเงิน (บาท)</th></tr></thead><tbody>'+tr+'<tr class="tt"><td class="c"><b>รวม</b></td><td class="n"><b>'+m2(total)+'</b></td></tr></tbody></table>'
++'<p>จำนวนเงิน (ตัวอักษร) <b>'+(total?BT(total):'')+'</b></p>'
++'<p class="ind">ข้าพเจ้าสัญญาว่าจะปฏิบัติตามระเบียบของทางราชการทุกประการ และจะนำใบสำคัญคู่จ่ายที่ถูกต้องพร้อมทั้งเงินเหลือจ่าย (ถ้ามี) ส่งใช้ภายใน 30 วัน นับแต่วันที่ได้รับเงินยืมนี้ (กำหนดส่งใช้ภายในวันที่ '+U(thL(v.due),40)+') ถ้าข้าพเจ้าไม่ส่งตามกำหนด ข้าพเจ้ายินยอมให้หักเงินเดือน ค่าจ้าง เบี้ยหวัด บำเหน็จ บำนาญ หรือเงินอื่นใดที่ข้าพเจ้าพึงได้รับจากทางราชการ ชดใช้จำนวนเงินที่ยืมไปจนครบถ้วนได้ทันที</p>'
++'<div class="sgr" style="margin-top:8mm"><div>ลงชื่อ'+U('',55)+' ผู้ยืม</div><div>('+E(bw)+')</div><div>วันที่ '+U(pd.d,10)+' เดือน '+U(pd.m,24)+' พ.ศ. '+U(pd.y,14)+'</div></div>'
++'<div class="two" style="margin-top:8mm"><div><p><b>ผู้อนุมัติ</b><br>อนุมัติให้ยืมเงินได้ตามจำนวนข้างต้น</p>'+sigBlock(v.dir,v.dirPos)+'<div>วันที่ '+U('',45)+'</div></div>'
++'<div><p><b>ใบรับเงิน</b><br>ได้รับเงินยืมจำนวน <b>'+m2(total)+'</b> บาท ไปถูกต้องแล้ว</p>'+sigBlock(bw,bp,' ผู้รับเงิน')+'<div>วันที่ '+U(thL(v.loanDate),45)+'</div></div></div>'
++'<div class="two" style="margin-top:6mm"><div></div><div><p>จ่ายเงินแล้ว</p>'+sigBlock(v.fin,v.finPos,' ผู้จ่ายเงิน')+'<div>วันที่ '+U('',45)+'</div></div></div></div>'}
+const CSS=`*{box-sizing:border-box}body{margin:0;background:#fff;color:#000;font-family:Sarabun,'TH Sarabun New',Tahoma,'Segoe UI Symbol','Noto Sans Thai',sans-serif;font-size:14.5px;line-height:1.55}
+.pg{width:210mm;min-height:297mm;padding:13mm 16mm;page-break-after:always;position:relative}.pg.l{width:297mm;min-height:210mm;padding:9mm 12mm;page:land}
+h1{text-align:center;font-size:18px;margin:2mm 0 3mm;font-weight:700}h2{font-size:15px;margin:3mm 0}.c{text-align:center}.r{text-align:right}.n{text-align:right;white-space:nowrap}.sm{font-size:12.5px}.ind{text-indent:12mm}
+p{margin:1.6mm 0}.u{display:inline-block;border-bottom:1px dotted #000;padding:0 2px;min-height:1.1em;vertical-align:baseline}.ck{font-family:'Segoe UI Symbol','DejaVu Sans',sans-serif;font-size:1.05em}
+.box{border:1.2px solid #000;min-height:270mm;position:relative}.bar{background:#d9d9d9;border-bottom:1.2px solid #000;text-align:center;font-weight:700;font-size:17px;padding:1.5mm}
+table{border-collapse:collapse;width:100%}.rt td{padding:1.3mm 3mm;vertical-align:middle}.rt td.rs{width:58mm;white-space:nowrap}.rt td.sec{font-weight:700;text-decoration:underline;padding-top:3mm}.ft{position:absolute;right:4mm;bottom:2mm;font-size:12.5px;font-weight:700}
+.hd td{vertical-align:top;font-size:13.5px}.hd td.r{width:34mm}.rt2{text-align:right;margin:0 0 3mm}
+.it{margin-top:2mm}.it td{padding:.8mm 1mm;vertical-align:top}.it .il{width:48%}.it .ic{white-space:nowrap}.it .ir{text-align:right;width:26mm;border-bottom:1px dotted #000}.it tr.tt td{padding-top:2mm}.bl{margin-top:2mm}
+.two>div>div:not(.sg){text-align:center}.sg,.sgr{margin-top:3mm;line-height:1.7}.sgr{width:90mm;margin-left:auto;text-align:center}.sg{text-align:center}.two{display:grid;grid-template-columns:1fr 1fr;gap:6mm}.cn{text-align:center;margin-bottom:6mm}
+.note{font-size:12.5px;margin-top:6mm;line-height:1.5}.note ol{margin:1mm 0 0 5mm;padding:0}
+.grid8{margin-top:3mm}.grid8 th,.grid8 td{border:1px solid #000;padding:1.2mm 1.6mm;vertical-align:top;font-size:13px}.grid8 th{text-align:center;background:#f2f2f2}.grid8 tr.tt td{background:#fafafa}.b111 td{height:7mm}
+@page{size:A4}@page land{size:A4 landscape}@media print{.pg{page-break-after:always}.pg:last-child{page-break-after:auto}}`;
+// ================= โหมดไปราชการ (ทำบันทึกข้อความ > ไปราชการ) =================
+const BLANK_R={id:'',no:'',title:'',place:'',name:'',companions:[],dept:'',category:'ไปราชการ',source:'',raw:{},items:{},loan:'',loanData:null,refundData:null,returnData:null,due:''};
+function makeState(r0){
+const r=r0||BLANK_R;
+const nm=r0?trav(r):[''],bs=r0?budgetShares(r):[{allowance:0,lodging:0,registration:0,transport:0,otherAmt:0,tot:0}];
+const src=(r.refundData&&Array.isArray(r.refundData.pex)&&r.refundData.pex.length)?r.refundData.pex:(r.loanData&&Array.isArray(r.loanData.pex)&&r.loanData.pex.length)?r.loanData.pex:null;
+const people=nm.map((n,i)=>{let o=null;if(src){const e=pexGet(src,n,i);if(e)o=numObj(e)}if(!o)o=numObj(bs[i]);const de=(typeof dirFind==='function'&&dirFind(n))||{};return Object.assign({n:n,pos:de.pos||'',dept:String(de.dept||(i===0?r.dept:'')).split('→')[0].trim(),on:true},o)});
+const c=loadC(),a=iso(r.dateFrom),b=iso(r.dateTo)||a,days=a?dayDiff(a,b)+1:'',nights=days?Math.max(days-1,0):'';
+const ln=r.loanData||{},rf=r.refundData||{},rt=r.returnData||{};
+const aw=people.find(p=>nz(p.allowance)>0),lg=people.find(p=>nz(p.lodging)>0);
+const hs=($('hosp').textContent||'').trim()||'โรงพยาบาลตาพระยา';
+const g0=MEMO_GROUPS.find(g=>g[0]===String(r.dept||'').split('→')[0].trim());
+const actual=rt.actual!=null?rt.actual:(rf.total!=null?rf.total:'');
+S={r:r,people:people,v:{
+title:r.title||'',place:r.place||'',
+mode:nm.length>1?'grp':'ind',docDate:ymd(),apprNo:'',apprDate:'',clNo:rf.letterNo||'',clDate:iso(rf.letterDate),
+dept:c.dept&&!r0?c.dept:(g0?g0[0]:(c.dept||'')),tel:c.tel||'',no:'',to:c.to||('ผู้อำนวยการ'+hs),invFrom:'',invNo:'',invDate:'',
+rule:c.rule||'ระเบียบกระทรวงการคลังว่าด้วยการเบิกจ่ายค่าใช้จ่ายในการเดินทางไปราชการ และที่แก้ไขเพิ่มเติม',
+dep:a,depT:c.depT||'08.00',ret:b,retT:c.retT||'16.30',from:'สำนักงาน',to2:'สำนักงาน',
+veh:'รถยนต์ส่วนบุคคล',plate:'',km:'',kmRate:c.kmRate||'4',routeFrom:(c.routeFrom||hs),routeTo:r.place||'',trdesc:'',
+days:String(days),aRate:aw?infer(0,nz(aw.allowance),days||0):'',nights:String(nights),lRate:lg?infer(0,nz(lg.lodging),nights||0):'',rooms:'1',
+loanNo:r.loan||'',loanDate:iso(ln.financeDate),loanAmt:ln.total!=null?String(ln.total):'',due:iso(r.due),actual:actual!==''?String(actual):'',retCash:'',
+borrower:nm[0]||'',fund:/บำรุง/.test(r.source||'')?'เงินบำรุง':(r.source?'เงินงบประมาณ':'เงินบำรุง'),
+fin:c.fin||'',finPos:c.finPos||'เจ้าพนักงานการเงินและบัญชี',dir:c.dir||'',dirPos:c.dirPos||('ผู้อำนวยการ'+hs),
+cmt:c.cmt||'',cmtN:c.cmtN||'',cmtP:c.cmtP||'',propN:nm[0]||'',propP:(people[0]&&people[0].pos)||''}};
+return S}
+// ---------- ส่วนกรอกข้อมูล ----------
+const DOCS=[['nav','1. ใบนำทาง (ใบทางเดินเอกสารเบิกค่าใช้จ่าย)','m'],['apr','2. ขออนุมัติไปราชการ','m'],['sum','3. ใบสรุปรายละเอียดของผู้เดินทาง (คนละ 1 ฉบับ)','m'],['loan','4. ขออนุมัติยืมเงินไปราชการ','m'],['pay','5. ขออนุมัติเบิกจ่ายเงินไปราชการ','m'],['ret','6. ขออนุมัติคืนเงินยืม','m'],
+['f8708','แบบ 8708 ใบเบิกค่าใช้จ่ายในการเดินทางไปราชการ (ส่วนที่ 1)','x'],['fp2','แบบ 8708 ส่วนที่ 2 หลักฐานการจ่ายเงิน (กรณีไปเป็นคณะ)','x'],['fb111','ใบรับรองแทนใบเสร็จรับเงิน (บก.111)','x'],['fcon','สัญญายืมเงิน','x']];
+const MEMOK=['apr','loan','pay','ret'];
+// หมวดข้อมูลที่แต่ละเอกสารต้องใช้: h=หัวบันทึก p=ผู้เดินทาง/ค่าใช้จ่าย t=การเดินทาง d=รายละเอียดค่าใช้จ่าย l=เงินยืม s=ผู้ลงนาม
+const NEED={nav:'ptd l',apr:'h pt d s',sum:'p t d s',loan:'h p t d l s',pay:'h p t d l s',ret:'h p t l s',f8708:'p t d l s',fp2:'p l s',fb111:'p t d s',fcon:'p t d l s'};
+const need=(k)=>(NEED[S.doc]||'').split(' ').join('').indexOf(k)>-1;
+function fieldsHtml(){const v=S.v,r=S.r,ro=!!r.id;
+const inp=(k,l,t,w)=>'<div'+(w?' class="w"':'')+'><label for="f_'+k+'">'+l+'</label><input id="f_'+k+'" type="'+(t||'text')+'" value="'+E(v[k])+'" autocomplete="off"></div>';
+const sel=(k,l,o)=>'<div><label for="f_'+k+'">'+l+'</label><select id="f_'+k+'">'+o.map(x=>'<option value="'+E(x[0])+'"'+(v[k]===x[0]?' selected':'')+'>'+E(x[1])+'</option>').join('')+'</select></div>';
+const ta=(k,l,w)=>'<div'+(w?' class="w"':'')+'><label for="f_'+k+'">'+l+'</label><textarea id="f_'+k+'" style="min-height:50px">'+E(v[k])+'</textarea></div>';
+const fs=(k,t,b)=>need(k)?'<fieldset class="frs"><legend>'+t+'</legend>'+b+'</fieldset>':'';
+const g3=[['บ้านพัก','บ้านพัก'],['สำนักงาน','สำนักงาน'],['ประเทศไทย','ประเทศไทย']];
+let h='';
+const isMemo=MEMOK.indexOf(S.doc)>-1;
+h+=fs('h','หัวบันทึกข้อความ','<div class="grid"><div class="w"><label for="f_dept">กลุ่มงาน</label><select id="f_dept"><option value="">— เลือกกลุ่มงาน —</option>'+MEMO_GROUPS.map(g=>'<option'+(v.dept===g[0]?' selected':'')+'>'+E(g[0])+'</option>').join('')+'</select></div>'
++inp('tel','โทรต่อ (เบอร์ต่อ)')+'<div><label for="f_no">ที่ (กรอกเฉพาะเลขลำดับหนังสือ)</label><div class="pf"><span id="f_nop"></span><input id="f_no" value="'+E(v.no)+'" placeholder="เช่น 1655"></div></div>'+inp('docDate','วันที่','date')+inp('to','เรียน')+'</div>');
+h+=fs('p','ผู้เดินทางและค่าใช้จ่าย (บาท)','<div class="tw"><table class="t pex"><thead><tr><th>ออก</th><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th>'+PXK.map(k=>'<th class="n">'+k[2]+'</th>').join('')+'<th></th></tr></thead><tbody>'
++S.people.map((p,i)=>'<tr><td><input type="checkbox" data-fp="'+i+'" data-fk="on"'+(p.on?' checked':'')+' aria-label="ออกเอกสารให้ '+E(p.n)+'"></td><td>'+(ro?E(p.n):'<input data-fp="'+i+'" data-fk="n" value="'+E(p.n)+'" placeholder="ชื่อ-สกุล" style="min-width:140px">')+'</td><td><input data-fp="'+i+'" data-fk="pos" value="'+E(p.pos)+'" placeholder="ตำแหน่ง" style="min-width:140px"></td>'+PXK.map(k=>'<td class="n"><input type="number" min="0" step="any" data-fp="'+i+'" data-fk="'+k[0]+'" value="'+E(nz(p[k[0]])||'')+'"></td>').join('')+'<td>'+((!ro&&S.people.length>1)?'<button type="button" class="s sm" data-fdel="'+i+'">ลบ</button>':'')+'</td></tr>').join('')+'</tbody></table></div>'+(ro?'':'<button type="button" class="s" id="f_addp" style="margin-top:6px">➕ เพิ่มผู้เดินทาง</button>')
++(['nav','f8708'].indexOf(S.doc)>-1?'<div class="grid" style="margin-top:6px">'+sel('mode','รูปแบบ',[['ind','แยกรายบุคคล (คนละฉบับ)'],['grp','รวมคณะ (ในนามผู้ขอ)']])+'</div>':''));
+h+=fs('t','ข้อมูลการเดินทาง','<div class="grid">'+inp('title','เรื่อง / ชื่อกิจกรรมที่ไปราชการ','text',1)+inp('place','สถานที่','text',1)
++(isMemo?inp('invFrom','หน่วยงานที่เชิญ/จัด (ถ้ามี)')+inp('invNo','หนังสือเชิญ เลขที่ (ถ้ามี)')+inp('invDate','ลงวันที่ (หนังสือเชิญ)','date'):'')
++(['loan','pay','ret'].indexOf(S.doc)>-1||['nav','f8708','fcon'].indexOf(S.doc)>-1?inp('apprNo','บันทึกขออนุมัติไปราชการ/คำสั่ง เลขที่')+inp('apprDate','ลงวันที่ (ได้รับอนุมัติ)','date'):'')
++inp('dep','ออกเดินทางวันที่','date')+inp('depT','เวลาออกเดินทาง (เช่น 08.00)')+inp('ret','กลับวันที่','date')+inp('retT','เวลากลับ (เช่น 16.30)')
++(['f8708'].indexOf(S.doc)>-1?sel('from','ออกเดินทางจาก',g3)+sel('to2','เดินทางกลับถึง',g3):'')+'</div>');
+h+=fs('d','รายละเอียดค่าใช้จ่าย','<div class="grid">'+inp('days','จำนวนวัน (เบี้ยเลี้ยง)')+inp('aRate','เบี้ยเลี้ยง บาท/วัน/คน')+inp('nights','จำนวนคืน (ที่พัก)')+inp('lRate','ที่พัก บาท/คืน/ห้อง')+inp('rooms','จำนวนห้อง')
++inp('veh','ยานพาหนะ')+inp('plate','ทะเบียนรถ')+inp('km','ระยะทางเที่ยวเดียว (กม.)')+inp('kmRate','อัตรา บาท/กม.')+inp('routeFrom','เส้นทาง จาก')+inp('routeTo','ถึง')+inp('trdesc','รายละเอียดค่าพาหนะ (พิมพ์เองถ้าไม่ใช้แบบคำนวณ)',0,1)
++(isMemo?inp('rule','ระเบียบที่อ้างถึง','text',1):'')+'</div>');
+h+=fs('l','เงินยืมและการคืนเงิน','<div class="grid">'+inp('borrower','ผู้ยืม')+sel('fund','ประเภทเงิน',[['เงินบำรุง','เงินบำรุง'],['เงินงบประมาณ','เงินงบประมาณ']])+inp('loanNo','สัญญายืมเงินเลขที่')+inp('loanDate','วันที่รับเงินยืม','date')+inp('loanAmt','จำนวนเงินยืม (บาท)','number')+inp('due','วันครบกำหนดคืน','date')
++inp('clNo','บันทึกขออนุมัติเบิก เลขที่')+inp('clDate','ลงวันที่ (บันทึกขออนุมัติเบิก)','date')
++(S.doc==='ret'?inp('actual','ใช้จ่ายจริง (บาท) เว้นว่าง=รวมตามตาราง','number')+inp('retCash','คืนเงินสด (บาท) เว้นว่าง=คำนวณ','number'):'')+'</div>');
+h+=fs('s','ผู้ลงนาม','<div class="grid">'+(isMemo?inp('propN','ผู้เสนอ — ชื่อ')+inp('propP','ผู้เสนอ — ตำแหน่ง')+ta('cmt','ความเห็นผู้บังคับบัญชาขั้นต้น (ไม่บังคับ)',1)+inp('cmtN','ผู้ให้ความเห็น — ชื่อ')+inp('cmtP','ผู้ให้ความเห็น — ตำแหน่ง'):'')
++inp('fin','ชื่อเจ้าหน้าที่การเงิน (ผู้จ่ายเงิน)')+inp('finPos','ตำแหน่ง (การเงิน)')+inp('dir','ชื่อผู้อำนวยการ (ผู้อนุมัติ)')+inp('dirPos','ตำแหน่ง (ผู้อนุมัติ)')+'</div>');
+return h}
+function gather(){const v=S.v;Object.keys(v).forEach(k=>{const el=$('f_'+k);if(el)v[k]=el.value.trim()});
+document.querySelectorAll('#tr_f [data-fp]').forEach(el=>{const p=S.people[+el.dataset.fp],k=el.dataset.fk;if(!p)return;p[k]=k==='on'?el.checked:((k==='pos'||k==='n')?el.value.trim():(parseFloat(el.value)||0))})}
+function updNo(){const el=$('f_nop');if(!el)return;const g=MEMO_GROUPS.find(x=>x[0]===S.v.dept);el.textContent=MEMO_NOP()+(g?g[1]+'/':'…/')}
+// ---------- ข้อความบันทึกข้อความ ----------
+const memoNo=v=>{const b=v.no||'';const g=MEMO_GROUPS.find(x=>x[0]===v.dept),pre=MEMO_NOP()+(g?g[1]+'/':'…/');return b.indexOf('/')>-1?MEMO_NOP()+b:pre+b};
+const joinTH=a=>a.length<2?(a[0]||''):a.slice(0,-1).join(' ')+' และ'+a[a.length-1];
+function mhead(v,subject){const hs=($('hosp').textContent||'').trim()||'โรงพยาบาลตาพระยา',e=s=>E(s).replace(/\n/g,'<br>'),t=mmTh;
+return '<div class="tt"><div class="gr"><img src="'+GARUDA+'" alt=""></div>บันทึกข้อความ</div>'
++'<p class="ln"><b>ส่วนราชการ</b>&nbsp; '+e(hs)+(v.dept?' '+e(v.dept):'')+' โทร '+e(t(MEMO_TEL()))+(v.tel?' ต่อ '+e(t(v.tel)):'')+'</p>'
++'<div class="two ln"><div><b>ที่</b>&nbsp; '+e(t(memoNo(v)))+'</div><div class="r"><b>วันที่</b>&nbsp; '+mmDate(v.docDate)+'</div></div>'
++'<p class="ln"><b>เรื่อง</b>&nbsp; '+e(t(subject))+'</p><p class="ln">เรียน&nbsp; '+e(t(v.to))+'</p>'}
+function msigs(v,e,th){const sg=(n,p)=>(n||p)?'<div class="sig">'+(n?'('+e(th(n))+')':'')+(n&&p?'\n':'')+e(th(p.replace(/\s*\|\s*/g,'\n')))+'</div>':'';
+let h=(v.propN||v.propP)?'<div class="sp"></div>'+sg(v.propN,v.propP):'';
+if(v.cmt||v.cmtN||v.cmtP)h+='<div class="cmt"><div class="ln">เรียน&nbsp; '+e(th(v.to))+'</div>'+(v.cmt?'<div class="ln">-&nbsp; '+e(th(v.cmt))+'</div>':'')+'<div class="sp"></div>'+sg(v.cmtN,v.cmtP)+'</div>';
+if(v.dir||v.dirPos)h+='<div class="ap"><b>อนุมัติ</b><div class="sp"></div>'+(v.dir?'('+e(th(v.dir))+')<br>':'')+e(th(v.dirPos))+'</div>';
+return h}
+function tripText(list,v){const hs=($('hosp').textContent||'').trim()||'โรงพยาบาลตาพระยา';
+const names=joinTH(list.map(p=>p.n).filter(Boolean))||'.....',many=list.length>1;
+const dt=v.dep?(v.ret&&v.ret!==v.dep?'ระหว่างวันที่ '+thL(v.dep)+' ถึงวันที่ '+thL(v.ret):'ในวันที่ '+thL(v.dep)):'';
+const where=v.place?' ณ '+v.place:'';
+const am=amounts(list),ds=descs(v,list);
+const lines=[];if(nz(am.a))lines.push('ค่าเบี้ยเลี้ยงเดินทาง'+(ds.aD?' '+ds.aD:'')+' เป็นเงิน '+m2(am.a)+' บาท');
+if(nz(am.l))lines.push('ค่าที่พัก'+(ds.lD?' '+ds.lD:'')+' เป็นเงิน '+m2(am.l)+' บาท');
+if(nz(am.t))lines.push('ค่าพาหนะ'+(ds.tD?' '+ds.tD:'')+' เป็นเงิน '+m2(am.t)+' บาท');
+if(nz(am.o))lines.push('ค่าใช้จ่ายอื่น ๆ'+(otherDesc(list,S.r)?' ('+otherDesc(list,S.r)+')':'')+' เป็นเงิน '+m2(am.o)+' บาท');
+const numbered=lines.map((x,i)=>'๓.'+(i+1)+' '+x);
+const total=am.all;return{hs,names,many,dt,where,am,lines,total,list,
+ev:(v.invFrom?v.invFrom+' ได้กำหนด':'มีกำหนด')+(v.invNo?'ตามหนังสือที่ '+v.invNo+(v.invDate?' ลงวันที่ '+thL(v.invDate):'')+' ':'')+'จัด'+(v.title||'.....')+(dt?' '+dt:'')+where,
+appr:(v.apprNo?'ตามบันทึกข้อความที่ '+v.apprNo+(v.apprDate?' ลงวันที่ '+thL(v.apprDate):'')+' ':'ตามที่ ')+hs+' ได้อนุมัติให้ '+names+' เดินทางไปราชการ เรื่อง '+(v.title||'.....')+(dt?' '+dt:'')+where}}
+function memoDoc(kind,list,v){const x=tripText(list,v),th=mmTh,e=s=>E(s).replace(/\n/g,'<br>');let subj,secs;
+const money=x.total?m2(x.total)+' บาท ('+bahtText(x.total)+')':'.....';
+const prop='จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ';
+if(kind==='apr'){subj='ขออนุมัติเดินทางไปราชการ';
+secs=[['เรื่องเดิม',x.ev?'ตามที่'+(/^มีกำหนด/.test(x.ev)?'':' ')+x.ev:'ตามที่ .....'],
+['ข้อเท็จจริง',(v.dept||'หน่วยงาน')+' พิจารณาแล้วเห็นว่าการเข้าร่วม'+(v.title||'.....')+' เป็นประโยชน์ต่อการปฏิบัติงานของหน่วยงาน จึงเห็นควรให้'+(x.many?'เจ้าหน้าที่ จำนวน '+list.length+' คน':'เจ้าหน้าที่')+'เข้าร่วมดังกล่าว'],
+['ข้อพิจารณา',['ในการนี้ '+(v.dept||'หน่วยงาน')+' จึงขออนุมัติให้ '+x.names+(list.length&&list[0].pos&&!x.many?' ตำแหน่ง '+list[0].pos:'')+' เดินทางไปราชการ เรื่อง '+(v.title||'.....')+(x.dt?' '+x.dt:'')+x.where+(v.veh?' โดยใช้'+v.veh+(v.plate?' ทะเบียน '+v.plate:''):'')+' ทั้งนี้ขอเบิกค่าใช้จ่ายในการเดินทางจาก'+v.fund+' ตาม'+v.rule+(x.total?' รวมเป็นเงินทั้งสิ้น '+money:'')+(x.lines.length?' ประกอบด้วย':'')].concat(x.lines.map((l,i)=>'๓.'+(i+1)+' '+l))],
+['ข้อเสนอ',prop]];
+if(x.many)secs[2][1].push('รายชื่อผู้เดินทาง: '+list.map((p,i)=>(i+1)+'. '+p.n+(p.pos?' ('+p.pos+')':'')).join(' '))}
+else if(kind==='loan'){subj='ขออนุมัติยืมเงินเพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการ';const amt=nz(v.loanAmt)||x.total,mt=amt?m2(amt)+' บาท ('+bahtText(amt)+')':'.....';
+secs=[['เรื่องเดิม',x.appr],['ข้อเท็จจริง','ข้าพเจ้า '+(v.borrower||'.....')+(list.length?' ตำแหน่ง '+((list.find(p=>p.n===v.borrower)||list[0]).pos||'.....'):'')+' มีความประสงค์ขอยืม'+v.fund+' เพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการดังกล่าว'],
+['ข้อพิจารณา',['ในการนี้ จึงขออนุมัติยืม'+v.fund+' จำนวน '+mt+(x.many?' สำหรับผู้เดินทาง จำนวน '+list.length+' คน':'')+' โดยมีรายละเอียดดังนี้'].concat(x.lines.map((l,i)=>'๓.'+(i+1)+' '+l)).concat(['ทั้งนี้ จะนำใบสำคัญคู่จ่ายและเงินเหลือจ่าย (ถ้ามี) ส่งใช้ภายใน ๓๐ วัน นับแต่วันที่ได้รับเงินยืม'])],
+['ข้อเสนอ',prop]]}
+else if(kind==='pay'){subj='ขออนุมัติเบิกจ่ายค่าใช้จ่ายในการเดินทางไปราชการ';
+secs=[['เรื่องเดิม',x.appr+(v.loanNo?' และได้รับอนุมัติเงินยืมตามสัญญาเลขที่ '+v.loanNo+(v.loanDate?' ลงวันที่ '+thL(v.loanDate):''):'')],
+['ข้อเท็จจริง','บัดนี้ '+(x.many?'ผู้เดินทางทั้งหมด':x.names)+' ได้เดินทางไปราชการเสร็จสิ้นเรียบร้อยแล้ว พร้อมนี้ได้แนบหลักฐานประกอบการเบิกจ่าย ได้แก่ ใบเบิกค่าใช้จ่ายในการเดินทางไปราชการ (แบบ ๘๗๐๘)'+(nz(x.am.t)?' ใบรับรองแทนใบเสร็จรับเงิน (บก.๑๑๑)':'')+' และเอกสารอื่นที่เกี่ยวข้อง'],
+['ข้อพิจารณา',['ในการนี้ จึงขออนุมัติเบิกจ่ายค่าใช้จ่ายในการเดินทางไปราชการ จาก'+v.fund+' ตาม'+v.rule+' เป็นเงินทั้งสิ้น '+money+' ประกอบด้วย'].concat(x.lines.map((l,i)=>'๓.'+(i+1)+' '+l)).concat(v.loanNo?['และขอหักล้างเงินยืมตามสัญญาเลขที่ '+v.loanNo]:[])],
+['ข้อเสนอ',prop]]}
+else{subj='ขออนุมัติคืนเงินยืมเพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการ';const loan=nz(v.loanAmt),act=nz(v.actual)||x.total,cash=v.retCash!==''?nz(v.retCash):Math.max(loan-act,0),extra=Math.max(act-loan,0);
+secs=[['เรื่องเดิม','ตามที่ ข้าพเจ้า '+(v.borrower||'.....')+' ได้รับอนุมัติให้ยืม'+v.fund+' ตามสัญญาเงินยืมเลขที่ '+(v.loanNo||'.....')+(v.loanDate?' ลงวันที่ '+thL(v.loanDate):'')+' จำนวน '+(loan?m2(loan)+' บาท ('+bahtText(loan)+')':'.....')+' เพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการ เรื่อง '+(v.title||'.....')+(x.dt?' '+x.dt:'')+x.where],
+['ข้อเท็จจริง','บัดนี้ ได้เดินทางไปราชการเสร็จสิ้นเรียบร้อยแล้ว มีค่าใช้จ่ายตามที่จ่ายจริง เป็นเงิน '+(act?m2(act)+' บาท ('+bahtText(act)+')':'.....')+(v.due?' ซึ่งอยู่ภายในกำหนดส่งใช้เงินยืม (วันที่ '+thL(v.due)+')':'')],
+['ข้อพิจารณา',['ในการนี้ จึงขออนุมัติส่งใช้เงินยืมตามสัญญาเลขที่ '+(v.loanNo||'.....')+' โดยมีรายละเอียดดังนี้','๓.๑ ใบสำคัญและเอกสารประกอบการเบิกจ่าย จำนวน '+(act?m2(Math.min(act,loan||act))+' บาท':'-'),'๓.๒ คืนเงินสด จำนวน '+(cash?m2(cash)+' บาท':'-')].concat(extra?['๓.๓ ขอเบิกค่าใช้จ่ายเพิ่มเติม จำนวน '+m2(extra)+' บาท']:[])],
+['ข้อเสนอ',prop]]}
+const body=secs.map((s,i)=>{const b=Array.isArray(s[1])?s[1]:[s[1]];return '<div class="hd">'+th(String(i+1))+'.&nbsp; '+s[0]+'</div><p class="bd">'+e(th(b[0]))+'</p>'+b.slice(1).map(z=>'<p class="li">'+e(th(z))+'</p>').join('')}).join('');
+return '<div class="memo">'+mhead(v,subj)+body+msigs(v,e,th)+'</div>'}
+// ---------- สร้างเอกสารตามชนิด ----------
+function build(){gather();const v=S.v,r=S.r,L=S.people.filter(p=>p.on&&(p.n||!r.id));if(!L.length)return '';const grp=v.mode==='grp'&&L.length>1,k=S.doc;let h='';
+const comb=Object.assign({},L[0],{main:true});
+if(k==='nav'||k==='f8708'){(grp?[[comb,L]]:L.map(p=>[p,[p]])).forEach(x=>{h+=(k==='nav'?fA:fB)(x[0],x[1],v,r)})}
+else if(k==='sum'){L.forEach(p=>{h+=fD(p,[p],v,r)})}
+else if(k==='fp2'){h=fC(S.people,v,r)}
+else if(k==='fb111'){L.forEach(p=>{h+=fE(p,v,r)})}
+else if(k==='fcon'){h=fF(L,v,r)}
+else h=memoDoc(k,L,v);
+return h}
+const memoCss=()=>document.getElementById('memo-css').textContent.replace(/\.memo-pv\{[^}]*\}/,'');
+const SHRINK='function shrink(){var H=297*96/25.4;document.querySelectorAll(".memo").forEach(function(m){m.style.minHeight="0";var fs=16;m.style.fontSize=fs+"pt";while(m.offsetHeight>H&&fs>12.5){fs-=0.5;m.style.fontSize=fs+"pt"}m.style.minHeight=""})}';
+function doc(mode){const body=build();if(!body)return '';const memo=MEMOK.indexOf(S.doc)>-1,word=mode==='word',prev=mode==='prev';
+const css=(memo?memoCss()+'body{margin:0;background:#fff}@page{size:A4;margin:0}@media print{.memo{min-height:0;page-break-after:always}.memo:last-child{page-break-after:auto}}':CSS)+(prev?'html,body{background:#e3e8ef!important}body{padding:12px 0}.pg,.memo{margin:0 auto 14px!important;box-shadow:0 2px 12px rgba(0,0,0,.25);background:#fff}':'');
+const js=memo&&!word?'<script>'+SHRINK+';window.onload=function(){var go=function(){shrink();'+(mode==='print'?'setTimeout(function(){window.print()},500)':'if(window.parent&&window.parent.__trFit)window.parent.__trFit()')+'};if(document.fonts&&document.fonts.ready)document.fonts.ready.then(go);else go()}<\/script>':(mode==='print'?'<script>window.onload=function(){setTimeout(function(){window.print()},700)}<\/script>':(prev?'<script>window.onload=function(){if(window.parent&&window.parent.__trFit)window.parent.__trFit()}<\/script>':''));
+return '<!DOCTYPE html><html lang="th"'+(word?' xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"':'')+'><head><meta charset="utf-8"><title>'+E(DOCS.find(d=>d[0]===S.doc)[1].replace(/^\d+\.\s*/,''))+'</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet"><style>'+css+'</style></head><body>'+body+js+'</body></html>'}
+// ---------- หน้าจอ ----------
+let timer=0;
+function render(){clearTimeout(timer);timer=setTimeout(()=>{const f=$('tr_pv');if(!f||!S)return;const html=doc('prev');f.srcdoc=html||'<body style="font:15px sans-serif;color:#888;padding:30px">เลือกผู้เดินทางอย่างน้อย 1 คน</body>'},250)}
+window.__trFit=function(){const f=$('tr_pv'),w=$('tr_wrap');if(!f||!w)return;try{const d=f.contentDocument,L=d.querySelector('.pg.l');const W=L?1123:794;f.style.width=W+'px';f.style.height='10px';const H=Math.max(d.documentElement.scrollHeight,d.body.scrollHeight);f.style.height=H+'px';
+const z=Math.min(1,(w.clientWidth-24)/W);f.style.transform='scale('+z+')';$('tr_box').style.height=Math.ceil(H*z)+'px';$('tr_box').style.width=Math.ceil(W*z)+'px'}catch(e){}};
+function mount(){const box=$('tr_f');box.innerHTML=fieldsHtml();updNo();
+box.oninput=box.onchange=ev=>{if(ev.target.id==='f_dept'){S.v.dept=ev.target.value;updNo()}render()};
+const ad=$('f_addp');if(ad)ad.onclick=()=>{gather();S.people.push({n:'',pos:'',dept:'',on:true,allowance:0,lodging:0,registration:0,transport:0,otherAmt:0});mount();render()};
+box.querySelectorAll('[data-fdel]').forEach(b=>b.onclick=()=>{gather();S.people.splice(+b.dataset.fdel,1);mount();render()});
+const nop=$('f_nop');if(nop)updNo();render()}
+function setDoc(k){if(S)gather();S.doc=k;$('tr_doc').value=k;mount()}
+function fillReqs(){const sel=$('tr_req'),cur=sel.value;const rows=(typeof T!=='undefined'?T:[]).filter(r=>!r.cancelled&&r.type!=='จัดโครงการ'&&r.category!=='โครงการ');
+sel.innerHTML='<option value="">— กรอกเอง (ไม่ดึงจากรายการในระบบ) —</option>'+rows.map(r=>'<option value="'+E(r.id)+'">'+E(r.no+' · '+r.title+' · '+r.name+(r.dt?' ('+r.dt+')':''))+'</option>').join('');sel.value=cur}
+function pickReq(id){const r=id?T.find(x=>x.id===id):null;const doc0=S&&S.doc||'apr';makeState(r);S.doc=doc0;$('tr_req').value=id||'';mount()}
+let inited=false;
+async function tripOpen(){if(!inited){inited=true;
+$('tr_doc').innerHTML='<optgroup label="เอกสารบันทึกข้อความและใบนำทาง">'+DOCS.filter(d=>d[2]==='m').map(d=>'<option value="'+d[0]+'">'+E(d[1])+'</option>').join('')+'</optgroup><optgroup label="แบบฟอร์มแนบประกอบการเบิก/ยืม">'+DOCS.filter(d=>d[2]==='x').map(d=>'<option value="'+d[0]+'">'+E(d[1])+'</option>').join('')+'</optgroup>';
+$('tr_doc').onchange=()=>setDoc($('tr_doc').value);$('tr_req').onchange=()=>pickReq($('tr_req').value);
+$('tr_print').onclick=()=>outp('print');$('tr_word').onclick=()=>outp('word');window.addEventListener('resize',()=>window.__trFit());
+makeState(null);S.doc='apr';$('tr_doc').value='apr';mount()}
+try{if(!T.length&&db)await dataLoad(true)}catch(e){}
+fillReqs()}
+function outp(mode){const m=$('tr_msg');m.textContent='';const html=doc(mode==='word'?'word':'print');if(!html){m.textContent='เลือกผู้เดินทางอย่างน้อย 1 คน';return}
+const v=S.v;saveC({depT:v.depT,retT:v.retT,kmRate:v.kmRate,routeFrom:v.routeFrom,dept:v.dept,tel:v.tel,to:v.to,rule:v.rule,fin:v.fin,finPos:v.finPos,dir:v.dir,dirPos:v.dirPos,cmt:v.cmt,cmtN:v.cmtN,cmtP:v.cmtP});
+const nm=(DOCS.find(d=>d[0]===S.doc)||[0,'เอกสาร'])[1].replace(/^\d+\.\s*/,'').replace(/[\\/:*?"<>|]/g,'');
+if(mode==='word'){const bl=new Blob(['﻿'+html],{type:'application/msword'}),el=document.createElement('a');el.href=URL.createObjectURL(bl);el.download=nm+'.doc';document.body.appendChild(el);el.click();setTimeout(()=>{URL.revokeObjectURL(el.href);el.remove()},500);return}
+const w=window.open('','_blank');if(!w){m.textContent='เบราว์เซอร์บล็อกหน้าต่างพิมพ์ กรุณาอนุญาตป๊อปอัปแล้วลองใหม่';return}w.document.open();w.document.write(html);w.document.close()}
+window.tripOpen=tripOpen;window.openForms=function(id){closeOv();MM.mode='trip';goTab('memo');tripPick(id)};window.tripPick=async function(id){await tripOpen();pickReq(id)};
+window.FRM_state=function(){return S};window.FRM_doc=function(m){return doc(m||'print')};window.FRM_set=function(k){setDoc(k)};
+
+})();
 </script>
 </body>
 </html>
