@@ -1883,23 +1883,23 @@ function otherDesc(list,r){const reg=SUM(list,'registration'),oth=SUM(list,'othe
 function sigBlock(name,pos,extra){return '<div class="sg"><div>ลงชื่อ'+U('',55)+(extra||'')+'</div><div>('+(name?E(name):U('',45))+')</div><div>ตำแหน่ง '+(pos?E(pos):U('',40))+'</div></div>'}
 // ---------- แบบฟอร์ม ----------
 function fA(p,list,v,r){const am=amounts(list),ds=descs(v,list),grp=list.length>1;
-const row=(l,right)=>'<tr><td>'+l+'</td><td class="rs">'+(right===0?'':(right||'ลงชื่อ'+U('',30)))+'</td></tr>';
+const row=(l,right)=>'<tr><td>'+l+'</td><td class="rs">'+(right===0?'':(right||'ลงชื่อ'+U('',24)))+'</td></tr>';
 const hasL=!!v.loanNo||nz(v.loanAmt)>0;
-const it=(k,l,val)=>row(CK(nz(val)>0)+' มี '+CK(!nz(val))+' ไม่มี &nbsp; '+l+' '+U(nz(val)?m2(val):'',40)+' บาท');
+const it=(k,l,val)=>row(CK(0)+' มี '+CK(0)+' ไม่มี &nbsp; '+l+' '+U('',40)+' บาท');
 return '<div class="pg"><div class="box"><div class="bar">ใบทางเดินเอกสารเบิกค่าใช้จ่ายเดินทางไปราชการ</div><table class="rt">'
 +row('<b>หน่วยงาน</b> '+U(p.dept||r.dept,80),0)
-+row('<b>ชื่อ-สกุล</b> '+U(p.n+(grp&&p.main?' และคณะ':''),60)+' <b>ตำแหน่ง</b> '+U(p.pos,50))
-+row(U(v.title,150))+row('ณ '+U(v.place,140))
-+row('บันทึกข้อความฝ่ายเลขที่ '+U(v.apprNo,40)+' ลงวันที่ '+U(thL(v.apprDate),40))
++row('<b>ชื่อ-สกุล</b> '+U(p.n+(grp&&p.main?' และคณะ':''),60)+' <b>ตำแหน่ง</b> '+U(p.pos,50),0)
++row(U(v.title,150),0)+row('ณ '+U(v.place,140),0)
++row('บันทึกข้อความฝ่ายเลขที่ '+U(v.apprNo,40)+' ลงวันที่ '+U(thL(v.apprDate),40),0)
 +row('วันที่เดินทางไปราชการ '+U(thL(v.dep),38)+' วันที่เดินทางกลับ '+U(thL(v.ret),38))
 +'<tr><td colspan="2" class="sec">การเงินตรวจสอบ</td></tr>'
-+row(CK(1)+' บันทึกข้อความเลขที่ '+U(v.clNo,40)+' ลงวันที่ '+U(thL(v.clDate),40))
-+row(CK(hasL)+' ยืม &nbsp;&nbsp; '+CK(!hasL)+' ไม่ยืม',0)
-+row(CK(hasL)+' สัญญายืมเงินเลขที่ '+U(v.loanNo,40)+' จำนวนเงิน '+U(nz(v.loanAmt)?m2(v.loanAmt):'',30)+' บาท')
-+row(CK(hasL)+' วันที่(วันที่จ่ายเงิน) '+U(thL(v.loanDate),38)+' วันครบกำหนด '+U(thL(v.due),38))
-+row(CK(0)+' ขอคืน &nbsp;&nbsp; '+CK(1)+' ขอเบิก',0)
-+it('a','ค่าเบี้ยเลี้ยงเดินทาง',am.a)+it('l','ค่าที่พัก',am.l)+it('t','ค่าพาหนะ/วัสดุเชื้อเพลิง',am.t)+it('o','ค่าใช้จ่ายอื่นๆ (ค่าลงทะเบียน)',am.o)
-+row('<span style="margin-left:60mm"><b>ยอดเงินรวม</b> '+U(m2(am.all),40)+' บาท</span>',0)
++row(CK(0)+' บันทึกข้อความเลขที่ '+U('',40)+' ลงวันที่ '+U('',40))
++row(CK(0)+' ยืม &nbsp;&nbsp; '+CK(0)+' ไม่ยืม',0)
++row(CK(0)+' สัญญายืมเงินเลขที่ '+U('',40)+' จำนวนเงิน '+U('',30)+' บาท')
++row(CK(0)+' วันที่(วันที่จ่ายเงิน) '+U('',38)+' วันครบกำหนด '+U('',38))
++row(CK(0)+' ขอคืน &nbsp;&nbsp; '+CK(0)+' ขอเบิก',0)
++it('a','ค่าเบี้ยเลี้ยงเดินทาง',0)+it('l','ค่าที่พัก',0)+it('t','ค่าพาหนะ/วัสดุเชื้อเพลิง',0)+it('o','ค่าใช้จ่ายอื่นๆ (ค่าลงทะเบียน)',0)
++row('<span style="margin-left:60mm"><b>ยอดเงินรวม</b> '+U('',40)+' บาท</span>',0)
 +'<tr><td colspan="2" class="sec">บัญชี (บันทึกใบสำคัญค้างจ่าย)</td></tr>'
 +row(CK(0)+' ครั้งที่ 1 &nbsp; วันที่ '+U('',50))
 +'<tr><td colspan="2" class="sec">การเงิน</td></tr>'
@@ -1969,22 +1969,33 @@ return '<div class="pg"><h1 style="margin-top:4mm">ใบรับรองแ�
 +'<p>จำนวนเงิน (ตัวอักษร) <b>'+BT(t)+'</b></p>'
 +'<p class="ind">ข้าพเจ้า '+U(p.n,55)+' ตำแหน่ง '+U(p.pos,50)+'<br>สังกัด '+E(hosp())+' ขอรับรองว่ารายจ่ายข้างต้นนี้ไม่อาจเรียกใบเสร็จรับเงินจากผู้รับได้ และข้าพเจ้าได้จ่ายไปในงานของทางราชการโดยแท้</p>'
 +'<div class="sgr" style="margin-top:12mm"><div>ลงชื่อ'+U('',60)+'</div><div>('+E(p.n)+')</div><div>วันที่ '+U(pd.d,10)+' เดือน '+U(pd.m,24)+' พ.ศ. '+U(pd.y,14)+'</div></div></div>'}
-function fF(list,v,r){const am=amounts(list),total=nz(v.loanAmt)||am.all,ds=descs(v,list),pd=P3(v.docDate),dp=P3(v.dep),rp=P3(v.ret),b=list[0]||{},bw=v.borrower||b.n||'';
-const bp=(list.find(p=>p.n===bw)||b).pos||'',bd=(list.find(p=>p.n===bw)||b).dept||r.dept||'';
+function fF(list,v,r){const am=amounts(list),total=nz(v.loanAmt)||am.all,ds=descs(v,list),pd=P3(v.docDate),b=list[0]||{},bw=v.borrower||b.n||'';
+const bp=(list.find(p=>p.n===bw)||b).pos||'',bd=(list.find(p=>p.n===bw)||b).dept||r.dept||'',th=mmTh;
 const rows=[['ค่าเบี้ยเลี้ยงเดินทาง'+(ds.aD?' '+ds.aD:''),am.a],['ค่าที่พัก'+(ds.lD?' '+ds.lD:''),am.l],['ค่าพาหนะ'+(ds.tD?' '+ds.tD:''),am.t],['ค่าใช้จ่ายอื่น ๆ'+(otherDesc(list,r)?' ('+otherDesc(list,r)+')':''),am.o]].filter(x=>nz(x[1])>0);
-const tr=rows.map((x,i)=>'<tr><td>'+(i+1)+'. '+E(x[0])+'</td><td class="n">'+m2(x[1])+'</td></tr>').join('')||'<tr><td>&nbsp;</td><td></td></tr>';
-const sum=am.all;
-return '<div class="pg"><table class="hd"><tr><td></td><td class="r" style="width:75mm;white-space:nowrap">สัญญาเลขที่ '+U(v.loanNo,40)+'<br>วันที่ '+U(thL(v.loanDate||v.docDate),40)+'</td></tr></table><h1>สัญญาการยืมเงิน</h1>'
-+'<p class="c">ส่วนราชการ '+U(hosp(),60)+'</p>'
-+'<p>ข้าพเจ้า '+U(bw,55)+' ตำแหน่ง '+U(bp,50)+'<br>สังกัด '+U(bd,60)+' มีความประสงค์ขอยืม'+E(v.fund)+' จาก'+E(hosp())+' เพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการ</p>'
-+'<p>เรื่อง '+U(v.title,130)+'<br>ณ '+U(v.place,150)+'<br>ตั้งแต่วันที่ '+U(thL(v.dep),42)+' ถึงวันที่ '+U(thL(v.ret),42)+(list.length>1?' (ผู้เดินทางรวม '+list.length+' คน)':'')+' ดังรายการต่อไปนี้</p>'
-+'<table class="grid8"><thead><tr><th>รายการ</th><th style="width:34mm">จำนวนเงิน (บาท)</th></tr></thead><tbody>'+tr+'<tr class="tt"><td class="c"><b>รวม</b></td><td class="n"><b>'+m2(total)+'</b></td></tr></tbody></table>'
-+'<p>จำนวนเงิน (ตัวอักษร) <b>'+(total?BT(total):'')+'</b></p>'
-+'<p class="ind">ข้าพเจ้าสัญญาว่าจะปฏิบัติตามระเบียบของทางราชการทุกประการ และจะนำใบสำคัญคู่จ่ายที่ถูกต้องพร้อมทั้งเงินเหลือจ่าย (ถ้ามี) ส่งใช้ภายใน 30 วัน นับแต่วันที่ได้รับเงินยืมนี้ (กำหนดส่งใช้ภายในวันที่ '+U(thL(v.due),40)+') ถ้าข้าพเจ้าไม่ส่งตามกำหนด ข้าพเจ้ายินยอมให้หักเงินเดือน ค่าจ้าง เบี้ยหวัด บำเหน็จ บำนาญ หรือเงินอื่นใดที่ข้าพเจ้าพึงได้รับจากทางราชการ ชดใช้จำนวนเงินที่ยืมไปจนครบถ้วนได้ทันที</p>'
-+'<div class="sgr" style="margin-top:8mm"><div>ลงชื่อ'+U('',55)+' ผู้ยืม</div><div>('+E(bw)+')</div><div>วันที่ '+U(pd.d,10)+' เดือน '+U(pd.m,24)+' พ.ศ. '+U(pd.y,14)+'</div></div>'
-+'<div class="two" style="margin-top:8mm"><div><p><b>ผู้อนุมัติ</b><br>อนุมัติให้ยืมเงินได้ตามจำนวนข้างต้น</p>'+sigBlock(v.dir,v.dirPos)+'<div>วันที่ '+U('',45)+'</div></div>'
-+'<div><p><b>ใบรับเงิน</b><br>ได้รับเงินยืมจำนวน <b>'+m2(total)+'</b> บาท ไปถูกต้องแล้ว</p>'+sigBlock(bw,bp,' ผู้รับเงิน')+'<div>วันที่ '+U(thL(v.loanDate),45)+'</div></div></div>'
-+'<div class="two" style="margin-top:6mm"><div></div><div><p>จ่ายเงินแล้ว</p>'+sigBlock(v.fin,v.finPos,' ผู้จ่ายเงิน')+'<div>วันที่ '+U('',45)+'</div></div></div></div>'}
+const tr=rows.map((x,i)=>'<tr><td>'+(i+1)+'. '+E(x.length?x[0]:'')+'</td><td class="n">'+m2(x[1])+'</td></tr>').join('');
+const pad='<tr><td style="height:22mm">&nbsp;</td><td></td></tr>';
+const bx='border:1.2px solid #000';
+const loc=(v.place||'');
+const p1='<div class="pg"><div style="'+bx+';padding:5mm 7mm;min-height:200mm">'
++'<table style="width:100%;border-collapse:collapse"><tr><td style="width:60%;text-align:center;vertical-align:middle"><h1 style="margin:0">สัญญาการยืมเงิน</h1></td><td style="border-left:1px solid #000;padding-left:3mm">เลขที่ '+U(v.loanNo,35)+'<br>วันครบกำหนด '+U(thL(v.due),30)+'</td></tr></table>'
++'<p style="margin-top:3mm"><b>ยื่นต่อ</b> ผู้อำนวยการ'+E(hosp())+'</p>'
++'<p style="margin-top:3mm">ข้าพเจ้า '+U(bw,60)+' ตำแหน่ง '+U(bp,50)+'<br>สังกัด '+U(bd||hosp(),55)+' อำเภอ '+U(v.amphoe||'ตาพระยา',30)+' จังหวัด '+U(v.province||'สระแก้ว',30)+'<br>มีความประสงค์ขอยืมเงินจาก '+U(hosp(),60)+'<br>เพื่อเป็นค่าใช้จ่ายในการ '+U((v.title||'เดินทางไปราชการ')+(v.place?' ณ '+v.place:'')+(v.dep?' ระหว่างวันที่ '+thL(v.dep)+(v.ret&&v.ret!==v.dep?' ถึงวันที่ '+thL(v.ret):''):''),0)+'<br>ดังรายละเอียดต่อไปนี้</p>'
++'<table class="grid8" style="margin-top:2mm"><tbody>'+(tr||'')+pad+'<tr class="tt"><td><b>รวมเงิน (บาท)</b> '+(total?BT(total):'')+'</td><td class="n" style="width:34mm"><b>'+m2(total)+'</b></td></tr></tbody></table>'
++'<p class="ind" style="margin-top:3mm">ข้าพเจ้าสัญญาว่าจะปฏิบัติตามระเบียบของทางราชการทุกประการ และจะนำใบสำคัญคู่จ่ายที่ถูกต้อง พร้อมทั้งเงินเหลือจ่าย (ถ้ามี) ส่งใช้ภายในกำหนดไว้ในระเบียบการเบิกจ่ายเงินจากคลัง คือ ภายในสิบห้าวัน นับจากวันกลับมาถึง ถ้าข้าพเจ้าไม่ส่งตามกำหนด ข้าพเจ้ายินยอมให้หักเงินเดือน ค่าจ้าง เบี้ยหวัด บำเหน็จ บำนาญ หรือเงินอื่นใดที่ข้าพเจ้าพึงได้รับจากทางราชการ ชดใช้จำนวนเงินที่ยืมไปจนครบถ้วนได้ทันที</p>'
++'<div style="margin-top:8mm;text-align:right;padding-right:6mm">ลายมือชื่อ'+U('',55)+' ผู้ยืม &nbsp; วันที่ '+U(pd.d+' '+pd.m+' '+pd.y,34)+'<div style="text-align:left;margin-left:60mm">('+E(bw)+')</div></div></div></div>';
+const ck=(t)=>'<td style="'+bx+';vertical-align:top;padding:2mm 3mm">'+t+'</td>';
+const th2=(t,w)=>'<th style="'+bx+';font-weight:700;padding:1mm;font-size:12.5px'+(w?';width:'+w:'')+'">'+t+'</th>';
+const emp=n=>Array(n).fill('<tr>'+('<td style="'+bx+';height:7mm">&nbsp;</td>').repeat(6)+'</tr>').join('');
+const p2='<div class="pg"><div style="'+bx+';padding:0">'
++'<table style="width:100%;border-collapse:collapse"><tr>'
++ck('<b>เสนอ</b> ผู้อำนวยการ'+E(hosp())+'<br>ได้ตรวจสอบแล้ว เห็นสมควรอนุมัติให้ยืมตามใบยืมฉบับนี้ได้ จำนวน <b>'+m2(total)+'</b> บาท '+(total?BT(total):'')+'<br>(ครั้งที่ '+U('',12)+' หรือ '+U('',12)+')<div style="margin-top:6mm">ลงชื่อ'+U('',50)+'</div><div style="margin-left:10mm">('+(v.fin?E(v.fin):U('',45))+')</div><div style="margin-left:10mm">'+(v.finPos?E(v.finPos):U('',40))+'</div><div>วันที่ '+U(thL(v.loanDate),35)+'</div>')
++'<td style="'+bx+';padding:0;width:56%;vertical-align:top"><div class="c"><b>รายการส่งใช้</b></div><table style="width:100%;border-collapse:collapse"><tr>'+th2('วัน เดือน ปี','15%')+th2('ใบสำคัญ/เงินสด')+th2('จำนวนเงิน')+th2('คงค้าง')+th2('ลายมือชื่อผู้รับ')+th2('ใบรับเลขที่')+'</tr>'+emp(5)+'</table></td></tr>'
++'<tr>'+ck('<div class="c"><b>คำอนุมัติ</b></div>อนุมัติให้ยืมตามเงื่อนไขข้างต้นได้ เป็นเงิน <b>'+m2(total)+'</b> บาท '+(total?BT(total):'')+'<div style="margin-top:6mm">ลงชื่อผู้อนุมัติ'+U('',50)+'</div><div style="margin-left:14mm">('+(v.dir?E(v.dir):U('',45))+')</div><div style="margin-left:14mm">'+(v.dirPos?E(v.dirPos):U('',40))+'</div><div>วันที่ '+U('',40)+'</div>')
++'<td style="'+bx+';padding:0;vertical-align:top"><div style="height:100%"></div></td></tr>'
++'<tr>'+ck('<div class="c"><b>ใบรับเงิน</b></div>ได้รับเงินยืมจำนวน <b>'+m2(total)+'</b> บาท '+(total?BT(total):'')+' ไปเป็นการถูกต้องแล้ว<div style="margin-top:6mm">ลงชื่อ'+U('',50)+' ผู้รับเงิน</div><div style="margin-left:10mm">('+E(bw)+')</div><div>วันที่ '+U(thL(v.loanDate),40)+'</div>')
++'<td style="'+bx+';padding:0;vertical-align:top"><div class="c"><b>รายการส่งใช้เงินยืม</b></div><table style="width:100%;border-collapse:collapse"><tr>'+th2('วัน เดือน ปี','15%')+th2('ใบสำคัญ/เงินสด')+th2('จำนวนเงิน')+th2('คงค้าง')+th2('ลายมือชื่อผู้รับ')+th2('ใบรับเลขที่')+'</tr>'+emp(6)+'</table></td></tr></table></div>'
++'<div class="sm" style="margin-top:4mm"><b>หมายเหตุ</b><br>(1) ยื่นต่อ ผู้อำนวยการกองคลัง หัวหน้ากองคลัง หัวหน้าแผนกคลัง หรือตำแหน่งอื่นใดที่ปฏิบัติงานในลักษณะเดียวกันแล้วแต่กรณี<br>(2) ให้ระบุชื่อส่วนราชการที่จ่ายเงินยืม<br>(3) ระบุวัตถุประสงค์ที่จะนำเงินยืมไปใช้จ่าย</div></div>';
+return p1+p2}
 const CSS=`*{box-sizing:border-box}body{margin:0;background:#fff;color:#000;font-family:Sarabun,'TH Sarabun New',Tahoma,'Segoe UI Symbol','Noto Sans Thai',sans-serif;font-size:14.5px;line-height:1.55}
 .pg{width:210mm;min-height:297mm;padding:13mm 16mm;page-break-after:always;position:relative}.pg.l{width:297mm;min-height:210mm;padding:9mm 12mm;page:land}
 h1{text-align:center;font-size:18px;margin:2mm 0 3mm;font-weight:700}h2{font-size:15px;margin:3mm 0}.c{text-align:center}.r{text-align:right}.n{text-align:right;white-space:nowrap}.sm{font-size:12.5px}.ind{text-indent:12mm}
@@ -2068,9 +2079,9 @@ return '<div class="tt"><div class="gr"><img src="'+GARUDA+'" alt=""></div>บ�
 +'<p class="ln"><b>ส่วนราชการ</b>&nbsp; '+e(hs)+(v.dept?' '+e(v.dept):'')+' โทร '+e(t(MEMO_TEL()))+(v.tel?' ต่อ '+e(t(v.tel)):'')+'</p>'
 +'<div class="two ln"><div><b>ที่</b>&nbsp; '+e(t(memoNo(v)))+'</div><div class="r"><b>วันที่</b>&nbsp; '+mmDate(v.docDate)+'</div></div>'
 +'<p class="ln"><b>เรื่อง</b>&nbsp; '+e(t(subject))+'</p><p class="ln">เรียน&nbsp; '+e(t(v.to))+'</p>'}
-function msigs(v,e,th){const sg=(n,p)=>(n||p)?'<div class="sig">'+(n?'('+e(th(n))+')':'')+(n&&p?'\n':'')+e(th(p.replace(/\s*\|\s*/g,'\n')))+'</div>':'';
+function msigs(v,e,th,two){const sg=(n,p)=>(n||p)?'<div class="sig">'+(n?'('+e(th(n))+')':'')+(n&&p?'\n':'')+e(th(p.replace(/\s*\|\s*/g,'\n')))+'</div>':'';
 let h=(v.propN||v.propP)?'<div class="sp"></div>'+sg(v.propN,v.propP):'';
-if(v.cmt||v.cmtN||v.cmtP)h+='<div class="cmt"><div class="ln">เรียน&nbsp; '+e(th(v.to))+'</div>'+(v.cmt?'<div class="ln">-&nbsp; '+e(th(v.cmt))+'</div>':'')+'<div class="sp"></div>'+sg(v.cmtN,v.cmtP)+'</div>';
+if(two){if(v.cmtN||v.cmtP)h+='<div class="sp"></div>'+sg(v.cmtN,v.cmtP)}else if(v.cmt||v.cmtN||v.cmtP)h+='<div class="cmt"><div class="ln">เรียน&nbsp; '+e(th(v.to))+'</div>'+(v.cmt?'<div class="ln">-&nbsp; '+e(th(v.cmt))+'</div>':'')+'<div class="sp"></div>'+sg(v.cmtN,v.cmtP)+'</div>';
 if(v.dir||v.dirPos)h+='<div class="ap"><b>อนุมัติ</b><div class="sp"></div>'+(v.dir?'('+e(th(v.dir))+')<br>':'')+e(th(v.dirPos))+'</div>';
 return h}
 function tripText(list,v){const hs=($('hosp').textContent||'').trim()||'โรงพยาบาลตาพระยา';
@@ -2095,22 +2106,24 @@ secs=[['เรื่องเดิม',x.ev?'ตามที่'+(/^มีก�
 ['ข้อพิจารณา',['ในการนี้ '+(v.dept||'หน่วยงาน')+' จึงขออนุมัติให้ '+x.names+(list.length&&list[0].pos&&!x.many?' ตำแหน่ง '+list[0].pos:'')+' เดินทางไปราชการ เรื่อง '+(v.title||'.....')+(x.dt?' '+x.dt:'')+x.where+(v.veh?' โดยใช้'+v.veh+(v.plate?' ทะเบียน '+v.plate:''):'')+' ทั้งนี้ขอเบิกค่าใช้จ่ายในการเดินทางจาก'+v.fund+' ตาม'+v.rule+(x.total?' รวมเป็นเงินทั้งสิ้น '+money:'')+(x.lines.length?' ประกอบด้วย':'')].concat(x.lines.map((l,i)=>'๓.'+(i+1)+' '+l))],
 ['ข้อเสนอ',prop]];
 if(x.many)secs[2][1].push('รายชื่อผู้เดินทาง: '+list.map((p,i)=>(i+1)+'. '+p.n+(p.pos?' ('+p.pos+')':'')).join(' '))}
-else if(kind==='loan'){subj='ขออนุมัติยืมเงินเพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการ';const amt=nz(v.loanAmt)||x.total,mt=amt?m2(amt)+' บาท ('+bahtText(amt)+')':'.....';
-secs=[['เรื่องเดิม',x.appr],['ข้อเท็จจริง','ข้าพเจ้า '+(v.borrower||'.....')+(list.length?' ตำแหน่ง '+((list.find(p=>p.n===v.borrower)||list[0]).pos||'.....'):'')+' มีความประสงค์ขอยืม'+v.fund+' เพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการดังกล่าว'],
-['ข้อพิจารณา',['ในการนี้ จึงขออนุมัติยืม'+v.fund+' จำนวน '+mt+(x.many?' สำหรับผู้เดินทาง จำนวน '+list.length+' คน':'')+' โดยมีรายละเอียดดังนี้'].concat(x.lines.map((l,i)=>'๓.'+(i+1)+' '+l)).concat(['ทั้งนี้ จะนำใบสำคัญคู่จ่ายและเงินเหลือจ่าย (ถ้ามี) ส่งใช้ภายใน ๓๐ วัน นับแต่วันที่ได้รับเงินยืม'])],
+else{const who=v.borrower||(list[0]&&list[0].n)||'.....',pp=(list.find(p=>p.n===who)||list[0]||{}).pos||'',me='ข้าพเจ้า '+who+(pp?' ตำแหน่ง '+pp:''),fundH=v.fund+(v.fund==='เงินบำรุง'?x.hs:''),ttl=v.title||'.....',
+evT='ตามที่'+(/^มีกำหนด/.test(x.ev)?'':' ')+x.ev+' นั้น',apT=(v.apprNo?' ตามบันทึกข้อความที่ '+v.apprNo+(v.apprDate?' ลงวันที่ '+thL(v.apprDate):''):'')+' โดยเบิกค่าใช้จ่ายจาก'+fundH,
+okT=me+' ได้รับอนุมัติให้'+(kind==='ret'?'ไปราชการ':'เดินทางไปราชการ')+' เรื่อง '+ttl+(x.dt?' '+x.dt:'')+x.where+apT;
+const loan=nz(v.loanAmt),mt=m=>m?m2(m)+' บาท '+bahtText(m).replace(/^/,'(')+')':'.....';
+if(kind==='loan'){subj='ขออนุมัติยืมเงินเพื่อเป็นค่าใช้จ่ายในการ '+(v.title||'เดินทางไปราชการ');const amt=loan||x.total;
+secs=[['เรื่องเดิม',evT],['ข้อเท็จจริง',okT],
+['ข้อพิจารณา',[me+' จึงขออนุมัติยืม'+fundH+' เพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการดังกล่าว จำนวนเงิน '+(amt?m2(amt)+' บาท ('+bahtText(amt)+')':'.....')+(x.many?' สำหรับผู้เดินทาง จำนวน '+list.length+' คน':'')+(x.lines.length?' ประกอบด้วย':' พร้อมนี้ได้แนบสัญญาเงินยืมมาด้วยแล้ว')].concat(x.lines.map((l,i)=>'๓.'+(i+1)+' '+l)).concat(x.lines.length?['พร้อมนี้ได้แนบสัญญาเงินยืมมาด้วยแล้ว']:[])],
 ['ข้อเสนอ',prop]]}
-else if(kind==='pay'){subj='ขออนุมัติเบิกจ่ายค่าใช้จ่ายในการเดินทางไปราชการ';
-secs=[['เรื่องเดิม',x.appr+(v.loanNo?' และได้รับอนุมัติเงินยืมตามสัญญาเลขที่ '+v.loanNo+(v.loanDate?' ลงวันที่ '+thL(v.loanDate):''):'')],
-['ข้อเท็จจริง','บัดนี้ '+(x.many?'ผู้เดินทางทั้งหมด':x.names)+' ได้เดินทางไปราชการเสร็จสิ้นเรียบร้อยแล้ว พร้อมนี้ได้แนบหลักฐานประกอบการเบิกจ่าย ได้แก่ ใบเบิกค่าใช้จ่ายในการเดินทางไปราชการ (แบบ ๘๗๐๘)'+(nz(x.am.t)?' ใบรับรองแทนใบเสร็จรับเงิน (บก.๑๑๑)':'')+' และเอกสารอื่นที่เกี่ยวข้อง'],
-['ข้อพิจารณา',['ในการนี้ จึงขออนุมัติเบิกจ่ายค่าใช้จ่ายในการเดินทางไปราชการ จาก'+v.fund+' ตาม'+v.rule+' เป็นเงินทั้งสิ้น '+money+' ประกอบด้วย'].concat(x.lines.map((l,i)=>'๓.'+(i+1)+' '+l)).concat(v.loanNo?['และขอหักล้างเงินยืมตามสัญญาเลขที่ '+v.loanNo]:[])],
+else if(kind==='pay'){subj='ขออนุมัติเบิกเงินค่าใช้จ่ายในการเดินทางไปราชการ “'+ttl+'”';
+secs=[['เรื่องเดิม',evT],['ข้อเท็จจริง',okT+(v.loanNo?' และได้รับอนุมัติเงินยืมตามสัญญาเงินยืมเลขที่ '+v.loanNo+(v.loanDate?' ลงวันที่ '+thL(v.loanDate):''):'')],
+['ข้อพิจารณา',['บัดนี้ '+me+' ได้กลับจากการเดินทางไปราชการ เรื่อง '+ttl+' ดังกล่าวเรียบร้อยแล้ว จึงขออนุมัติเบิกเงินค่าใช้จ่ายเดินทางไปราชการ จำนวนเงิน '+money+' รายละเอียดตามเอกสารที่ได้แนบมาพร้อมนี้'+(x.lines.length?' ประกอบด้วย':'')].concat(x.lines.map((l,i)=>'๓.'+(i+1)+' '+l)).concat(v.loanNo?['และขอหักล้างเงินยืมตามสัญญาเงินยืมเลขที่ '+v.loanNo]:[])],
 ['ข้อเสนอ',prop]]}
-else{subj='ขออนุมัติคืนเงินยืมเพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการ';const loan=nz(v.loanAmt),act=nz(v.actual)||x.total,cash=v.retCash!==''?nz(v.retCash):Math.max(loan-act,0),extra=Math.max(act-loan,0);
-secs=[['เรื่องเดิม','ตามที่ ข้าพเจ้า '+(v.borrower||'.....')+' ได้รับอนุมัติให้ยืม'+v.fund+' ตามสัญญาเงินยืมเลขที่ '+(v.loanNo||'.....')+(v.loanDate?' ลงวันที่ '+thL(v.loanDate):'')+' จำนวน '+(loan?m2(loan)+' บาท ('+bahtText(loan)+')':'.....')+' เพื่อเป็นค่าใช้จ่ายในการเดินทางไปราชการ เรื่อง '+(v.title||'.....')+(x.dt?' '+x.dt:'')+x.where],
-['ข้อเท็จจริง','บัดนี้ ได้เดินทางไปราชการเสร็จสิ้นเรียบร้อยแล้ว มีค่าใช้จ่ายตามที่จ่ายจริง เป็นเงิน '+(act?m2(act)+' บาท ('+bahtText(act)+')':'.....')+(v.due?' ซึ่งอยู่ภายในกำหนดส่งใช้เงินยืม (วันที่ '+thL(v.due)+')':'')],
-['ข้อพิจารณา',['ในการนี้ จึงขออนุมัติส่งใช้เงินยืมตามสัญญาเลขที่ '+(v.loanNo||'.....')+' โดยมีรายละเอียดดังนี้','๓.๑ ใบสำคัญและเอกสารประกอบการเบิกจ่าย จำนวน '+(act?m2(Math.min(act,loan||act))+' บาท':'-'),'๓.๒ คืนเงินสด จำนวน '+(cash?m2(cash)+' บาท':'-')].concat(extra?['๓.๓ ขอเบิกค่าใช้จ่ายเพิ่มเติม จำนวน '+m2(extra)+' บาท']:[])],
-['ข้อเสนอ',prop]]}
+else{subj='ขออนุมัติคืนเงินตามสัญญาเงินยืมเลขที่ '+(v.loanNo||'.....');const act=nz(v.actual)||x.total,cash=v.retCash!==''?nz(v.retCash):Math.max(loan-act,0),extra=Math.max(act-loan,0),lt='ตามสัญญาเงินยืม เลขที่ '+(v.loanNo||'.....')+(v.loanDate?' ลงวันที่ '+thL(v.loanDate):'');
+secs=[['เรื่องเดิม',okT],['ข้อเท็จจริง',me+' ได้รับอนุมัติให้ยืม'+fundH+' เพื่อจ่ายค่าใช้จ่ายในการเดินทางไปราชการ เรื่อง '+ttl+' จำนวนเงิน '+(loan?m2(loan)+' บาท ('+bahtText(loan)+')':'.....')+' '+lt],
+['ข้อพิจารณา',['บัดนี้ '+me+' ได้เดินทางกลับจากการเดินทางไปราชการ เรื่อง '+ttl+' เรียบร้อยแล้ว จึงขออนุมัติคืนเงินยืม'+lt+' โดยมีรายละเอียดดังนี้','๓.๑ เอกสารใบรับใบสำคัญ จำนวน '+(act?m2(loan?Math.min(act,loan):act)+' บาท':'- บาท'),'๓.๒ เงินสด จำนวน '+(cash?m2(cash)+' บาท':'- บาท')].concat(extra?['๓.๓ ขอเบิกค่าใช้จ่ายเพิ่มเติม จำนวน '+m2(extra)+' บาท']:[])],
+['ข้อเสนอ',prop]]}}
 const body=secs.map((s,i)=>{const b=Array.isArray(s[1])?s[1]:[s[1]];return '<div class="hd">'+th(String(i+1))+'.&nbsp; '+s[0]+'</div><p class="bd">'+e(th(b[0]))+'</p>'+b.slice(1).map(z=>'<p class="li">'+e(th(z))+'</p>').join('')}).join('');
-return '<div class="memo">'+mhead(v,subj)+body+msigs(v,e,th)+'</div>'}
+return '<div class="memo">'+mhead(v,subj)+body+msigs(v,e,th,kind==='ret')+'</div>'}
 // ---------- สร้างเอกสารตามชนิด ----------
 function build(){gather();const v=S.v,r=S.r,L=S.people.filter(p=>p.on&&(p.n||!r.id));if(!L.length)return '';const grp=v.mode==='grp'&&L.length>1,k=S.doc;let h='';
 const comb=Object.assign({},L[0],{main:true});
