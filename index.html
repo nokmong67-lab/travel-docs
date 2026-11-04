@@ -895,6 +895,7 @@ const dueCell=r=>{if(!r.due)return '-';const b=fd(r.due);if(!tStaff)return b;ret
 const hasDocs=r=>r.docs.length>0||!!r.file;
 const fyOfIso=iso=>/^\d{4}-\d{2}/.test(iso||'')?String(+iso.slice(0,4)+543+(+iso.slice(5,7)>=10?1:0)):'';
 function norm(r,full){
+if(window.deepFixBE){deepFixBE(r.ranges);['dateFrom','dateTo','due'].forEach(function(k){if(r[k])r[k]=fixBE(r[k])});deepFixBE(r.loanData);deepFixBE(r.returnData);deepFixBE(r.refundData)}
 const dt=(Array.isArray(r.ranges)&&r.ranges.length)?rangesText(r.ranges):r.dateFrom?(r.dateFrom===r.dateTo?fd(r.dateFrom):fd(r.dateFrom)+' – '+fd(r.dateTo)):(r.date||'-');
 return {id:r.id,created:r.created||'',no:r.no||r.id,fy:fyOfIso(r.dateFrom)||(/^\d+-(\d{4})$/.exec(r.id)||[])[1]||'',name:r.name||'',dept:r.dept||'',type:r.type||'',category:r.category||'',title:r.title||'',place:r.place||'',dateFrom:r.dateFrom||'',dateTo:r.dateTo||'',ranges:Array.isArray(r.ranges)?r.ranges:[],dt,due:(r.loanData&&r.loanData.financeDate)?addDays(r.loanData.financeDate,30):(r.due||''),docs:Array.isArray(r.docs)?r.docs:[],file:(r.returnData&&r.returnData.file)||'',raw:r,days:r.days||'',status:r.status||'รอดำเนินการ',loan:r.loan||'',
 cancelled:!!(r.cancelled&&r.cancelled.active),cinfo:r.cancelled||null,email:r.email||'',companions:Array.isArray(r.companions)?r.companions:[],projItems:Array.isArray(r.projItems)?r.projItems:[],budget:r.budget,source:r.source||'',
@@ -1848,6 +1849,15 @@ function mmMode(m){MM.mode=m;$('mm_m_trip').setAttribute('aria-pressed',m==='tri
 if(m==='proj')memoOpenProj();else if(m==='trip')tripOpen().then(()=>{if(window.__trFit)window.__trFit()})}
 function memoOpen(){mmMode(MM.mode||'')}
 $('mm_m_trip').onclick=()=>mmMode('trip');$('mm_m_proj').onclick=()=>mmMode('proj');
+</script>
+<script id="be-fix">
+/* แก้ปีที่ถูกบันทึกเป็น พ.ศ. ลงช่องวันที่ (เช่น 2569 -> แสดงเป็น 3112): ถ้าปี > 2400 ให้ลบ 543 */
+(function(){var R=/^(\d{4})(-\d{2}-\d{2})/;
+window.fixBE=function(s){if(typeof s!=='string')return s;var m=R.exec(s);return m&&+m[1]>2400?String(+m[1]-543)+s.slice(4):s};
+window.deepFixBE=function(o,d){d=d||0;if(!o||d>5)return o;if(Array.isArray(o)){for(var i=0;i<o.length;i++){if(typeof o[i]==='string')o[i]=fixBE(o[i]);else deepFixBE(o[i],d+1)}return o}
+if(typeof o==='object'){for(var k in o){if(typeof o[k]==='string'){if(R.test(o[k])&&o[k].length<=10)o[k]=fixBE(o[k])}else deepFixBE(o[k],d+1)}}return o};
+function g(e){var t=e.target;if(t&&t.tagName==='INPUT'&&t.type==='date'){var f=fixBE(t.value);if(f!==t.value)t.value=f}}
+document.addEventListener('input',g,true);document.addEventListener('change',g,true)})();
 </script>
 <script id="forms-js">
 /* ===== ชุดเอกสารเบิก/ยืมไปราชการ (แบบ 8708 ส่วนที่ 1-2, ใบทางเดินเอกสาร, สรุปค่าใช้จ่าย, บก.111, สัญญายืมเงิน) ===== */
