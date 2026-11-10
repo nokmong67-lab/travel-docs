@@ -1259,7 +1259,7 @@ f.ranges=so;f.dateFrom=so[0].from;f.dateTo=so.reduce((m,r)=>r.to>m?r.to:m,so[0].
 f.days=daysOf();AMT.forEach(k=>{f[k]=parseFloat(f[k])||0});f.budget=sumAmt();
 if(isProj()){const rows=pitems.filter(r=>String(r.name).trim()||r.amt!=='');
 if(rows.some(r=>!String(r.name).trim()))return say('พิมพ์ชื่อรายการงบประมาณให้ครบทุกแถวที่ใส่จำนวนเงิน','err');
-f.projItems=rows.map(r=>({name:String(r.name).trim(),amt:parseFloat(r.amt)||0}));AMT.forEach(k=>{f[k]=0});f.otherNote='';f.budget=sumList(f.projItems)}
+f.projItems=rows.map(r=>({name:String(r.name).trim(),amt:parseFloat(r.amt)||0,label:r.label||'',f:r.f||[],r:r.r===undefined?'':r.r}));AMT.forEach(k=>{f[k]=0});f.otherNote='';f.budget=sumList(f.projItems)}
 else f.projItems=[];
 if(!isProj()&&people.length){const nm=[String(f.name).trim()].concat(people);f.pex=nm.map((n,i)=>Object.assign({n},numObj(pexV[i])));AMT.forEach(k=>{f[k]=f.pex.reduce((t,o)=>t+nz(o[k]),0)});f.budget=sumAmt()}else f.pex=[];
 const dateText=rangesText(f.ranges);
@@ -1287,12 +1287,34 @@ else await ref.set(Object.assign({id:r.id,no:r.no||r.id,name:r.name||'',title:r.
 let pitems=[{name:'',amt:''}],mItems=null,mPex=null,rPex=null;
 const sumList=a=>a.reduce((t,r)=>t+(parseFloat(r.amt)||0),0);
 const isProj=()=>{const e=$('x_type'),c=$('x_category');return (!!c&&c.value==='โครงการ')||(!!e&&e.value==='จัดโครงการ')};
+const LPRE={'ค่าอาหารว่างและเครื่องดื่ม':['คน','มื้อ'],'ค่าอาหารกลางวัน':['คน','มื้อ'],'ค่าสมนาคุณวิทยากร':['กลุ่ม','คน','ชั่วโมง'],'ค่าจัดทำสื่อ/วัสดุ':['ชุด']},LOTH='อื่น ๆ (ระบุเอง)',LUN=['คน','วัน','มื้อ','ชุด','กลุ่ม','ชั่วโมง','ครั้ง','เล่ม','แผ่น','อัน','เดือน'];
+const lnum=x=>{const s=String(x==null?'':x).trim();return s!==''&&isFinite(+s)?+s:null};
+function lnorm(it){if(!Array.isArray(it.f)){it.f=[];const o=[['p','คน'],['d','วัน'],['m','มื้อ']];o.forEach(a=>{if(it[a[0]]!==undefined&&it[a[0]]!=='')it.f.push({n:String(it[a[0]]),u:a[1]})});if(!it.f.length&&it.r===undefined&&it.amt!==''&&it.amt!=null&&it.name){it.r=String(it.amt);it.other=true}}
+if(it.label===undefined)it.label=it.name||'';if(it.r===undefined)it.r='';return it}
+function lgen(it){const f=it.f.filter(x=>lnum(x.n)!==null),r=lnum(it.r);let t=it.label||'';
+f.forEach((x,i)=>{t+=' '+(i?'ละ ':'')+lnum(x.n).toLocaleString('th-TH')+(x.u?' '+x.u+'ๆ':'')});
+if(r!==null)t+=(f.length?' ละ ':' ')+r.toLocaleString('th-TH')+' บาท';return t.trim()}
+function lcalc(it){const r=lnum(it.r);if(r===null)return '';let t=r;it.f.forEach(x=>{const n=lnum(x.n);if(n!==null)t*=n});return String(Math.round(t*100)/100)}
+function lsync(it){it.amt=lcalc(it);it.name=it.label?lgen(it):''}
 function drawList(box,arr,onChange){
-box.innerHTML='<div class="prow" style="font-size:.85rem;color:var(--mut);font-weight:600"><span style="flex:2 1 0">1. รายละเอียด</span><span style="flex:1 1 0">2. จำนวนเงิน (บาท)</span><span style="width:52px"></span></div>'+arr.map((it,i)=>'<div class="prow"><input type="text" data-k="name" data-i="'+i+'" placeholder="รายละเอียด เช่น ค่าอาหารว่าง ค่าวิทยากร" value="'+esc(it.name)+'" aria-label="รายละเอียด"><input type="number" inputmode="decimal" min="0" step="any" data-k="amt" data-i="'+i+'" placeholder="จำนวนเงิน" value="'+esc(it.amt)+'" aria-label="จำนวนเงิน"><button type="button" class="s" data-del="'+i+'" aria-label="ลบรายการ">ลบ</button></div>').join('')+'<button type="button" class="s" data-add="1" style="margin-top:4px">+ เพิ่มรายการ</button>';
-const upT=()=>{const t=box.querySelector('[data-tot]');if(t)t.textContent=sumList(arr).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})};upT();
-box.querySelectorAll('input').forEach(inp=>{inp.oninput=()=>{arr[+inp.dataset.i][inp.dataset.k]=inp.value;upT();onChange()}});
+arr.forEach(it=>{lnorm(it);if(it.amt===''||it.amt==null||it.f.length||it.r!=='')lsync(it)});
+const fm=n=>(parseFloat(n)||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const ni=(i,j,v)=>'<input type="number" inputmode="decimal" min="0" step="any" data-fi="'+i+'" data-fj="'+j+'" data-fk="n" value="'+esc(v)+'" placeholder="จำนวน" aria-label="จำนวน" style="width:76px;flex:none"><input type="text" list="dl_units" data-fi="'+i+'" data-fj="'+j+'" data-fk="u" value="'+esc(arr[i].f[j].u||'')+'" placeholder="หน่วย" aria-label="หน่วย" style="width:98px;flex:none">';
+box.innerHTML='<datalist id="dl_units">'+LUN.map(u=>'<option value="'+u+'">').join('')+'</datalist>'
++arr.map((it,i)=>{const oth=it.other||(it.label&&!LPRE[it.label]),sv=oth?'__o':(it.label||'');
+return '<div style="padding:10px 0;border-bottom:1px dashed var(--line)"><div class="prow" style="margin:0 0 6px;align-items:center"><span style="font-weight:700;width:1.6em">'+(i+1)+')</span><select data-sel="'+i+'" aria-label="รายละเอียด" style="flex:2 1 0"><option value="">— เลือกรายการ —</option>'+Object.keys(LPRE).map(o=>'<option'+(sv===o?' selected':'')+'>'+o+'</option>').join('')+'<option value="__o"'+(sv==='__o'?' selected':'')+'>'+LOTH+'</option></select>'+(oth?'<input type="text" data-lab="'+i+'" placeholder="ระบุรายการ" value="'+esc(it.label||'')+'" aria-label="ระบุรายการ" style="flex:2 1 0">':'')+'<button type="button" class="s" data-del="'+i+'" aria-label="ลบรายการ" style="padding:9px 12px">ลบ</button></div>'
++'<div class="prow" style="margin:0;flex-wrap:wrap;align-items:center;padding-left:1.6em">'+it.f.map((x,j)=>(j?'<span>ละ</span>':'')+ni(i,j,x.n)+'<button type="button" class="lnk" data-fx="'+i+'.'+j+'" aria-label="ลบตัวคูณ" title="ลบตัวคูณ">✕</button>').join('')+(it.f.length<4?'<button type="button" class="s sm" data-fa="'+i+'">+ ตัวคูณ</button>':'')+'<span>ละ</span><input type="number" inputmode="decimal" min="0" step="any" data-pr="'+i+'" value="'+esc(it.r)+'" placeholder="ราคา" aria-label="ราคาต่อหน่วย" style="width:90px;flex:none"><span>บาท</span><b style="margin-left:auto" data-amt="'+i+'">= '+(it.amt!==''?fm(it.amt):'-')+'</b></div>'
++'<div class="mut" style="font-size:.82rem;padding-left:1.6em;margin-top:2px" data-txt="'+i+'">'+esc(it.name||'')+'</div></div>'}).join('')
++'<button type="button" class="s" data-add="1" style="margin-top:8px">+ เพิ่มรายการ</button>';
+const upd=i=>{const it=arr[i];lsync(it);const a=box.querySelector('[data-amt="'+i+'"]'),t=box.querySelector('[data-txt="'+i+'"]');if(a)a.textContent='= '+(it.amt!==''?fm(it.amt):'-');if(t)t.textContent=it.name||'';onChange()};
+box.querySelectorAll('select[data-sel]').forEach(se=>{se.onchange=()=>{const it=arr[+se.dataset.sel];if(se.value==='__o'){it.other=true;if(LPRE[it.label])it.label='';if(!it.f.length)it.f=[{n:'',u:'ชุด'}]}else{it.other=false;it.label=se.value;if(LPRE[se.value]){const old=it.f.map(x=>x.n);it.f=LPRE[se.value].map((u,j)=>({n:old[j]||'',u}))}}lsync(it);drawList(box,arr,onChange);onChange()}});
+box.querySelectorAll('[data-lab]').forEach(el=>{el.oninput=()=>{arr[+el.dataset.lab].label=el.value;upd(+el.dataset.lab)}});
+box.querySelectorAll('[data-fi]').forEach(el=>{el.oninput=()=>{arr[+el.dataset.fi].f[+el.dataset.fj][el.dataset.fk]=el.value;upd(+el.dataset.fi)}});
+box.querySelectorAll('[data-pr]').forEach(el=>{el.oninput=()=>{arr[+el.dataset.pr].r=el.value;upd(+el.dataset.pr)}});
+box.querySelectorAll('[data-fx]').forEach(b=>{b.onclick=()=>{const q=b.dataset.fx.split('.');arr[+q[0]].f.splice(+q[1],1);lsync(arr[+q[0]]);drawList(box,arr,onChange);onChange()}});
+box.querySelectorAll('[data-fa]').forEach(b=>{b.onclick=()=>{arr[+b.dataset.fa].f.push({n:'',u:''});drawList(box,arr,onChange)}});
 box.querySelectorAll('[data-del]').forEach(b=>{b.onclick=()=>{arr.splice(+b.dataset.del,1);if(!arr.length)arr.push({name:'',amt:''});drawList(box,arr,onChange);onChange()}});
-box.querySelector('[data-add]').onclick=()=>{arr.push({name:'',amt:''});drawList(box,arr,onChange);onChange();const ins=box.querySelectorAll('input[data-k=name]');ins[ins.length-1].focus()}}
+box.querySelector('[data-add]').onclick=()=>{arr.push({name:'',amt:''});drawList(box,arr,onChange);onChange()}}
 function applyMode(){const p=isProj();
 ['_h','allowance','lodging','registration','transport','otherAmt','otherNote'].forEach(k=>show('w_'+k,!p));
 show('w_projItems',p);show('w_companions',!p);if(p){people.length=0;const pl=$('plist');if(pl)pl.innerHTML='';drawList($('pibox'),pitems,calc)}pexRefresh()}
@@ -1313,7 +1335,7 @@ ds.value=r.dept||'';
 AMT.forEach(k=>{$('x_'+k).value=r[k]?r[k]:''});
 fillSel('category','categoryOther',r.category,CATOPT,'อื่นๆ');
 fillSel('type','typeOther',r.type,TYPEOPT,'อื่น ๆ');
-pitems=Array.isArray(r.projItems)&&r.projItems.length?r.projItems.map(x=>({name:x.name,amt:x.amt})):[{name:'',amt:''}];applyMode();
+pitems=Array.isArray(r.projItems)&&r.projItems.length?r.projItems.map(x=>({name:x.name,amt:x.amt,label:x.label,f:x.f,r:x.r,p:x.p,d:x.d,m:x.m})):[{name:'',amt:''}];applyMode();
 fillSel('source','sourceOther',r.source,SRC,'อื่นๆ');
 people=Array.isArray(r.companions)?r.companions.slice():[];pexV=pexInit(trav(r),r.pex,r);
 docs=Array.isArray(r.docs)?r.docs.map(d=>({name:d.name,url:d.url})):[];
@@ -1392,7 +1414,7 @@ h+='<div><label for="m_source">แหล่งงบประมาณ</label><s
 h+='<div id="m_wso"'+(sv==='อื่นๆ'?'':' hidden')+'><label for="m_sourceOther">ระบุแหล่งงบประมาณอื่นๆ</label><input id="m_sourceOther" type="text" value="'+esc(so)+'"></div>';
 h+='<div class="wide" style="font-weight:600;margin-top:6px">รายละเอียด'+(mode==='loan'?'การยืมเงิน':'การเบิกเงิน')+' (บาท) — แก้ไขได้</div>';
 const proj=cur.type==='จัดโครงการ';
-mItems=proj?((d.itemsList&&d.itemsList.length?d.itemsList:(cur.projItems||[])).map(x=>({name:x.name,amt:x.amt}))):null;if(proj&&!mItems.length)mItems=[{name:'',amt:''}];
+mItems=proj?((d.itemsList&&d.itemsList.length?d.itemsList:(cur.projItems||[])).map(x=>({name:x.name,amt:x.amt,label:x.label,f:x.f,r:x.r,p:x.p,d:x.d,m:x.m}))):null;if(proj&&!mItems.length)mItems=[{name:'',amt:''}];
 h+=proj?'<div class="wide" id="m_pibox"></div>':mPex?('<div class="wide"><div class="tw" id="m_pexbox"></div></div>'+fld('otherNote','อื่นๆ (พิมพ์รายละเอียด)','text',it.otherNote||'')):(fld('allowance','ค่าเบี้ยเลี้ยง','number',it.allowance||'')+fld('lodging','ค่าที่พัก','number',it.lodging||'')+fld('registration','ค่าลงทะเบียน','number',it.registration||'')+fld('transport','ค่ายานพาหนะ','number',it.transport||'')+fld('otherAmt','อื่นๆ (จำนวนเงิน)','number',it.otherAmt||'')+fld('otherNote','อื่นๆ (พิมพ์รายละเอียด)','text',it.otherNote||''));
 h+='<div class="wide"><label for="m_total">'+(mode==='refund'?'รวมเบิกจริงทั้งสิ้น':'รวมเงินทั้งสิ้น')+' (คำนวณอัตโนมัติ)</label><input id="m_total" type="text" readonly style="font-weight:600"></div>';
 h+=fld('financeDate','การเงินทำขออนุมัติเบิกจ่ายเสร็จสิ้นวันที่','date',d.financeDate||'',true,mode==='loan'?TIP_LOAN:TIP_REF);
@@ -1418,7 +1440,7 @@ if(source==='อื่นๆ'){source=g('sourceOther');if(!source)return say('�
 let items={},total=0,itemsList=null,pexOut=null;
 if(mItems){const rows=mItems.filter(r=>String(r.name).trim()||r.amt!=='');
 if(rows.some(r=>!String(r.name).trim()))return say('พิมพ์ชื่อรายการให้ครบทุกแถวที่ใส่จำนวนเงิน','err');
-itemsList=rows.map(r=>({name:String(r.name).trim(),amt:parseFloat(r.amt)||0}));total=sumList(itemsList)}
+itemsList=rows.map(r=>({name:String(r.name).trim(),amt:parseFloat(r.amt)||0,label:r.label||'',f:r.f||[],r:r.r===undefined?'':r.r}));total=sumList(itemsList)}
 else if(mPex){const nm=trav(cur);pexOut=nm.map((n,i)=>Object.assign({n},numObj(mPex[i])));AMT.forEach(k=>{items[k]=pexOut.reduce((t,o)=>t+nz(o[k]),0)});items.otherNote=g('otherNote');total=AMT.reduce((t,k)=>t+items[k],0)}
 else{AMT.forEach(k=>{items[k]=parseFloat(g(k))||0});items.otherNote=g('otherNote');total=AMT.reduce((t,k)=>t+items[k],0)}
 let loanIn='';
