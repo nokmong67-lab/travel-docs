@@ -751,7 +751,7 @@ show('w_categoryOther',false);show('w_sourceOther',false);show('w_typeOther',fal
 $('x_type').onchange=()=>{const o=$('x_type').value==='อื่น ๆ';show('w_typeOther',o);if(o)$('x_typeOther').focus();applyMode()};
 $('x_source').onchange=()=>{const o=$('x_source').value==='อื่นๆ';show('w_sourceOther',o);if(o)$('x_sourceOther').focus()};
 ['dateFrom','dateTo'].concat(AMT).forEach(k=>$('x_'+k).addEventListener('input',calc));calc();
-$('x_category').onchange=()=>{const o=$('x_category').value==='อื่นๆ';show('w_categoryOther',o);if(o)$('x_categoryOther').focus()}}
+$('x_category').onchange=()=>{const o=$('x_category').value==='อื่นๆ';show('w_categoryOther',o);if(o)$('x_categoryOther').focus();applyMode()}}
 function collect(defs){const o={};defs.forEach(d=>{const el=$('x_'+d[0]);if(!el)return;const v=el.value.trim();if(v!=='')o[d[0]]=v});return o}
 function say(t,c){$('msg').textContent=t;$('msg').className=c||'';const l=$('lg_msg');if(l){l.textContent=t;l.className=c||''}}
 let db=null,canWrite=null,cur=null;
@@ -1286,15 +1286,16 @@ if(sn.exists)await ref.update(patch);
 else await ref.set(Object.assign({id:r.id,no:r.no||r.id,name:r.name||'',title:r.title||'',dept:r.dept||'',type:r.type||'',category:r.category||'',date:'',status:r.status||'',loan:r.loan||'',due:''},patch))}
 let pitems=[{name:'',amt:''}],mItems=null,mPex=null,rPex=null;
 const sumList=a=>a.reduce((t,r)=>t+(parseFloat(r.amt)||0),0);
-const isProj=()=>{const e=$('x_type');return !!e&&e.value==='จัดโครงการ'};
+const isProj=()=>{const e=$('x_type'),c=$('x_category');return (!!c&&c.value==='โครงการ')||(!!e&&e.value==='จัดโครงการ')};
 function drawList(box,arr,onChange){
-box.innerHTML=arr.map((it,i)=>'<div class="prow"><input type="text" data-k="name" data-i="'+i+'" placeholder="ชื่อรายการ" value="'+esc(it.name)+'" aria-label="ชื่อรายการ"><input type="number" inputmode="decimal" min="0" step="any" data-k="amt" data-i="'+i+'" placeholder="จำนวนเงิน" value="'+esc(it.amt)+'" aria-label="จำนวนเงิน"><button type="button" class="s" data-del="'+i+'" aria-label="ลบรายการ">ลบ</button></div>').join('')+'<button type="button" class="s" data-add="1" style="margin-top:4px">+ เพิ่มรายการ</button>';
-box.querySelectorAll('input').forEach(inp=>{inp.oninput=()=>{arr[+inp.dataset.i][inp.dataset.k]=inp.value;onChange()}});
+box.innerHTML='<div class="prow" style="font-size:.85rem;color:var(--mut);font-weight:600"><span style="flex:2 1 0">1. รายละเอียด</span><span style="flex:1 1 0">2. จำนวนเงิน (บาท)</span><span style="width:52px"></span></div>'+arr.map((it,i)=>'<div class="prow"><input type="text" data-k="name" data-i="'+i+'" placeholder="รายละเอียด เช่น ค่าอาหารว่าง ค่าวิทยากร" value="'+esc(it.name)+'" aria-label="รายละเอียด"><input type="number" inputmode="decimal" min="0" step="any" data-k="amt" data-i="'+i+'" placeholder="จำนวนเงิน" value="'+esc(it.amt)+'" aria-label="จำนวนเงิน"><button type="button" class="s" data-del="'+i+'" aria-label="ลบรายการ">ลบ</button></div>').join('')+'<button type="button" class="s" data-add="1" style="margin-top:4px">+ เพิ่มรายการ</button>';
+const upT=()=>{const t=box.querySelector('[data-tot]');if(t)t.textContent=sumList(arr).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})};upT();
+box.querySelectorAll('input').forEach(inp=>{inp.oninput=()=>{arr[+inp.dataset.i][inp.dataset.k]=inp.value;upT();onChange()}});
 box.querySelectorAll('[data-del]').forEach(b=>{b.onclick=()=>{arr.splice(+b.dataset.del,1);if(!arr.length)arr.push({name:'',amt:''});drawList(box,arr,onChange);onChange()}});
 box.querySelector('[data-add]').onclick=()=>{arr.push({name:'',amt:''});drawList(box,arr,onChange);onChange();const ins=box.querySelectorAll('input[data-k=name]');ins[ins.length-1].focus()}}
 function applyMode(){const p=isProj();
 ['_h','allowance','lodging','registration','transport','otherAmt','otherNote'].forEach(k=>show('w_'+k,!p));
-show('w_projItems',p);if(p)drawList($('pibox'),pitems,calc);pexRefresh()}
+show('w_projItems',p);show('w_companions',!p);if(p){people.length=0;const pl=$('plist');if(pl)pl.innerHTML='';drawList($('pibox'),pitems,calc)}pexRefresh()}
 let editing=null,curR=null;
 const TYPEOPT=NEW.find(d=>d[0]==='type')[3],CATOPT=NEW.find(d=>d[0]==='category')[3];
 function fillSel(sk,ok,val,opts,oth){const sel=$('x_'+sk);
