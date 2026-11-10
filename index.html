@@ -841,6 +841,7 @@ const PXK=[['allowance','ค่าเบี้ยเลี้ยง','เบี�
 const pxSum=o=>PXK.reduce((t,k)=>t+nz(o&&o[k[0]]),0);
 const pxVal=o=>(o&&o.amt!=null)?nz(o.amt):pxSum(o);
 const numObj=o=>{const r={};PXK.forEach(k=>{r[k[0]]=parseFloat(o&&o[k[0]])||0});return r};
+const isProjR=r=>!!r&&(r.type==='จัดโครงการ'||r.category==='โครงการ');
 const trav=r=>[String(r.name||'').trim()||'(ไม่ระบุ)'].concat(Array.isArray(r.companions)?r.companions:[]);
 function pexGet(pex,n,i){if(!Array.isArray(pex))return null;const a=pex[i];if(a&&a.n===n)return a;return pex.find(e=>e.n===n)||a||null}
 function pexInit(names,pex,items){const v=names.map((n,i)=>{const e=pexGet(pex,n,i);return e?numObj(e):{}});
@@ -866,7 +867,7 @@ rows.forEach((o,i)=>{h+='<tr><td>'+esc(nm[i])+'</td>'+cols.map(c=>'<td class="n"
 h+='<tr class="ptot"><td>รวม</td>'+cols.map(c=>'<td class="n">'+money(rows.reduce((t,o)=>t+nz(o[c[0]]),0))+'</td>').join('')+(amtOnly?'':'<td class="n">'+money(rows.reduce((t,o)=>t+tot(o),0))+'</td>')+'</tr></tbody></table></div>';return h}
 // สัดส่วนงบของแต่ละคน (r = รายการที่ norm แล้ว) — รายการเก่าที่ไม่ได้แยกรายคน นับเป็นของผู้ขอ
 function budgetShares(r){const nm=trav(r),out=nm.map(()=>({allowance:0,lodging:0,registration:0,transport:0,otherAmt:0,tot:0})),raw=r.raw||{};
-if(r.type!=='จัดโครงการ'&&Array.isArray(raw.pex)&&raw.pex.length){nm.forEach((n,i)=>{const e=pexGet(raw.pex,n,i);if(e){const o=numObj(e);o.tot=pxSum(o);out[i]=o}});
+if(!isProjR(r)&&Array.isArray(raw.pex)&&raw.pex.length){nm.forEach((n,i)=>{const e=pexGet(raw.pex,n,i);if(e){const o=numObj(e);o.tot=pxSum(o);out[i]=o}});
 const d=nz(r.budget)-out.reduce((t,o)=>t+o.tot,0);if(Math.abs(d)>0.005){out[0].otherAmt+=d;out[0].tot+=d}return out}
 const it=r.items||{};PXK.forEach(k=>{out[0][k[0]]=nz(it[k[0]])});const d=nz(r.budget)-pxSum(out[0]);out[0].otherAmt+=d;out[0].tot=nz(r.budget);return out}
 function spentShares(r){const nm=trav(r),out=nm.map(()=>0),src=r.refundData?[r.refundData,nz(r.refundData.total)]:r.returnData?[r.returnData,nz(r.returnData.actual)]:null;
@@ -1353,7 +1354,7 @@ $('r_doc').onchange=()=>{curR=reqs.find(r=>r.id===$('r_doc').value)||null;render
 function renderRF(){
 if(!curR){show('r_form',false);return}
 const d=curR.returnData||{},lt=(curR.loanData&&curR.loanData.total)||0;
-const rn=trav(curR);rPex=(curR.type!=='จัดโครงการ'&&rn.length>1)?rn.map((n,i)=>{const e=pexGet(d.pex,n,i);return e?{amt:e.amt}:{}}):null;if(rPex&&!(Array.isArray(d.pex)&&d.pex.length)&&nz(d.actual))rPex[0].amt=d.actual;
+const rn=trav(curR);rPex=(!isProjR(curR)&&rn.length>1)?rn.map((n,i)=>{const e=pexGet(d.pex,n,i);return e?{amt:e.amt}:{}}):null;if(rPex&&!(Array.isArray(d.pex)&&d.pex.length)&&nz(d.actual))rPex[0].amt=d.actual;
 let h='<fieldset><legend>คืนเงินยืม · '+esc(dispNo(curR))+' '+esc(curR.title)+'</legend><div class="grid">';
 h+='<div><label>เลขยืมเงิน</label><div style="font-weight:600">'+esc(curR.loan)+'</div></div><div><label>จำนวนเงินยืม</label><div style="font-weight:600">'+(lt?lt.toLocaleString('th-TH')+' บาท':'-')+'</div></div>';
 h+=rfld('returnDate','วันที่ยื่นคืนเงิน','date',d.returnDate||'')+rfld('signDate','วันที่ ผอ.ลงนามคืนเงิน','date',d.signDate||'');
@@ -1404,7 +1405,7 @@ function fld(k,label,type,val,wide,tip){return '<div'+(wide?' class="wide"':'')+
 function renderMF(mode){
 if(!cur)return;
 const d=cur[mode+'Data']||{},it=d.items||{allowance:cur.allowance,lodging:cur.lodging,registration:cur.registration,transport:cur.transport,otherAmt:cur.otherAmt,otherNote:cur.otherNote};
-const names=trav(cur);mPex=(cur.type!=='จัดโครงการ'&&names.length>1)?pexInit(names,d.items?d.pex:cur.pex,it):null;
+const names=trav(cur);mPex=(!isProjR(cur)&&names.length>1)?pexInit(names,d.items?d.pex:cur.pex,it):null;
 const v0=d.source!=null?d.source:cur.source||'',inList=SRC.includes(v0),sv=inList?v0:(v0?'อื่นๆ':''),so=inList?'':v0;
 let h='<fieldset><legend>'+(mode==='loan'?'ยืมเงิน':'เบิกเงิน')+' · '+esc(cur.no||cur.id)+' '+esc(cur.title)+'</legend><div class="grid">';
 if(mode==='loan'){const lm=/^ย?(\d+)\/(\d{4})$/.exec(cur.loan||''),lfy=lm?lm[2]:String(fiscalBE());
@@ -1413,7 +1414,7 @@ h+=fld('letterNo','เลขที่หนังสือของกลุ่�
 h+='<div><label for="m_source">แหล่งงบประมาณ</label><select id="m_source"><option value=""></option>'+SRC.map(o=>'<option'+(o===sv?' selected':'')+'>'+o+'</option>').join('')+'</select></div>';
 h+='<div id="m_wso"'+(sv==='อื่นๆ'?'':' hidden')+'><label for="m_sourceOther">ระบุแหล่งงบประมาณอื่นๆ</label><input id="m_sourceOther" type="text" value="'+esc(so)+'"></div>';
 h+='<div class="wide" style="font-weight:600;margin-top:6px">รายละเอียด'+(mode==='loan'?'การยืมเงิน':'การเบิกเงิน')+' (บาท) — แก้ไขได้</div>';
-const proj=cur.type==='จัดโครงการ';
+const proj=isProjR(cur);
 mItems=proj?((d.itemsList&&d.itemsList.length?d.itemsList:(cur.projItems||[])).map(x=>({name:x.name,amt:x.amt,label:x.label,f:x.f,r:x.r,p:x.p,d:x.d,m:x.m}))):null;if(proj&&!mItems.length)mItems=[{name:'',amt:''}];
 h+=proj?'<div class="wide" id="m_pibox"></div>':mPex?('<div class="wide"><div class="tw" id="m_pexbox"></div></div>'+fld('otherNote','อื่นๆ (พิมพ์รายละเอียด)','text',it.otherNote||'')):(fld('allowance','ค่าเบี้ยเลี้ยง','number',it.allowance||'')+fld('lodging','ค่าที่พัก','number',it.lodging||'')+fld('registration','ค่าลงทะเบียน','number',it.registration||'')+fld('transport','ค่ายานพาหนะ','number',it.transport||'')+fld('otherAmt','อื่นๆ (จำนวนเงิน)','number',it.otherAmt||'')+fld('otherNote','อื่นๆ (พิมพ์รายละเอียด)','text',it.otherNote||''));
 h+='<div class="wide"><label for="m_total">'+(mode==='refund'?'รวมเบิกจริงทั้งสิ้น':'รวมเงินทั้งสิ้น')+' (คำนวณอัตโนมัติ)</label><input id="m_total" type="text" readonly style="font-weight:600"></div>';
@@ -2184,7 +2185,7 @@ const ad=$('f_addp');if(ad)ad.onclick=()=>{gather();S.people.push({n:'',pos:'',d
 box.querySelectorAll('[data-fdel]').forEach(b=>b.onclick=()=>{gather();S.people.splice(+b.dataset.fdel,1);mount();render()});
 const nop=$('f_nop');if(nop)updNo();render()}
 function setDoc(k){if(S)gather();S.doc=k;$('tr_doc').value=k;mount()}
-function fillReqs(){const sel=$('tr_req'),cur=sel.value;const rows=(typeof T!=='undefined'?T:[]).filter(r=>!r.cancelled&&r.type!=='จัดโครงการ'&&r.category!=='โครงการ');
+function fillReqs(){const sel=$('tr_req'),cur=sel.value;const rows=(typeof T!=='undefined'?T:[]).filter(r=>!r.cancelled&&!isProjR(r)&&r.category!=='โครงการ');
 sel.innerHTML='<option value="">— กรอกเอง (ไม่ดึงจากรายการในระบบ) —</option>'+rows.map(r=>'<option value="'+E(r.id)+'">'+E(r.no+' · '+r.title+' · '+r.name+(r.dt?' ('+r.dt+')':''))+'</option>').join('');sel.value=cur}
 function pickReq(id){const r=id?T.find(x=>x.id===id):null;const doc0=S&&S.doc||'apr';makeState(r);S.doc=doc0;$('tr_req').value=id||'';mount()}
 let inited=false;
