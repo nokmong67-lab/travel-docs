@@ -402,6 +402,20 @@ html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-templa
 #login .lg-help{margin:14px 0 0;font-size:.82rem;color:var(--mut);text-align:center}
 @media(max-width:820px){html body #login.lgs{grid-template-columns:1fr}#login .lg-r{order:1;padding:24px 16px}#login .lg-l{order:2;padding:28px 20px}#login .lg-h{font-size:1.4rem}}
 </style>
+<style id="compact-css">
+html{font-size:14px}body{font-size:1rem;line-height:1.5}
+.topbar{padding:8px 20px}.hero{padding:16px 24px}main{padding:12px 20px 36px}
+.item{padding:8px 12px;margin-top:8px}.item h2{font-size:.98rem}dl{gap:1px 10px;margin:4px 0 0}
+input,select{padding:6px 9px}label{font-size:.82rem}.grid{gap:8px 12px}
+button.s,a.s{padding:6px 12px}.nav .tab,.sb .nav button.tab{padding-top:8px;padding-bottom:8px}
+#p-track,#p-staff,#p-memo{padding:14px}
+table.ctb{font-size:.84rem}table.ctb th,table.ctb td{padding:4px 7px;vertical-align:middle}table.ctb tbody tr:hover{background:rgba(127,127,127,.08)}
+table.ctb .chip{font-size:.74rem;padding:1px 8px}table.ctb button.sm{padding:2px 8px!important;font-size:.76rem!important}
+input,select,textarea,button{font-size:.92rem}input[type=search]{font-size:.9rem}
+#tfilters .grid{grid-template-columns:repeat(4,1fr);gap:6px 10px}#tfilters .grid .wide{grid-column:1/-1}@media(max-width:900px){#tfilters .grid{grid-template-columns:1fr 1fr}}
+table.ctb{min-width:820px}table.ctb td:nth-child(2){min-width:180px}table.ctb td:nth-child(3){min-width:100px}table.ctb td:last-child{min-width:150px;width:150px}table.ctb .chip{white-space:nowrap}table.ctb{min-width:0}
+.laysw{display:inline-flex;gap:4px}.laysw .s[aria-pressed=true]{border-color:var(--acc);background:var(--tint);font-weight:700}
+</style>
 </head>
 <body>
 <div class="app">
@@ -565,7 +579,7 @@ html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-templa
 <div id="tv-bar" class="nav sub" hidden><button class="tab" id="tv-list" aria-selected="true">📋 รายการ</button><button class="tab" id="tv-rep" aria-selected="false">📊 รายงานสรุป</button></div>
 <div id="slot-track"><div id="tfilters">
 <div class="grid">
-<div class="wide"><label for="tq">ค้นหา (เลขรับ / ชื่อเรื่อง / ผู้ขอ)</label><input id="tq" autocomplete="off" placeholder="เช่น 1/2570 หรือ ชื่อ"></div>
+<div class="wide"><label for="tq">ค้นหา (เลขรับ / เลขยืมเงิน / ชื่อเรื่อง / ผู้ขอ)</label><input id="tq" autocomplete="off" placeholder="เช่น 1/2570 หรือ ชื่อ"></div>
 <div><label for="tp">รายบุคคล (ผู้ขอ/ผู้ร่วมเดินทาง)</label><select id="tp"></select></div>
 <div><label for="td">กลุ่มงาน</label><select id="td"></select></div>
 <div><label for="tt">ประเภท</label><select id="tt"></select></div>
@@ -574,7 +588,7 @@ html body #login.lgs{position:fixed;inset:0;z-index:500;display:grid;grid-templa
 <div><label for="tc">หมวดหมู่</label><select id="tc"></select></div>
 <div><label for="tm">เดือน (ตามวันที่เดินทาง)</label><select id="tm"></select></div>
 </div>
-<div class="row" style="margin:12px 0 0;flex-wrap:wrap"><button class="s" id="ex-x" type="button">ส่งออก Excel</button><button class="s" id="ex-r" type="button">ส่งออกรายงาน (พิมพ์/PDF)</button><button class="s" id="tclr" type="button">ล้างตัวกรอง</button></div>
+<div class="row" style="margin:12px 0 0;flex-wrap:wrap"><button class="s" id="ex-x" type="button">ส่งออก Excel</button><button class="s" id="ex-r" type="button">ส่งออกรายงาน (พิมพ์/PDF)</button><button class="s" id="tclr" type="button">ล้างตัวกรอง</button><span class="laysw"><button class="s" id="lay-t" type="button" aria-pressed="true">☰ ตาราง</button><button class="s" id="lay-c" type="button" aria-pressed="false">▦ การ์ด</button></span></div>
 <p id="tcount" class="mut" style="margin:6px 0 0"></p>
 </div></div>
 <div id="tout"></div>
@@ -918,7 +932,14 @@ opt('tc',u(T.map(r=>r.category)));
 opt('tt',u(T.map(r=>r.type)));opt('ts',STATUS.concat(['ยกเลิก']));opt('ty',u(T.map(r=>r.fy)).sort().reverse())}
 function tFiltered(){
 const q=$('tq').value.trim().toLowerCase(),p=$('tp').value,d=$('td').value,t=$('tt').value,s=$('ts').value,y=$('ty').value,c=$('tc').value,mo=$('tm').value;
-return T.filter(r=>(!p||r.name===p||r.companions.includes(p))&&(!d||r.dept===d)&&(!c||r.category===c)&&(!mo||(r.dateFrom||'').slice(0,7)===mo)&&(!t||r.type===t)&&(!s||r.status===s)&&(!y||r.fy===y)&&(!q||[r.no,r.id,r.title,r.name].join(' ').toLowerCase().includes(q)))}
+return T.filter(r=>(!p||r.name===p||r.companions.includes(p))&&(!d||r.dept===d)&&(!c||r.category===c)&&(!mo||(r.dateFrom||'').slice(0,7)===mo)&&(!t||r.type===t)&&(!s||r.status===s)&&(!y||r.fy===y)&&(!q||[r.no,r.id,r.title,r.name,r.loan].join(' ').toLowerCase().includes(q)))}
+let tLay='tbl';try{tLay=localStorage.getItem('tp_lay')==='card'?'card':'tbl'}catch(e){}
+function actsHtml(r){const id=esc(r.id),B=(a,t)=>'<button type="button" class="s sm" data-act="'+a+'" data-id="'+id+'">'+t+'</button>';
+return B('detail','รายละเอียด')+(tStaff&&hasDocs(r)?B('docs','เอกสาร'):'')+(tStaff&&auth.user?(r.cancelled?(can('doc')?B('restore','เรียกคืน'):''):mailBtn(r).replace('class="s"','class="s sm"')+(can('doc')?B('edit','แก้ไข'):'')+(can('money')?B('loan','ยืม/เบิก'):'')+(r.loan&&can('ret')?B('ret','คืนเงิน'):'')+(can('doc')?B('cancel','ยกเลิก'):'')):'')}
+function tableHtml(rows){
+if(!rows.length)return '<p class="mut">ไม่พบรายการตามตัวกรองที่เลือก</p>';
+return '<div class="tw"><table class="t ctb"><thead><tr><th>เลขรับ</th><th>ชื่อเรื่อง</th><th>ผู้ขอ</th><th>วันที่</th><th>สถานะ</th><th>เลขยืมเงิน</th>'+(tStaff?'<th class="n">งบ (บาท)</th>':'')+'<th>กำหนดคืน</th><th></th></tr></thead><tbody>'
++rows.map(r=>'<tr'+(r.cancelled?' class="cx"':'')+'><td style="white-space:nowrap"><b>'+esc(r.no)+'</b></td><td>'+esc(r.title)+'</td><td>'+esc(r.name)+(r.companions.length?' <span class="mut">+'+r.companions.length+'</span>':'')+'</td><td style="min-width:110px">'+esc(r.dt)+'</td><td>'+chip(r.status)+'</td><td style="white-space:nowrap">'+esc(r.loan||'-')+'</td>'+(tStaff?'<td class="n">'+(r.budget!=null?money(r.budget):'-')+'</td>':'')+'<td style="white-space:nowrap">'+(r.due?dueCell(r):'-')+'</td><td><div class="row" style="margin:0;flex-wrap:wrap;gap:4px">'+actsHtml(r)+'</div></td></tr>').join('')+'</tbody></table></div>'}
 function cardsHtml(rows){
 if(!rows.length)return '<p class="mut">ไม่พบรายการตามตัวกรองที่เลือก</p>';
 return rows.map(r=>{const l=r.loanData,t=r.returnData;
@@ -1197,9 +1218,9 @@ $('a_dump').onclick=async()=>{try{say('กำลังเตรียมไฟ�
 function fyStep(d){const el=$('ty'),o=[...el.options].map(x=>x.value).filter(Boolean).sort();if(!o.length)return;let i=o.indexOf(el.value);i=i<0?o.length-1:Math.min(Math.max(i+d,0),o.length-1);el.value=o[i];renderT()}
 function renderT(){const rows=tFiltered();
 $('tcount').textContent='แสดง '+rows.length+' จาก '+T.length+' รายการ'+(tStaff?(auth.user?' · มุมมองเจ้าหน้าที่ (เห็นงบประมาณ)':' · ดูอย่างเดียว (เข้าสู่ระบบเจ้าหน้าที่เพื่อแก้ไข)'):'')+(DEMO?' · ⚠️ ข้อมูลตัวอย่าง (Demo) ไม่ใช่ข้อมูลจริง':'');
-const rp=tStaff&&tView==='rep';show('tv-bar',tStaff);show('tout',!rp);show('rout',rp);$('tout').innerHTML=cardsHtml(rows);$('rout').innerHTML=rp?dashHtml(rows):''}
+const rp=tStaff&&tView==='rep';show('tv-bar',tStaff);show('tout',!rp);show('rout',rp);$('tout').innerHTML=tLay==='tbl'?tableHtml(rows):cardsHtml(rows);['lay-t','lay-c'].forEach(k=>{const e=$(k);if(e)e.setAttribute('aria-pressed',String((k==='lay-t')===(tLay==='tbl')))});$('rout').innerHTML=rp?dashHtml(rows):''}
 function tv(w){tView=w;$('tv-list').setAttribute('aria-selected',w==='list');$('tv-rep').setAttribute('aria-selected',w==='rep');$('main').classList.toggle('wide',w==='rep'&&tStaff);renderT()}
-$('tv-list').onclick=()=>tv('list');$('tv-rep').onclick=()=>tv('rep');
+$('lay-t').onclick=()=>{tLay='tbl';try{localStorage.setItem('tp_lay','tbl')}catch(e){}renderT()};$('lay-c').onclick=()=>{tLay='card';try{localStorage.setItem('tp_lay','card')}catch(e){}renderT()};$('tv-list').onclick=()=>tv('list');$('tv-rep').onclick=()=>tv('rep');
 $('tq').addEventListener('input',renderT);['tp','td','tt','ts','ty','tc','tm'].forEach(k=>$(k).addEventListener('change',renderT));
 $('tclr').onclick=()=>{['tq','tp','td','tt','ts','ty','tc','tm'].forEach(k=>{$(k).value=''});renderT()};
 
